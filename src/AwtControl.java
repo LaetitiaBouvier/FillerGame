@@ -161,6 +161,7 @@ public class AwtControl{
 
 		//add menubar to the frame
 		mainFrame.setMenuBar(menuBar);
+		
 		mainFrame.setVisible(true);  
 	}
 

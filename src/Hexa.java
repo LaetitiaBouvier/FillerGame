@@ -15,6 +15,18 @@ public class Hexa {
 	private Hexa voisinGauche;
 	private Hexa voisinGaucheHaut;
 	
+	/**
+	 * 
+	 * @param centreX			: bidul
+	 * @param centreY
+	 * @param color
+	 * @param voisinDroiteHaut
+	 * @param voisinDroite
+	 * @param voisinDroitBas
+	 * @param voisinGaucheBas
+	 * @param voisinGauche
+	 * @param voisinGaucheHaut
+	 */
 	public Hexa(int centreX, int centreY, Color color, Hexa voisinDroiteHaut,Hexa voisinDroite, Hexa voisinDroitBas, Hexa voisinGaucheBas, Hexa voisinGauche, Hexa voisinGaucheHaut){
 		
 		this.centreX = centreX;

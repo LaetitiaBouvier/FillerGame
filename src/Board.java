@@ -29,6 +29,10 @@ public class Board extends Canvas {
 		
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j < grille[0].length; j++){
+				
+				// ATTENTION il se passe un truc dans les coins : il faut que les 4 coins soient de couleur diff !
+				// TODO : truc bidul
+				
 				if(j %2 == 0){ decalageX = -30;}
 				if(j %2 == 1){ decalageX = 0;}
 				
@@ -166,7 +170,6 @@ public class Board extends Canvas {
 				g.setColor(Color.black);
 				g.drawPolygon(x, y, 6);
 			}
-			System.out.println();
 		}
 	}
 }
