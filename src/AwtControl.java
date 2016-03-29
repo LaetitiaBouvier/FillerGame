@@ -55,7 +55,7 @@ public class AwtControl{
 		panel.setBackground(Color.black);
 		panel.setSize(B.getHeight(),B.getWidth());
 		
-		mainFrame.setSize(B.getHeight()+10,B.getWidth()+300);
+		mainFrame.setSize(B.getHeight()+10,B.getWidth()+270);
 		
 		Button redButton 		= new Button("ROUGE");		redButton.setBackground(Color.red);
 		Button orangeButton 	= new Button("ORANGE");		orangeButton.setBackground(Color.orange);

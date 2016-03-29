@@ -21,7 +21,7 @@ public class Board extends Canvas {
 	public Board(int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4) {
 		
 		setBackground (Color.black);
-        setSize(60*nb +30, 60*nb +60);
+        setSize(40*nb +50, 40*nb +60);
 		
 		int decalageX = 0;
 		
@@ -33,7 +33,7 @@ public class Board extends Canvas {
 				// ATTENTION il se passe un truc dans les coins : il faut que les 4 coins soient de couleur diff !
 				// TODO : truc bidul
 				
-				if(j %2 == 0){ decalageX = -30;}
+				if(j %2 == 0){ decalageX = -20;}
 				if(j %2 == 1){ decalageX = 0;}
 				
 				Color color = Color.black;
@@ -54,7 +54,7 @@ public class Board extends Canvas {
 					color = Color.magenta;
 				}
 				
-				grille[i][j] = new Hexa(60+i*60+decalageX, 60+j*60, color, null, null, null, null, null, null);
+				grille[i][j] = new Hexa(60+i*40+decalageX, 50+j*40, color, null, null, null, null, null, null);
 			}
 		}
 		
