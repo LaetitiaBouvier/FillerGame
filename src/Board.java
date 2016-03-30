@@ -63,6 +63,7 @@ public class Board extends Canvas {
 			for(int j = 0; j < grille[0].length; j++){
 				
 				if(i == 0 && j == 0){						// Premier Hexa de la première ligne
+					
 					grille[0][0].setVoisinDroiteHaut(null);
 					grille[0][0].setVoisinGaucheHaut(null);
 					grille[0][0].setVoisinGauche(null);
@@ -74,27 +75,28 @@ public class Board extends Canvas {
 				else if(i == nb-1 && j == 0){				// Dernier Hexa de la première ligne
 					
 					grille[nb-1][0].setVoisinDroiteHaut(null);
-					grille[nb-1][0].setVoisinGaucheHaut(null);
 					grille[nb-1][0].setVoisinDroite(null);
+					grille[nb-1][0].setVoisinGaucheHaut(null);
 					
 					grille[nb-1][0].setVoisinGauche(grille[nb-2][0]);
 					grille[nb-1][0].setVoisinGaucheBas(grille[nb-2][1]);
 					grille[nb-1][0].setVoisinDroiteBas(grille[nb-1][1]);
 				}
 				else if(i != 0  && i != nb-1 && j == 0){	// Du deuxième à l'avant dernier Hexa de la première ligne
+					
 					grille[i][0].setVoisinDroiteHaut(null);
 					grille[i][0].setVoisinGaucheHaut(null);
 					
 					grille[i][0].setVoisinDroite(grille[i+1][0]);
 					grille[i][0].setVoisinGauche(grille[i-1][0]);
-					
-					grille[i][0].setVoisinDroiteBas(grille[i+1][1]);
+					grille[i][0].setVoisinDroiteBas(grille[i][1]);
 					grille[i][0].setVoisinGaucheBas(grille[i-1][1]);
 				}
 				else if(i == 0 && j != 0 && j != nb-1){		// Du deuxième à l'avant dernier Hexa de la première colonne
+					
 					grille[i][j].setVoisinGauche(null);
 					
-					if(j %2 == 0){	// Si décalé vers la gauche
+					if(j % 2 == 0){	// Si décalé vers la gauche
 						grille[0][j].setVoisinDroiteHaut(grille[0][j-1]);
 						grille[0][j].setVoisinDroite(grille[1][j]);
 						grille[0][j].setVoisinDroiteBas(grille[0][j+1]);
@@ -142,7 +144,7 @@ public class Board extends Canvas {
 						grille[0][nb-1].setVoisinGauche(null);
 						grille[0][nb-1].setVoisinGaucheHaut(null);
 						
-						grille[0][nb-1].setVoisinDroiteHaut(grille[1][nb-2]);
+						grille[0][nb-1].setVoisinDroiteHaut(grille[0][nb-2]);
 						grille[0][nb-1].setVoisinDroite(grille[1][nb-1]);
 					}
 					if(j % 2 == 1){ // Si la dernière ligne est impaire
@@ -160,16 +162,6 @@ public class Board extends Canvas {
 					
 					if(j % 2 == 0){	// Si la dernière ligne est paire
 						
-						grille[nb-1][nb-1].setVoisinDroiteHaut(null);
-						grille[nb-1][nb-1].setVoisinDroite(null);
-						grille[nb-1][nb-1].setVoisinDroiteBas(null);
-						grille[nb-1][nb-1].setVoisinGaucheBas(null);
-						
-						grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
-						grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-1][nb-2]);
-					}
-					if(j % 2 == 1){	// Si la dernière ligne est impaire
-						
 						grille[nb-1][nb-1].setVoisinDroite(null);
 						grille[nb-1][nb-1].setVoisinDroiteBas(null);
 						grille[nb-1][nb-1].setVoisinGaucheBas(null);
@@ -178,14 +170,23 @@ public class Board extends Canvas {
 						grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-2][nb-2]);
 						grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
 					}
-					
+					if(j % 2 == 1){	// Si la dernière ligne est impaire
+						
+						grille[nb-1][nb-1].setVoisinDroiteHaut(null);
+						grille[nb-1][nb-1].setVoisinDroite(null);
+						grille[nb-1][nb-1].setVoisinDroiteBas(null);
+						grille[nb-1][nb-1].setVoisinGaucheBas(null);
+						
+						grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
+						grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-1][nb-2]);
+					}
 				}
 				else if(i != 0  && i != nb-1 && j == nb-1){	// Du deuxième à l'avant dernier Hexa de la dernière ligne
 					
+					grille[i][nb-1].setVoisinDroiteBas(null);
+					grille[i][nb-1].setVoisinGaucheBas(null);
+					
 					if(j % 2 == 0){	// Si la dernière ligne est paire
-						
-						grille[i][nb-1].setVoisinDroiteBas(null);
-						grille[i][nb-1].setVoisinGaucheBas(null);
 						
 						grille[i][nb-1].setVoisinDroite(grille[i+1][nb-1]);
 						grille[i][nb-1].setVoisinDroiteHaut(grille[i][nb-2]);
@@ -193,9 +194,6 @@ public class Board extends Canvas {
 						grille[i][nb-1].setVoisinGauche(grille[i-1][nb-1]);
 					}
 					if(j % 2 == 1){	// Si la dernière ligne est impaire
-						
-						grille[i][nb-1].setVoisinDroiteBas(null);
-						grille[i][nb-1].setVoisinGaucheBas(null);
 						
 						grille[i][nb-1].setVoisinDroite(grille[i+1][nb-1]);
 						grille[i][nb-1].setVoisinDroiteHaut(grille[i+1][nb-2]);
