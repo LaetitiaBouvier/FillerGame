@@ -20,10 +20,17 @@ public class Board extends Canvas {
 	 */
 	public Board(int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4) {
 		
-		// TODO : fractionner le code de ce constructeur, en sous-fonctions etc
-		
+		// Settings :
 		setBackground (Color.black);
-        setSize(40*nb +50, 40*nb +60);
+        setSize(20*nb +25, 20*nb +30);
+		
+        initialisationGrille(nb);
+		
+		defVoisins(nb);
+		
+	}
+	
+	private void initialisationGrille(int nb){
 		
 		int decalageX = 0;
 		
@@ -32,9 +39,9 @@ public class Board extends Canvas {
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j < grille[0].length; j++){
 				
-				// ATTENTION il se passe un truc dans les coins : il faut que les 4 coins soient de couleur diff !
+				// ATTENTION il se passe un truc dans les coins : il faut que les 4 coins soient de couleurs diff !
 				
-				if(j %2 == 0){ decalageX = -20;}
+				if(j %2 == 0){ decalageX = -10;}
 				if(j %2 == 1){ decalageX = 0;}
 				
 				Color color = Color.black;
@@ -55,177 +62,195 @@ public class Board extends Canvas {
 					color = Color.magenta;
 				}
 				
-				grille[i][j] = new Hexa(60+i*40+decalageX, 50+j*40, color, null, null, null, null, null, null);
+				grille[i][j] = new Hexa(30+i*20+decalageX, 25+j*20, color, null, null, null, null, null, null);
 			}
 		}
+	}
+	
+	private void defVoisins(int nb){
 		
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j < grille[0].length; j++){
 				
-				if(i == 0 && j == 0){						// Premier Hexa de la première ligne
-					
-					grille[0][0].setVoisinDroiteHaut(null);
-					grille[0][0].setVoisinGaucheHaut(null);
-					grille[0][0].setVoisinGauche(null);
-					grille[0][0].setVoisinGaucheBas(null);
-					
-					grille[0][0].setVoisinDroite(grille[1][0]);
-					grille[0][0].setVoisinDroiteBas(grille[0][1]);
-				}
-				else if(i == nb-1 && j == 0){				// Dernier Hexa de la première ligne
-					
-					grille[nb-1][0].setVoisinDroiteHaut(null);
-					grille[nb-1][0].setVoisinDroite(null);
-					grille[nb-1][0].setVoisinGaucheHaut(null);
-					
-					grille[nb-1][0].setVoisinGauche(grille[nb-2][0]);
-					grille[nb-1][0].setVoisinGaucheBas(grille[nb-2][1]);
-					grille[nb-1][0].setVoisinDroiteBas(grille[nb-1][1]);
-				}
-				else if(i != 0  && i != nb-1 && j == 0){	// Du deuxième à l'avant dernier Hexa de la première ligne
-					
-					grille[i][0].setVoisinDroiteHaut(null);
-					grille[i][0].setVoisinGaucheHaut(null);
-					
-					grille[i][0].setVoisinDroite(grille[i+1][0]);
-					grille[i][0].setVoisinGauche(grille[i-1][0]);
-					grille[i][0].setVoisinDroiteBas(grille[i][1]);
-					grille[i][0].setVoisinGaucheBas(grille[i-1][1]);
-				}
-				else if(i == 0 && j != 0 && j != nb-1){		// Du deuxième à l'avant dernier Hexa de la première colonne
-					
-					grille[i][j].setVoisinGauche(null);
-					
-					if(j % 2 == 0){	// Si décalé vers la gauche
-						grille[0][j].setVoisinDroiteHaut(grille[0][j-1]);
-						grille[0][j].setVoisinDroite(grille[1][j]);
-						grille[0][j].setVoisinDroiteBas(grille[0][j+1]);
-						
-						grille[0][j].setVoisinGaucheHaut(null);
-						grille[0][j].setVoisinGaucheBas(null);
-					}
-					else{			// Sinon
-						grille[0][j].setVoisinGaucheHaut(grille[0][j-1]);
-						grille[0][j].setVoisinDroiteHaut(grille[1][j-1]);
-						grille[0][j].setVoisinDroite(grille[1][j]);
-						grille[0][j].setVoisinDroiteBas(grille[1][j+1]);
-						grille[0][j].setVoisinGaucheBas(grille[0][j+1]);
-					}
-				}
-				else if(i == nb-1 && j != 0 && j != nb-1){	// Du deuxième à l'avant dernier Hexa de la dernière colonne
-					grille[i][j].setVoisinDroite(null);
-					
-					if(j %2 == 0){	// Si décalé vers la gauche
-						grille[nb-1][j].setVoisinDroiteHaut(grille[nb-1][j-1]);
-						grille[nb-1][j].setVoisinGaucheHaut(grille[nb-2][j-1]);
-						grille[nb-1][j].setVoisinGauche(grille[nb-2][j]);
-						grille[nb-1][j].setVoisinGaucheBas(grille[nb-2][j+1]);
-						grille[nb-1][j].setVoisinDroiteBas(grille[nb-1][j+1]);
-					}
-					else{			// Sinon
-						grille[nb-1][j].setVoisinDroiteHaut(null);
-						grille[nb-1][j].setVoisinDroiteBas(null);
-						
-						grille[nb-1][j].setVoisinGaucheHaut(grille[nb-1][j-1]);
-						grille[nb-1][j].setVoisinGauche(grille[nb-2][j]);
-						grille[nb-1][j].setVoisinGaucheBas(grille[nb-1][j+1]);
-					}
-				}
-				// ATTENTION : tous les hexas de la dernière ligne s'articulent différent selon que cette ligne soit paire ou impaire ... (la 1ère ligne est la ligne 0)
-				// - Si la dernière est paire (en partant de 0)	, Alors elle sera décalée à droite
-				// - Si la dernière est impaire...				, Alors elle ne sera pas décalée à droite
+				if		(i == 0 && j == 0)	 	{ defFirstHExaFirstRow();		}
+				else if	(i == nb-1 && j == 0)	{ defLastHexaFirstRow(nb);		}
+				else if	(i == 0 && j == nb-1)	{ defFirstHexaLastRow(j, nb);	}
+				else if (i == nb-1 && j == nb-1){ defLastHexaLastRow(j, nb);	}
 				
-				else if(i == 0 && j == nb-1){				// Premier Hexa de la dernière ligne
-					
-					if(j % 2 == 0){	// Si la dernière ligne est paire
-						
-						grille[0][nb-1].setVoisinDroiteBas(null);
-						grille[0][nb-1].setVoisinGaucheBas(null);
-						grille[0][nb-1].setVoisinGauche(null);
-						grille[0][nb-1].setVoisinGaucheHaut(null);
-						
-						grille[0][nb-1].setVoisinDroiteHaut(grille[0][nb-2]);
-						grille[0][nb-1].setVoisinDroite(grille[1][nb-1]);
-					}
-					if(j % 2 == 1){ // Si la dernière ligne est impaire
-						
-						grille[0][nb-1].setVoisinDroiteBas(null);
-						grille[0][nb-1].setVoisinGaucheBas(null);
-						grille[0][nb-1].setVoisinGauche(null);
-						
-						grille[0][nb-1].setVoisinGaucheHaut(grille[0][nb-2]);
-						grille[0][nb-1].setVoisinDroiteHaut(grille[1][nb-2]);
-						grille[0][nb-1].setVoisinDroite(grille[1][nb-1]);
-					}
-				}
-				else if(i == nb-1 && j == nb-1){			// Dernier Hexa de la dernière ligne
-					
-					if(j % 2 == 0){	// Si la dernière ligne est paire
-						
-						grille[nb-1][nb-1].setVoisinDroite(null);
-						grille[nb-1][nb-1].setVoisinDroiteBas(null);
-						grille[nb-1][nb-1].setVoisinGaucheBas(null);
-						
-						grille[nb-1][nb-1].setVoisinDroiteHaut(grille[nb-1][nb-2]);
-						grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-2][nb-2]);
-						grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
-					}
-					if(j % 2 == 1){	// Si la dernière ligne est impaire
-						
-						grille[nb-1][nb-1].setVoisinDroiteHaut(null);
-						grille[nb-1][nb-1].setVoisinDroite(null);
-						grille[nb-1][nb-1].setVoisinDroiteBas(null);
-						grille[nb-1][nb-1].setVoisinGaucheBas(null);
-						
-						grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
-						grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-1][nb-2]);
-					}
-				}
-				else if(i != 0  && i != nb-1 && j == nb-1){	// Du deuxième à l'avant dernier Hexa de la dernière ligne
-					
-					grille[i][nb-1].setVoisinDroiteBas(null);
-					grille[i][nb-1].setVoisinGaucheBas(null);
-					
-					if(j % 2 == 0){	// Si la dernière ligne est paire
-						
-						grille[i][nb-1].setVoisinDroite(grille[i+1][nb-1]);
-						grille[i][nb-1].setVoisinDroiteHaut(grille[i][nb-2]);
-						grille[i][nb-1].setVoisinGaucheHaut(grille[i-1][nb-2]);
-						grille[i][nb-1].setVoisinGauche(grille[i-1][nb-1]);
-					}
-					if(j % 2 == 1){	// Si la dernière ligne est impaire
-						
-						grille[i][nb-1].setVoisinDroite(grille[i+1][nb-1]);
-						grille[i][nb-1].setVoisinDroiteHaut(grille[i+1][nb-2]);
-						grille[i][nb-1].setVoisinGaucheHaut(grille[i][nb-2]);
-						grille[i][nb-1].setVoisinGauche(grille[i-1][nb-1]);
-					}
-				}
-				else{										// Sinon ... (si l'Hexa ne fait partie d'aucune bordure)
-					
-					if(j % 2 == 0){
-						
-						grille[i][j].setVoisinDroiteHaut(grille[i][j-1]);
-						grille[i][j].setVoisinDroite(grille[i+1][j]);
-						grille[i][j].setVoisinDroiteBas(grille[i][j+1]);
-						grille[i][j].setVoisinGaucheBas(grille[i-1][j+1]);
-						grille[i][j].setVoisinGauche(grille[i-1][j]);
-						grille[i][j].setVoisinGaucheHaut(grille[i-1][j-1]);
-					}
-					if(j % 2 == 1){
-						
-						grille[i][j].setVoisinDroiteHaut(grille[i+1][j-1]);
-						grille[i][j].setVoisinDroite(grille[i+1][j]);
-						grille[i][j].setVoisinDroiteBas(grille[i+1][j+1]);
-						grille[i][j].setVoisinGaucheBas(grille[i][j+1]);
-						grille[i][j].setVoisinGauche(grille[i-1][j]);
-						grille[i][j].setVoisinGaucheHaut(grille[i][j-1]);
-					}
-				}
+				else if (i != 0 && i != nb-1 && j == 0)	  {	defFirstRowInBettween(i);			}
+				else if (i == 0 && j != 0    && j != nb-1){	defFirstColumnInBettween(i, j);		}
+				else if(i == nb-1 && j != 0  && j != nb-1){	defLastColumnInBettween(i, j, nb);	}
+				else if(i != 0  && i != nb-1 && j == nb-1){	defLastRowInBettween(i, j, nb);		}
+				
+				else{	defNoBorderHexa(i, j);	}
 			}
 		}
+	}
+	
+	private void defFirstHExaFirstRow(){
 		
+		this.grille[0][0].setVoisinDroiteHaut(null);
+		this.grille[0][0].setVoisinGaucheHaut(null);
+		this.grille[0][0].setVoisinGauche(null);
+		this.grille[0][0].setVoisinGaucheBas(null);
 		
+		this.grille[0][0].setVoisinDroite(grille[1][0]);
+		this.grille[0][0].setVoisinDroiteBas(grille[0][1]);
+	}
+	
+	private void defLastHexaFirstRow(int nb){
+		
+		this.grille[nb-1][0].setVoisinDroiteHaut(null);
+		this.grille[nb-1][0].setVoisinDroite(null);
+		this.grille[nb-1][0].setVoisinGaucheHaut(null);
+		
+		this.grille[nb-1][0].setVoisinGauche(grille[nb-2][0]);
+		this.grille[nb-1][0].setVoisinGaucheBas(grille[nb-2][1]);
+		this.grille[nb-1][0].setVoisinDroiteBas(grille[nb-1][1]);
+	}
+	
+	private void defFirstHexaLastRow(int j, int nb){
+		
+		if(j % 2 == 0){	// Si la dernière ligne est paire
+			
+			this.grille[0][nb-1].setVoisinDroiteBas(null);
+			this.grille[0][nb-1].setVoisinGaucheBas(null);
+			this.grille[0][nb-1].setVoisinGauche(null);
+			this.grille[0][nb-1].setVoisinGaucheHaut(null);
+			
+			this.grille[0][nb-1].setVoisinDroiteHaut(grille[0][nb-2]);
+			this.grille[0][nb-1].setVoisinDroite(grille[1][nb-1]);
+		}
+		if(j % 2 == 1){ // Si la dernière ligne est impaire
+			
+			this.grille[0][nb-1].setVoisinDroiteBas(null);
+			this.grille[0][nb-1].setVoisinGaucheBas(null);
+			this.grille[0][nb-1].setVoisinGauche(null);
+			
+			this.grille[0][nb-1].setVoisinGaucheHaut(grille[0][nb-2]);
+			this.grille[0][nb-1].setVoisinDroiteHaut(grille[1][nb-2]);
+			this.grille[0][nb-1].setVoisinDroite(grille[1][nb-1]);
+		}
+	}
+	
+	private void defLastHexaLastRow(int j, int nb){
+		
+		if(j % 2 == 0){	// Si la dernière ligne est paire
+			
+			this.grille[nb-1][nb-1].setVoisinDroite(null);
+			this.grille[nb-1][nb-1].setVoisinDroiteBas(null);
+			this.grille[nb-1][nb-1].setVoisinGaucheBas(null);
+			
+			this.grille[nb-1][nb-1].setVoisinDroiteHaut(grille[nb-1][nb-2]);
+			this.grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-2][nb-2]);
+			this.grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
+		}
+		if(j % 2 == 1){	// Si la dernière ligne est impaire
+			
+			this.grille[nb-1][nb-1].setVoisinDroiteHaut(null);
+			this.grille[nb-1][nb-1].setVoisinDroite(null);
+			this.grille[nb-1][nb-1].setVoisinDroiteBas(null);
+			this.grille[nb-1][nb-1].setVoisinGaucheBas(null);
+			
+			this.grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
+			this.grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-1][nb-2]);
+		}
+	}
+	
+	private void defFirstRowInBettween(int i){
+		
+		this.grille[i][0].setVoisinDroiteHaut(null);
+		this.grille[i][0].setVoisinGaucheHaut(null);
+		
+		this.grille[i][0].setVoisinDroite(grille[i+1][0]);
+		this.grille[i][0].setVoisinGauche(grille[i-1][0]);
+		this.grille[i][0].setVoisinDroiteBas(grille[i][1]);
+		this.grille[i][0].setVoisinGaucheBas(grille[i-1][1]);
+	}
+	
+	private void defFirstColumnInBettween(int i, int j){
+		
+		this.grille[i][j].setVoisinGauche(null);
+		
+		if(j % 2 == 0){	// Si décalé vers la gauche
+			this.grille[0][j].setVoisinDroiteHaut(grille[0][j-1]);
+			this.grille[0][j].setVoisinDroite(grille[1][j]);
+			this.grille[0][j].setVoisinDroiteBas(grille[0][j+1]);
+			
+			this.grille[0][j].setVoisinGaucheHaut(null);
+			this.grille[0][j].setVoisinGaucheBas(null);
+		}
+		else{			// Sinon
+			this.grille[0][j].setVoisinGaucheHaut(grille[0][j-1]);
+			this.grille[0][j].setVoisinDroiteHaut(grille[1][j-1]);
+			this.grille[0][j].setVoisinDroite(grille[1][j]);
+			this.grille[0][j].setVoisinDroiteBas(grille[1][j+1]);
+			this.grille[0][j].setVoisinGaucheBas(grille[0][j+1]);
+		}
+	}
+	
+	private void defLastColumnInBettween(int i, int j, int nb){
+		
+		this.grille[i][j].setVoisinDroite(null);
+		
+		if(j %2 == 0){	// Si décalé vers la gauche
+			this.grille[nb-1][j].setVoisinDroiteHaut(grille[nb-1][j-1]);
+			this.grille[nb-1][j].setVoisinGaucheHaut(grille[nb-2][j-1]);
+			this.grille[nb-1][j].setVoisinGauche(grille[nb-2][j]);
+			this.grille[nb-1][j].setVoisinGaucheBas(grille[nb-2][j+1]);
+			this.grille[nb-1][j].setVoisinDroiteBas(grille[nb-1][j+1]);
+		}
+		else{			// Sinon
+			this.grille[nb-1][j].setVoisinDroiteHaut(null);
+			this.grille[nb-1][j].setVoisinDroiteBas(null);
+			
+			this.grille[nb-1][j].setVoisinGaucheHaut(grille[nb-1][j-1]);
+			this.grille[nb-1][j].setVoisinGauche(grille[nb-2][j]);
+			this.grille[nb-1][j].setVoisinGaucheBas(grille[nb-1][j+1]);
+		}
+	}
+	
+	private void defLastRowInBettween(int i, int j, int nb){
+		
+		this.grille[i][nb-1].setVoisinDroiteBas(null);
+		this.grille[i][nb-1].setVoisinGaucheBas(null);
+		
+		if(j % 2 == 0){	// Si la dernière ligne est paire
+			
+			this.grille[i][nb-1].setVoisinDroite(grille[i+1][nb-1]);
+			this.grille[i][nb-1].setVoisinDroiteHaut(grille[i][nb-2]);
+			this.grille[i][nb-1].setVoisinGaucheHaut(grille[i-1][nb-2]);
+			this.grille[i][nb-1].setVoisinGauche(grille[i-1][nb-1]);
+		}
+		if(j % 2 == 1){	// Si la dernière ligne est impaire
+			
+			this.grille[i][nb-1].setVoisinDroite(grille[i+1][nb-1]);
+			this.grille[i][nb-1].setVoisinDroiteHaut(grille[i+1][nb-2]);
+			this.grille[i][nb-1].setVoisinGaucheHaut(grille[i][nb-2]);
+			this.grille[i][nb-1].setVoisinGauche(grille[i-1][nb-1]);
+		}
+	}
+	
+	private void defNoBorderHexa(int i, int j){
+		
+		if(j % 2 == 0){
+			
+			grille[i][j].setVoisinDroiteHaut(grille[i][j-1]);
+			grille[i][j].setVoisinDroite(grille[i+1][j]);
+			grille[i][j].setVoisinDroiteBas(grille[i][j+1]);
+			grille[i][j].setVoisinGaucheBas(grille[i-1][j+1]);
+			grille[i][j].setVoisinGauche(grille[i-1][j]);
+			grille[i][j].setVoisinGaucheHaut(grille[i-1][j-1]);
+		}
+		if(j % 2 == 1){
+			
+			grille[i][j].setVoisinDroiteHaut(grille[i+1][j-1]);
+			grille[i][j].setVoisinDroite(grille[i+1][j]);
+			grille[i][j].setVoisinDroiteBas(grille[i+1][j+1]);
+			grille[i][j].setVoisinGaucheBas(grille[i][j+1]);
+			grille[i][j].setVoisinGauche(grille[i-1][j]);
+			grille[i][j].setVoisinGaucheHaut(grille[i][j-1]);
+		}
 	}
 	
 	@Override
@@ -236,8 +261,8 @@ public class Board extends Canvas {
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j< grille[0].length; j++){
 				
-				int x[] = {grille[i][j].getCentreX(),	grille[i][j].getCentreX()+20,	grille[i][j].getCentreX()+20,	grille[i][j].getCentreX(), grille[i][j].getCentreX()-20, grille[i][j].getCentreX()-20};
-				int y[] = {grille[i][j].getCentreY()+30, grille[i][j].getCentreY()+10, grille[i][j].getCentreY()-10, grille[i][j].getCentreY()-30, grille[i][j].getCentreY()-10, grille[i][j].getCentreY()+10};
+				int x[] = {grille[i][j].getCentreX(),		grille[i][j].getCentreX()+10,	grille[i][j].getCentreX()+10,	grille[i][j].getCentreX(), 		grille[i][j].getCentreX()-10, 	grille[i][j].getCentreX()-10};
+				int y[] = {grille[i][j].getCentreY()+15,	grille[i][j].getCentreY()+5, 	grille[i][j].getCentreY()-5, 	grille[i][j].getCentreY()-15, 	grille[i][j].getCentreY()-5, 	grille[i][j].getCentreY()+5};
 				
 				g.setColor(grille[i][j].getColor());
 				g.fillPolygon(x, y, 6);
