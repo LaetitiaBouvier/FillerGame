@@ -49,7 +49,7 @@ public class AwtControl{
 	}
 
 	private void showEventDemo(){
-		Board B = new Board(13, "Joueur1", "Joueur2", "", "");
+		Board B = new Board(50, "Joueur1", "Joueur2", "", "");
 
 		Panel panel = new Panel();
 		panel.setBackground(Color.black);

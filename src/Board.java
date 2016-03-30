@@ -2,6 +2,7 @@
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 
 public class Board extends Canvas {
@@ -27,6 +28,8 @@ public class Board extends Canvas {
         initialisationGrille(nb);
 		
 		defVoisins(nb);
+		
+		defJoueurs(nomJoueur1, nomJoueur2, nomJoueur3, nomJoueur4, nb);
 		
 	}
 	
@@ -253,6 +256,98 @@ public class Board extends Canvas {
 		}
 	}
 	
+	private void defJoueurs(String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, int nb){
+		
+		ArrayList<Hexa> listeInitialeJ1 = new ArrayList<Hexa>();
+		ArrayList<Hexa> listeInitialeJ2 = new ArrayList<Hexa>();
+		
+		listeInitialeJ1.add(grille[0][0]);
+		listeInitialeJ1 = getConnectedSameColorHexas(listeInitialeJ1);
+		
+		this.joueur1 = new Player(nomJoueur1, grille[0][0].getColor(), listeInitialeJ1.size(), listeInitialeJ1);
+		
+		listeInitialeJ2.add(grille[nb-1][nb-1]);
+		listeInitialeJ2 = getConnectedSameColorHexas(listeInitialeJ2);
+		
+		this.joueur2 = new Player(nomJoueur2, grille[nb-1][nb-1].getColor(), listeInitialeJ2.size(), listeInitialeJ2);
+		
+		if(!nomJoueur3.isEmpty()){
+			
+			ArrayList<Hexa> listeInitialeJ3 = new ArrayList<Hexa>();
+			
+			listeInitialeJ3.add(grille[nb-1][0]);
+			listeInitialeJ3 = getConnectedSameColorHexas(listeInitialeJ3);
+			
+			this.joueur3 = new Player(nomJoueur3, grille[nb-1][0].getColor(), listeInitialeJ3.size(), listeInitialeJ3);
+		}
+		else{
+			this.joueur3 = null;
+		}
+		
+		if(!nomJoueur4.isEmpty()){
+			
+			ArrayList<Hexa> listeInitialeJ4 = new ArrayList<Hexa>();
+			
+			listeInitialeJ4.add(grille[0][nb-1]);
+			listeInitialeJ4 = getConnectedSameColorHexas(listeInitialeJ4);
+			
+			this.joueur4 = new Player(nomJoueur4, grille[0][nb-1].getColor(), listeInitialeJ4.size(), listeInitialeJ4);
+		}
+		else{
+			this.joueur4 = null;
+		}
+	}
+	
+	private ArrayList<Hexa> getConnectedSameColorHexas(ArrayList<Hexa> liste){
+		
+		boolean add = false;
+		
+		for(int i = 0; i < liste.size(); i++){
+			
+			Hexa hexa = liste.get(i);
+			
+			if( hexa.getVoisinDroiteHaut() != null && !liste.contains(hexa.getVoisinDroiteHaut()) ){
+				if( liste.get(i).getVoisinDroiteHaut().getColor().getRGB() == hexa.getColor().getRGB()){
+					
+					liste.add(hexa.getVoisinDroiteHaut());	add = true;
+				}
+			}
+			if( hexa.getVoisinDroite() != null && !liste.contains(hexa.getVoisinDroite()) ){
+				if( hexa.getVoisinDroite().getColor().getRGB() == hexa.getColor().getRGB()){
+					
+					liste.add(hexa.getVoisinDroite());		add = true;
+				}
+			}
+			if( hexa.getVoisinDroiteBas() != null && !liste.contains(hexa.getVoisinDroiteBas()) ){
+				if( liste.get(i).getVoisinDroiteBas().getColor().getRGB() == hexa.getColor().getRGB()){
+					
+					liste.add(hexa.getVoisinDroiteBas());	add = true;
+				}
+			}
+			if(hexa.getVoisinGaucheBas() != null && !liste.contains(hexa.getVoisinGaucheBas()) ){
+				if( hexa.getVoisinGaucheBas().getColor().getRGB() == hexa.getColor().getRGB()){
+					
+					liste.add(hexa.getVoisinGaucheBas());	add = true;
+				}
+			}
+			if(hexa.getVoisinGauche() != null && !liste.contains(hexa.getVoisinGauche()) ){
+				if( hexa.getVoisinGauche().getColor().getRGB() == hexa.getColor().getRGB()){
+					
+					liste.add(hexa.getVoisinGauche());		add = true;
+				}
+			}
+			if(hexa.getVoisinGaucheHaut() != null && !liste.contains(hexa.getVoisinGaucheHaut()) ){
+				if( hexa.getVoisinGaucheHaut().getColor().getRGB() == hexa.getColor().getRGB()){
+					
+					liste.add(hexa.getVoisinGaucheHaut());	add = true;
+				}
+			}
+		}
+		if(add == false){	return liste;	}	// Condition de sortie de la récursion
+		
+		return getConnectedSameColorHexas(liste);
+	}
+	
 	@Override
 	public void paint(Graphics g){
 		
@@ -271,5 +366,37 @@ public class Board extends Canvas {
 				g.drawPolygon(x, y, 6);
 			}
 		}
+	}
+
+	public Player getJoueur1() {
+		return joueur1;
+	}
+
+	public void setJoueur1(Player joueur1) {
+		this.joueur1 = joueur1;
+	}
+
+	public Player getJoueur2() {
+		return joueur2;
+	}
+
+	public void setJoueur2(Player joueur2) {
+		this.joueur2 = joueur2;
+	}
+
+	public Player getJoueur3() {
+		return joueur3;
+	}
+
+	public void setJoueur3(Player joueur3) {
+		this.joueur3 = joueur3;
+	}
+
+	public Player getJoueur4() {
+		return joueur4;
+	}
+
+	public void setJoueur4(Player joueur4) {
+		this.joueur4 = joueur4;
 	}
 }
