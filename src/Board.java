@@ -6,7 +6,7 @@ import java.awt.Graphics;
 
 public class Board extends Canvas {
 	
-	private Hexa[][] grille;		// j represente les lignes, i les éléments en colonne de chaque ligne
+	private Hexa[][] grille;		// grille[i][j] : j represente les lignes, i les éléments en colonne de chaque ligne
 	private Player joueur1;
 	private Player joueur2;
 	private Player joueur3;
@@ -20,6 +20,8 @@ public class Board extends Canvas {
 	 */
 	public Board(int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4) {
 		
+		// TODO : fractionner le code de ce constructeur, en sous-fonctions etc
+		
 		setBackground (Color.black);
         setSize(40*nb +50, 40*nb +60);
 		
@@ -31,7 +33,6 @@ public class Board extends Canvas {
 			for(int j = 0; j < grille[0].length; j++){
 				
 				// ATTENTION il se passe un truc dans les coins : il faut que les 4 coins soient de couleur diff !
-				// TODO : truc bidul
 				
 				if(j %2 == 0){ decalageX = -20;}
 				if(j %2 == 1){ decalageX = 0;}
@@ -68,7 +69,7 @@ public class Board extends Canvas {
 					grille[0][0].setVoisinGaucheBas(null);
 					
 					grille[0][0].setVoisinDroite(grille[1][0]);
-					grille[0][0].setVoisinGaucheBas(grille[0][1]);
+					grille[0][0].setVoisinDroiteBas(grille[0][1]);
 				}
 				else if(i == nb-1 && j == 0){				// Dernier Hexa de la première ligne
 					
@@ -128,24 +129,100 @@ public class Board extends Canvas {
 						grille[nb-1][j].setVoisinGaucheBas(grille[nb-1][j+1]);
 					}
 				}
+				// ATTENTION : tous les hexas de la dernière ligne s'articulent différent selon que cette ligne soit paire ou impaire ... (la 1ère ligne est la ligne 0)
+				// - Si la dernière est paire (en partant de 0)	, Alors elle sera décalée à droite
+				// - Si la dernière est impaire...				, Alors elle ne sera pas décalée à droite
+				
 				else if(i == 0 && j == nb-1){				// Premier Hexa de la dernière ligne
 					
-					grille[0][nb-1].setVoisinDroiteBas(null);
-					grille[0][nb-1].setVoisinGaucheBas(null);
-					grille[0][nb-1].setVoisinGauche(null);
-					
-					grille[0][nb-1].setVoisinGaucheHaut(grille[0][nb-2]);
-					grille[0][nb-1].setVoisinDroiteHaut(grille[1][nb-2]);
-					grille[0][nb-1].setVoisinDroite(grille[1][nb-1]);
+					if(j % 2 == 0){	// Si la dernière ligne est paire
+						
+						grille[0][nb-1].setVoisinDroiteBas(null);
+						grille[0][nb-1].setVoisinGaucheBas(null);
+						grille[0][nb-1].setVoisinGauche(null);
+						grille[0][nb-1].setVoisinGaucheHaut(null);
+						
+						grille[0][nb-1].setVoisinDroiteHaut(grille[1][nb-2]);
+						grille[0][nb-1].setVoisinDroite(grille[1][nb-1]);
+					}
+					if(j % 2 == 1){ // Si la dernière ligne est impaire
+						
+						grille[0][nb-1].setVoisinDroiteBas(null);
+						grille[0][nb-1].setVoisinGaucheBas(null);
+						grille[0][nb-1].setVoisinGauche(null);
+						
+						grille[0][nb-1].setVoisinGaucheHaut(grille[0][nb-2]);
+						grille[0][nb-1].setVoisinDroiteHaut(grille[1][nb-2]);
+						grille[0][nb-1].setVoisinDroite(grille[1][nb-1]);
+					}
 				}
 				else if(i == nb-1 && j == nb-1){			// Dernier Hexa de la dernière ligne
+					
+					if(j % 2 == 0){	// Si la dernière ligne est paire
+						
+						grille[nb-1][nb-1].setVoisinDroiteHaut(null);
+						grille[nb-1][nb-1].setVoisinDroite(null);
+						grille[nb-1][nb-1].setVoisinDroiteBas(null);
+						grille[nb-1][nb-1].setVoisinGaucheBas(null);
+						
+						grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
+						grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-1][nb-2]);
+					}
+					if(j % 2 == 1){	// Si la dernière ligne est impaire
+						
+						grille[nb-1][nb-1].setVoisinDroite(null);
+						grille[nb-1][nb-1].setVoisinDroiteBas(null);
+						grille[nb-1][nb-1].setVoisinGaucheBas(null);
+						
+						grille[nb-1][nb-1].setVoisinDroiteHaut(grille[nb-1][nb-2]);
+						grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-2][nb-2]);
+						grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
+					}
 					
 				}
 				else if(i != 0  && i != nb-1 && j == nb-1){	// Du deuxième à l'avant dernier Hexa de la dernière ligne
 					
+					if(j % 2 == 0){	// Si la dernière ligne est paire
+						
+						grille[i][nb-1].setVoisinDroiteBas(null);
+						grille[i][nb-1].setVoisinGaucheBas(null);
+						
+						grille[i][nb-1].setVoisinDroite(grille[i+1][nb-1]);
+						grille[i][nb-1].setVoisinDroiteHaut(grille[i][nb-2]);
+						grille[i][nb-1].setVoisinGaucheHaut(grille[i-1][nb-2]);
+						grille[i][nb-1].setVoisinGauche(grille[i-1][nb-1]);
+					}
+					if(j % 2 == 1){	// Si la dernière ligne est impaire
+						
+						grille[i][nb-1].setVoisinDroiteBas(null);
+						grille[i][nb-1].setVoisinGaucheBas(null);
+						
+						grille[i][nb-1].setVoisinDroite(grille[i+1][nb-1]);
+						grille[i][nb-1].setVoisinDroiteHaut(grille[i+1][nb-2]);
+						grille[i][nb-1].setVoisinGaucheHaut(grille[i][nb-2]);
+						grille[i][nb-1].setVoisinGauche(grille[i-1][nb-1]);
+					}
 				}
 				else{										// Sinon ... (si l'Hexa ne fait partie d'aucune bordure)
 					
+					if(j % 2 == 0){
+						
+						grille[i][j].setVoisinDroiteHaut(grille[i][j-1]);
+						grille[i][j].setVoisinDroite(grille[i+1][j]);
+						grille[i][j].setVoisinDroiteBas(grille[i][j+1]);
+						grille[i][j].setVoisinGaucheBas(grille[i-1][j+1]);
+						grille[i][j].setVoisinGauche(grille[i-1][j]);
+						grille[i][j].setVoisinGaucheHaut(grille[i-1][j-1]);
+					}
+					if(j % 2 == 1){
+						
+						grille[i][j].setVoisinDroiteHaut(grille[i+1][j-1]);
+						grille[i][j].setVoisinDroite(grille[i+1][j]);
+						grille[i][j].setVoisinDroiteBas(grille[i+1][j+1]);
+						grille[i][j].setVoisinGaucheBas(grille[i][j+1]);
+						grille[i][j].setVoisinGauche(grille[i-1][j]);
+						grille[i][j].setVoisinGaucheHaut(grille[i][j-1]);
+					}
 				}
 			}
 		}
