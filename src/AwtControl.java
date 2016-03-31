@@ -19,12 +19,16 @@ public class AwtControl{
 
 	private Frame mainFrame;
 	private Panel controlPanel;
+	private Board board;
 
 	public AwtControl(){
+		
+		this.board = new Board(13, "Joueur1", "Joueur2", "", "");
 		prepareGUI();
 	}
 
 	public static void main(String[] args){
+		
 		AwtControl awtControlDemo = new AwtControl();
 		awtControlDemo.showEventDemo();
 	}
@@ -49,13 +53,12 @@ public class AwtControl{
 	}
 
 	private void showEventDemo(){
-		Board B = new Board(50, "Joueur1", "Joueur2", "", "");
 
 		Panel panel = new Panel();
 		panel.setBackground(Color.black);
-		panel.setSize(B.getHeight(),B.getWidth());
+		panel.setSize(board.getHeight(),board.getWidth());
 		
-		mainFrame.setSize(B.getHeight()+10,B.getWidth()+270);
+		mainFrame.setSize(board.getHeight()+10,board.getWidth()+270);
 		
 		Button redButton 		= new Button("ROUGE");		redButton.setBackground(Color.red);
 		Button orangeButton 	= new Button("ORANGE");		orangeButton.setBackground(Color.orange);
@@ -64,6 +67,13 @@ public class AwtControl{
 		Button blueButton 		= new Button("BLEU");		blueButton.setBackground(Color.blue);
 		Button magentaButton	= new Button("MAGENTA");	magentaButton.setBackground(Color.magenta);
 		
+		redButton.setActionCommand("ROUGE");				redButton.addActionListener		(new ButtonClickListener()); 
+		orangeButton.setActionCommand("ORANGE");			orangeButton.addActionListener	(new ButtonClickListener()); 
+		yellowButton.setActionCommand("JAUNE");				yellowButton.addActionListener	(new ButtonClickListener());
+		greenButton.setActionCommand("VERT");				greenButton.addActionListener	(new ButtonClickListener()); 
+		blueButton.setActionCommand("BLEU");				blueButton.addActionListener	(new ButtonClickListener()); 
+		magentaButton.setActionCommand("MAGENTA");			magentaButton.addActionListener (new ButtonClickListener()); 
+		
 		GridBagLayout layout = new GridBagLayout();
 
 		panel.setLayout(layout);        
@@ -71,7 +81,7 @@ public class AwtControl{
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		panel.add(B,gbc);
+		panel.add(board,gbc);
 		
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
@@ -171,15 +181,24 @@ public class AwtControl{
 			
 			String command = e.getActionCommand();
 			
-			if( command.equals( "OK" ))  {
-				System.out.println("Ok Button clicked.");
+			if( command.equals( "ROUGE"	)) {
+				board.nextStep(Color.red);
 			}
-			else if( command.equals( "Submit" ) )  {
-				System.out.println("Submit Button clicked."); 
+			if( command.equals( "ORANGE")) {
+				board.nextStep(Color.orange);
 			}
-			else  {
-				System.out.println("Cancel Button clicked.");
-			}  	
+			if( command.equals( "JAUNE"	)) {
+				board.nextStep(Color.yellow);
+			}
+			if( command.equals( "VERT"  )) {
+				board.nextStep(Color.green);
+			}
+			if( command.equals( "BLEU"  )) {
+				board.nextStep(Color.blue);
+			}
+			if( command.equals( "MAGENTA"	)) {
+				board.nextStep(Color.magenta);
+			}
 		}		
 	}
 	

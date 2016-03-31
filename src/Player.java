@@ -8,6 +8,7 @@ public class Player {
 	private Color couleur;
 	private int nbCases;
 	private ArrayList<Hexa> casesCtrl;
+	private boolean myTurn;
 	
 	public Player(String nom, Color couleur, int nbCases, ArrayList<Hexa> casesCtrl){
 		
@@ -15,6 +16,7 @@ public class Player {
 		this.couleur = couleur;
 		this.nbCases = nbCases;
 		this.casesCtrl = casesCtrl;
+		this.myTurn = false;
 	}
 	
 	public String getNom() {
@@ -40,5 +42,13 @@ public class Player {
 	}
 	public void setCasesCtrl(ArrayList<Hexa> casesCtrl) {
 		this.casesCtrl = casesCtrl;
+	}
+
+	public boolean isMyTurn() {
+		return myTurn;
+	}
+
+	public void setMyTurn(boolean myTurn) {
+		this.myTurn = myTurn;
 	}
 }

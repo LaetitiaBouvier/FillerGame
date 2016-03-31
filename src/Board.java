@@ -30,7 +30,6 @@ public class Board extends Canvas {
 		defVoisins(nb);
 		
 		defJoueurs(nomJoueur1, nomJoueur2, nomJoueur3, nomJoueur4, nb);
-		
 	}
 	
 	private void initialisationGrille(int nb){
@@ -265,6 +264,7 @@ public class Board extends Canvas {
 		listeInitialeJ1 = getConnectedSameColorHexas(listeInitialeJ1);
 		
 		this.joueur1 = new Player(nomJoueur1, grille[0][0].getColor(), listeInitialeJ1.size(), listeInitialeJ1);
+		this.joueur1.setMyTurn(true);
 		
 		listeInitialeJ2.add(grille[nb-1][nb-1]);
 		listeInitialeJ2 = getConnectedSameColorHexas(listeInitialeJ2);
@@ -348,6 +348,45 @@ public class Board extends Canvas {
 		return getConnectedSameColorHexas(liste);
 	}
 	
+	public void nextStep(Color couleur){
+		
+		boolean flag = true;
+		
+		Player joueur = null;
+		
+		if(this.joueur1.isMyTurn() && flag){
+			
+			flag = false;
+			
+			joueur = this.joueur1;
+			
+			this.joueur1.setMyTurn(false);
+			this.joueur2.setMyTurn(true);
+		}
+		
+		if(this.joueur2.isMyTurn() && flag){
+			
+			flag = false;
+			
+			joueur = this.joueur2;
+			
+			this.joueur2.setMyTurn(false);
+			this.joueur1.setMyTurn(true);
+		}
+		
+		ArrayList<Hexa> hexasCtrl = joueur.getCasesCtrl();
+		
+		for(int i = 0; i < hexasCtrl.size(); i++){
+			hexasCtrl.get(i).setColor(couleur);
+		}
+		
+		hexasCtrl = getConnectedSameColorHexas(hexasCtrl);
+		
+		joueur.setCasesCtrl(hexasCtrl);
+		
+		repaint();
+	}
+	
 	@Override
 	public void paint(Graphics g){
 		
@@ -367,7 +406,12 @@ public class Board extends Canvas {
 			}
 		}
 	}
-
+	
+	@Override
+	public void repaint(){
+		super.repaint();
+	}
+	
 	public Player getJoueur1() {
 		return joueur1;
 	}
