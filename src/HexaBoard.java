@@ -1,10 +1,11 @@
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-
+/**
+ * Cette classe permet la gestion de tableaux de cellules hexagonales
+ */
 public class HexaBoard extends Canvas implements Board{
 	
 	private Hexa[][] grille;		// grille[i][j] : j represente les lignes, i les éléments en colonne de chaque ligne
@@ -21,9 +22,24 @@ public class HexaBoard extends Canvas implements Board{
 	 * Joueur3 : en haut à droite de la grille
 	 * Joueur4 : en bas  à gaucge de la grille
 	 */
+	
+	/**
+	 * Ce constructeur permet la création d'un tableau en appelant l'initialisation de la grille, la définition des voisins des cellules héxagonales (liaison des cellules entre elles)
+	 * et en appelant la définition des joueurs liés au tableau
+	 * 
+	 * @param nb			: entier représentant la taille d'un côté du tableau
+	 * @param nomJoueur1	: chaîne de caractères représentant le nom du joueur 1
+	 * @param nomJoueur2	: chaîne de caractères représentant le nom du joueur 2
+	 * @param nomJoueur3	: chaîne de caractères représentant le nom du joueur 3
+	 * @param nomJoueur4	: chaîne de caractères représentant le nom du joueur 4
+	 * 
+	 * @see initialisationGrille(int nb)
+	 * @see defVoisins(int nb)
+	 * @see defJoueurs(int nb)
+	 */
 	public HexaBoard(int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4) {
 		
-		int h = 20*nb +25;
+		int h = 20*nb +30;
 		int l = 20*nb +30;
 		
 		// Settings :
@@ -35,11 +51,16 @@ public class HexaBoard extends Canvas implements Board{
         
         initialisationGrille(nb);
 		
-		defVoisins(nb);
+		defVoisins();
 		
 		defJoueurs(nomJoueur1, nomJoueur2, nomJoueur3, nomJoueur4, nb);
 	}
 	
+	/**
+	 * Cette fonction initialise la grille des cellules (ici un pavage d'hexagones) en créant les cellules à leur place et en leur attribuant une couleur aléatoire
+	 * 
+	 * @param nb	: entier représentant la taille d'un côté du tableau
+	 */
 	private void initialisationGrille(int nb){
 		
 		int decalageX = 0;
@@ -77,192 +98,46 @@ public class HexaBoard extends Canvas implements Board{
 		}
 	}
 	
-	private void defVoisins(int nb){
+	/**
+	 * Cette fonction définie les voisins de chaque cellule héxagonale (liaison des cellules entre elles) en fonction de son positionnement sur la grille
+	 * 
+	 */
+	private void defVoisins(){
 		
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j < grille[0].length; j++){
 				
-				if		(i == 0 && j == 0)	 	{ defFirstHExaFirstRow();		}
-				else if	(i == nb-1 && j == 0)	{ defLastHexaFirstRow(nb);		}
-				else if	(i == 0 && j == nb-1)	{ defFirstHexaLastRow(j, nb);	}
-				else if (i == nb-1 && j == nb-1){ defLastHexaLastRow(j, nb);	}
-				
-				else if (i != 0 && i != nb-1 && j == 0)	  {	defFirstRowInBettween(i);			}
-				else if (i == 0 && j != 0    && j != nb-1){	defFirstColumnInBettween(i, j);		}
-				else if(i == nb-1 && j != 0  && j != nb-1){	defLastColumnInBettween(i, j, nb);	}
-				else if(i != 0  && i != nb-1 && j == nb-1){	defLastRowInBettween(i, j, nb);		}
-				
-				else{	defNoBorderHexa(i, j);	}
+				if(j % 2 == 0){
+					try{ grille[i][j].setVoisinDroiteHaut(grille[i][j-1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroiteHaut(null); 	}
+					try{ grille[i][j].setVoisinDroite(grille[i+1][j]); 		}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroite(null); 		}
+					try{ grille[i][j].setVoisinDroiteBas(grille[i][j+1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroiteBas(null); 	}
+					try{ grille[i][j].setVoisinGaucheBas(grille[i-1][j+1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGaucheBas(null); 	}
+					try{ grille[i][j].setVoisinGauche(grille[i-1][j]);		}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGauche(null); 		}
+					try{ grille[i][j].setVoisinGaucheHaut(grille[i-1][j-1]);}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGaucheHaut(null); 	}
+				}
+				if(j % 2 == 1){
+					try{ grille[i][j].setVoisinDroiteHaut(grille[i+1][j-1]);}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroiteHaut(null); 	}
+					try{ grille[i][j].setVoisinDroite(grille[i+1][j]);		}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroite(null); 		}
+					try{ grille[i][j].setVoisinDroiteBas(grille[i+1][j+1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroiteBas(null);	}
+					try{ grille[i][j].setVoisinGaucheBas(grille[i][j+1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGaucheBas(null); 	}
+					try{ grille[i][j].setVoisinGauche(grille[i-1][j]);		}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGauche(null); 		}
+					try{ grille[i][j].setVoisinGaucheHaut(grille[i][j-1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGaucheHaut(null); 	}
+				}
 			}
 		}
 	}
 	
-	private void defFirstHExaFirstRow(){
-		
-		this.grille[0][0].setVoisinDroiteHaut(null);
-		this.grille[0][0].setVoisinGaucheHaut(null);
-		this.grille[0][0].setVoisinGauche(null);
-		this.grille[0][0].setVoisinGaucheBas(null);
-		
-		this.grille[0][0].setVoisinDroite(grille[1][0]);
-		this.grille[0][0].setVoisinDroiteBas(grille[0][1]);
-	}
-	
-	private void defLastHexaFirstRow(int nb){
-		
-		this.grille[nb-1][0].setVoisinDroiteHaut(null);
-		this.grille[nb-1][0].setVoisinDroite(null);
-		this.grille[nb-1][0].setVoisinGaucheHaut(null);
-		
-		this.grille[nb-1][0].setVoisinGauche(grille[nb-2][0]);
-		this.grille[nb-1][0].setVoisinGaucheBas(grille[nb-2][1]);
-		this.grille[nb-1][0].setVoisinDroiteBas(grille[nb-1][1]);
-	}
-	
-	private void defFirstHexaLastRow(int j, int nb){
-		
-		if(j % 2 == 0){	// Si la dernière ligne est paire
-			
-			this.grille[0][nb-1].setVoisinDroiteBas(null);
-			this.grille[0][nb-1].setVoisinGaucheBas(null);
-			this.grille[0][nb-1].setVoisinGauche(null);
-			this.grille[0][nb-1].setVoisinGaucheHaut(null);
-			
-			this.grille[0][nb-1].setVoisinDroiteHaut(grille[0][nb-2]);
-			this.grille[0][nb-1].setVoisinDroite(grille[1][nb-1]);
-		}
-		if(j % 2 == 1){ // Si la dernière ligne est impaire
-			
-			this.grille[0][nb-1].setVoisinDroiteBas(null);
-			this.grille[0][nb-1].setVoisinGaucheBas(null);
-			this.grille[0][nb-1].setVoisinGauche(null);
-			
-			this.grille[0][nb-1].setVoisinGaucheHaut(grille[0][nb-2]);
-			this.grille[0][nb-1].setVoisinDroiteHaut(grille[1][nb-2]);
-			this.grille[0][nb-1].setVoisinDroite(grille[1][nb-1]);
-		}
-	}
-	
-	private void defLastHexaLastRow(int j, int nb){
-		
-		if(j % 2 == 0){	// Si la dernière ligne est paire
-			
-			this.grille[nb-1][nb-1].setVoisinDroite(null);
-			this.grille[nb-1][nb-1].setVoisinDroiteBas(null);
-			this.grille[nb-1][nb-1].setVoisinGaucheBas(null);
-			
-			this.grille[nb-1][nb-1].setVoisinDroiteHaut(grille[nb-1][nb-2]);
-			this.grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-2][nb-2]);
-			this.grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
-		}
-		if(j % 2 == 1){	// Si la dernière ligne est impaire
-			
-			this.grille[nb-1][nb-1].setVoisinDroiteHaut(null);
-			this.grille[nb-1][nb-1].setVoisinDroite(null);
-			this.grille[nb-1][nb-1].setVoisinDroiteBas(null);
-			this.grille[nb-1][nb-1].setVoisinGaucheBas(null);
-			
-			this.grille[nb-1][nb-1].setVoisinGauche(grille[nb-2][nb-1]);
-			this.grille[nb-1][nb-1].setVoisinGaucheHaut(grille[nb-1][nb-2]);
-		}
-	}
-	
-	private void defFirstRowInBettween(int i){
-		
-		this.grille[i][0].setVoisinDroiteHaut(null);
-		this.grille[i][0].setVoisinGaucheHaut(null);
-		
-		this.grille[i][0].setVoisinDroite(grille[i+1][0]);
-		this.grille[i][0].setVoisinGauche(grille[i-1][0]);
-		this.grille[i][0].setVoisinDroiteBas(grille[i][1]);
-		this.grille[i][0].setVoisinGaucheBas(grille[i-1][1]);
-	}
-	
-	private void defFirstColumnInBettween(int i, int j){
-		
-		this.grille[i][j].setVoisinGauche(null);
-		
-		if(j % 2 == 0){	// Si décalé vers la gauche
-			this.grille[0][j].setVoisinDroiteHaut(grille[0][j-1]);
-			this.grille[0][j].setVoisinDroite(grille[1][j]);
-			this.grille[0][j].setVoisinDroiteBas(grille[0][j+1]);
-			
-			this.grille[0][j].setVoisinGaucheHaut(null);
-			this.grille[0][j].setVoisinGaucheBas(null);
-		}
-		else{			// Sinon
-			this.grille[0][j].setVoisinGaucheHaut(grille[0][j-1]);
-			this.grille[0][j].setVoisinDroiteHaut(grille[1][j-1]);
-			this.grille[0][j].setVoisinDroite(grille[1][j]);
-			this.grille[0][j].setVoisinDroiteBas(grille[1][j+1]);
-			this.grille[0][j].setVoisinGaucheBas(grille[0][j+1]);
-		}
-	}
-	
-	private void defLastColumnInBettween(int i, int j, int nb){
-		
-		this.grille[i][j].setVoisinDroite(null);
-		
-		if(j %2 == 0){	// Si décalé vers la gauche
-			this.grille[nb-1][j].setVoisinDroiteHaut(grille[nb-1][j-1]);
-			this.grille[nb-1][j].setVoisinGaucheHaut(grille[nb-2][j-1]);
-			this.grille[nb-1][j].setVoisinGauche(grille[nb-2][j]);
-			this.grille[nb-1][j].setVoisinGaucheBas(grille[nb-2][j+1]);
-			this.grille[nb-1][j].setVoisinDroiteBas(grille[nb-1][j+1]);
-		}
-		else{			// Sinon
-			this.grille[nb-1][j].setVoisinDroiteHaut(null);
-			this.grille[nb-1][j].setVoisinDroiteBas(null);
-			
-			this.grille[nb-1][j].setVoisinGaucheHaut(grille[nb-1][j-1]);
-			this.grille[nb-1][j].setVoisinGauche(grille[nb-2][j]);
-			this.grille[nb-1][j].setVoisinGaucheBas(grille[nb-1][j+1]);
-		}
-	}
-	
-	private void defLastRowInBettween(int i, int j, int nb){
-		
-		this.grille[i][nb-1].setVoisinDroiteBas(null);
-		this.grille[i][nb-1].setVoisinGaucheBas(null);
-		
-		if(j % 2 == 0){	// Si la dernière ligne est paire
-			
-			this.grille[i][nb-1].setVoisinDroite(grille[i+1][nb-1]);
-			this.grille[i][nb-1].setVoisinDroiteHaut(grille[i][nb-2]);
-			this.grille[i][nb-1].setVoisinGaucheHaut(grille[i-1][nb-2]);
-			this.grille[i][nb-1].setVoisinGauche(grille[i-1][nb-1]);
-		}
-		if(j % 2 == 1){	// Si la dernière ligne est impaire
-			
-			this.grille[i][nb-1].setVoisinDroite(grille[i+1][nb-1]);
-			this.grille[i][nb-1].setVoisinDroiteHaut(grille[i+1][nb-2]);
-			this.grille[i][nb-1].setVoisinGaucheHaut(grille[i][nb-2]);
-			this.grille[i][nb-1].setVoisinGauche(grille[i-1][nb-1]);
-		}
-	}
-	
-	private void defNoBorderHexa(int i, int j){
-		
-		if(j % 2 == 0){
-			
-			grille[i][j].setVoisinDroiteHaut(grille[i][j-1]);
-			grille[i][j].setVoisinDroite(grille[i+1][j]);
-			grille[i][j].setVoisinDroiteBas(grille[i][j+1]);
-			grille[i][j].setVoisinGaucheBas(grille[i-1][j+1]);
-			grille[i][j].setVoisinGauche(grille[i-1][j]);
-			grille[i][j].setVoisinGaucheHaut(grille[i-1][j-1]);
-		}
-		if(j % 2 == 1){
-			
-			grille[i][j].setVoisinDroiteHaut(grille[i+1][j-1]);
-			grille[i][j].setVoisinDroite(grille[i+1][j]);
-			grille[i][j].setVoisinDroiteBas(grille[i+1][j+1]);
-			grille[i][j].setVoisinGaucheBas(grille[i][j+1]);
-			grille[i][j].setVoisinGauche(grille[i-1][j]);
-			grille[i][j].setVoisinGaucheHaut(grille[i][j-1]);
-		}
-	}
-	
+	/**
+	 * Cette fonction définie les joueurs liés au tableau en les créant 
+	 * 
+	 * @param nomJoueur1	: chaîne de caractère représentant le nom du joueur 1
+	 * @param nomJoueur2	: chaîne de caractère représentant le nom du joueur 2
+	 * @param nomJoueur3	: chaîne de caractère représentant le nom du joueur 3
+	 * @param nomJoueur4	: chaîne de caractère représentant le nom du joueur 4
+	 * @param nb			: entier représentant la taille d'un côté du tableau
+	 * 
+	 * @see getConnectedSameColorHexas(ArrayList<Hexa> listeHexa)
+	 */
 	private void defJoueurs(String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, int nb){
 		
 		ArrayList<Hexa> listeInitialeJ1 = new ArrayList<Hexa>();
@@ -306,6 +181,12 @@ public class HexaBoard extends Canvas implements Board{
 		}
 	}
 	
+	/**
+	 * Cette fonction récursive permet d'obtenir, à partir d'une liste initiale de celulles hexagonales, une liste "augmentée" : comprennant en plus leurs voisines de même couleur 
+	 * 
+	 * @param liste		: liste des cellules hexagonales à partir desquels on souhaite obtenir la liste "augmentée" 
+	 * @return liste	: liste des cellules hexagonales comprennant la liste de départ et la liste "augmentée"
+	 */
 	private ArrayList<Hexa> getConnectedSameColorHexas(ArrayList<Hexa> liste){
 		
 		boolean add = false;
@@ -356,6 +237,16 @@ public class HexaBoard extends Canvas implements Board{
 		return getConnectedSameColorHexas(liste);
 	}
 	
+	/**
+	 * Cette fonction fait progresser la partie, étape par étape, selon les couleurs d'actions prises : redéfinissant ainsi les listes de cellules contrôlées par les joueurs
+	 * Cette fonction rafraichit ensuite le tableau (suite au différents changements de couleur) en appelant la fonction "repaint()"
+	 * 
+	 * @see getConnectedSameColorHexas(ArrayList<Hexa> liste)
+	 * @see setCasesCtrl(ArrayList<Hexa> liste)
+	 * @see repaint()
+	 * 
+	 * @param couleur	: couleur de l'action qu'on a décidé de prendre ce tour ci
+	 */
 	public void nextStep(Color couleur){
 		
 		boolean flag = true;
@@ -378,8 +269,44 @@ public class HexaBoard extends Canvas implements Board{
 			
 			joueur = this.joueur2;
 			
-			this.joueur2.setMyTurn(false);
-			this.joueur1.setMyTurn(true);
+			if(this.joueur3 == null){
+				this.joueur2.setMyTurn(false);
+				this.joueur1.setMyTurn(true);
+			}
+			if(this.joueur3 != null){
+				this.joueur2.setMyTurn(false);
+				this.joueur3.setMyTurn(true);
+			}
+		}
+		
+		if(this.joueur3 != null){
+			if(this.joueur3.isMyTurn() && flag){
+				
+				flag = false;
+				
+				joueur = this.joueur3;
+				
+				if(this.joueur4 == null){
+					this.joueur3.setMyTurn(false);
+					this.joueur1.setMyTurn(true);
+				}
+				if(this.joueur4 != null){
+					this.joueur3.setMyTurn(false);
+					this.joueur4.setMyTurn(true);
+				}
+			}
+		}
+		
+		if(this.joueur4 != null){
+			if(this.joueur4.isMyTurn() && flag){
+				
+				flag = false;
+				
+				joueur = this.joueur4;
+				
+				this.joueur4.setMyTurn(false);
+				this.joueur1.setMyTurn(true);
+			}
 		}
 		
 		ArrayList<Hexa> hexasCtrl = joueur.getCasesCtrl();
@@ -395,6 +322,11 @@ public class HexaBoard extends Canvas implements Board{
 		repaint();
 	}
 	
+	/**
+	 * Cette fonction retourne les couleurs occupées par tous les joueurs présents
+	 * 
+	 * @return couleurs		: retourne les couleurs de tous les joueurs autour du tableau
+	 */
 	public ArrayList<Color> getColorsFromPlayers(){
 		
 		ArrayList<Color> couleurs = new ArrayList<Color>();
@@ -415,12 +347,17 @@ public class HexaBoard extends Canvas implements Board{
 		couleurs.add(couleur1);
 		couleurs.add(couleur2);
 		
-		if(couleur3 != null){ couleurs.add(couleur3); }
-		if(couleur4 != null){ couleurs.add(couleur4); }
+		if(joueur3 != null){ couleurs.add(couleur3); }
+		if(joueur4 != null){ couleurs.add(couleur4); }
 		
 		return couleurs;
 	}
 	
+	/**
+	 * Cette fonction retourne les couleurs libres qu'aucun joueur n'occupe
+	 * 
+	 * @return couleursLibres	: retourne les couleurs libres du tableau
+	 */
 	public ArrayList<Color> getFreeColors(){
 		
 		ArrayList<Color> couleursLibres = new ArrayList<Color>();
@@ -448,6 +385,9 @@ public class HexaBoard extends Canvas implements Board{
 	}
 	
 	@Override
+	/**
+	 * Cette fonction dessine le tableau en tenant compte des coordonées et des couleurs de chaque cellule, ici il s'agit d'un pavage d'hexagones
+	 */
 	public void paint(Graphics g){
 		
 		super.paint(g);
@@ -468,55 +408,38 @@ public class HexaBoard extends Canvas implements Board{
 	}
 	
 	@Override
-	public void repaint(){
-		super.repaint();
-	}
+	/**
+	 * Cette fonction permet de raffraichir le dessin du tableau
+	 */
+	public void repaint(){ super.repaint(); }
 	
-	public int getHauteur(){
-		return this.hauteur;
-	}
+	/**
+	 * Getter retournant la hauteur du tableau
+	 */
+	public int getHauteur(){ return this.hauteur; }
 	
-	public void setHauteur(int hauteur){
-		this.hauteur = hauteur;
-	}
+	/**
+	 * Getter retournant la largeur du tableau
+	 */
+	public int getLargeur(){ return this.largeur; }
 	
-	public int getLargeur(){
-		return this.largeur;
-	}
-	
-	public void setLarheur(int largeur){
-		this.largeur = largeur;
-	}
-	
-	public Player getJoueur1() {
-		return joueur1;
-	}
+	/**
+	 * Getter retournant le joueur 1
+	 */
+	public Player getJoueur1() { return joueur1; }
 
-	public void setJoueur1(Player joueur1) {
-		this.joueur1 = joueur1;
-	}
+	/**
+	 * Getter retournant le joueur 2
+	 */
+	public Player getJoueur2() { return joueur2; }
 
-	public Player getJoueur2() {
-		return joueur2;
-	}
+	/**
+	 * Getter retournant le joueur 3
+	 */
+	public Player getJoueur3() { return joueur3; }
 
-	public void setJoueur2(Player joueur2) {
-		this.joueur2 = joueur2;
-	}
-
-	public Player getJoueur3() {
-		return joueur3;
-	}
-
-	public void setJoueur3(Player joueur3) {
-		this.joueur3 = joueur3;
-	}
-
-	public Player getJoueur4() {
-		return joueur4;
-	}
-
-	public void setJoueur4(Player joueur4) {
-		this.joueur4 = joueur4;
-	}
+	/**
+	 * Getter retournant le joueur 4
+	 */
+	public Player getJoueur4() { return joueur4; }
 }

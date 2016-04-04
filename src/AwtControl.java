@@ -36,10 +36,10 @@ public class AwtControl{
 		
 		//Sélectionne le tableau à générer
 		if(tableau.equals("INTRO")){
-			this.board = new IntroBoard(300, 300);
+			this.board = new IntroBoard(500, 500);
 		}
 		if(tableau.equals("HEXA")){
-			this.board = new HexaBoard(13, "Joueur1", "Joueur2", "", "");
+			this.board = new HexaBoard(12, "Joueur1", "Joueur2", "", "");
 		}
 		
 		//Prépare le cadre principale
@@ -80,7 +80,7 @@ public class AwtControl{
 		controlPanel.setBackground(Color.black);
 		controlPanel.setSize(board.getHauteur(),board.getLargeur());
 		
-		mainFrame.setSize(board.getHauteur()+10,board.getLargeur()+270);
+		mainFrame.setSize(board.getHauteur()+30,board.getLargeur()+270);
 		
 		setMenu();
 		setBoardAndButtons();
@@ -252,8 +252,8 @@ public class AwtControl{
 				board.nextStep(Color.magenta);
 			}
 			
-			setRestrictedButtons();
 			setAllowedButtons();
+			setRestrictedButtons();
 		}
 		
 		/**
