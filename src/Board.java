@@ -1,7 +1,9 @@
 import java.awt.Color;
 import java.util.ArrayList;
 
-
+/**
+ * Cette interface permet de définir le contrat que doivent respecter les Board IntroBoard, SquareBoard, DiamondBoard et HexaBoard
+ */
 public interface Board {
 	
 	public void nextStep(Color couleur);

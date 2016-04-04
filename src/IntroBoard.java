@@ -1,10 +1,10 @@
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 /**
  * L'objectif de cette classe est seulement d'offrir un joli petit menu introductif fait maison !
- *
  */
 public class IntroBoard extends Canvas implements Board{
 	
@@ -23,6 +23,12 @@ public class IntroBoard extends Canvas implements Board{
 	
 	@Override
 	public void nextStep(Color couleur) { }
+	
+	@Override
+	public ArrayList<Color> getColorsFromPlayers() { return null; }
+
+	@Override
+	public ArrayList<Color> getFreeColors() { return null; }
 	
 	@Override
 	public void paint(Graphics g){
@@ -50,5 +56,4 @@ public class IntroBoard extends Canvas implements Board{
 
 	@Override
 	public Player getJoueur4() { return null; }
-
 }
