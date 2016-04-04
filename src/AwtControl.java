@@ -17,14 +17,24 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+/**
+ *	Cette classe est la classe principale du logiciel "The Filler Game".
+ *	Elle permet la gestion de tous les composants graphiques et de l'utilisation général du programme.
+ */
 public class AwtControl{
 
 	private Frame mainFrame;
 	private Panel controlPanel;
 	private Board board;
 
+	/**
+	 * Ce constructeur permet de selectionner quel tableau on souhaite générer à l'écran, et prépare les principaux composants graphiques.
+	 * 
+	 * @param tableau 	 : chaîne de caractères représentant le nom du tableau que l'on souhaite voir
+	 */
 	public AwtControl(String tableau){
 		
+		//Sélectionne le tableau à générer
 		if(tableau.equals("INTRO")){
 			this.board = new IntroBoard(300, 300);
 		}
@@ -32,17 +42,7 @@ public class AwtControl{
 			this.board = new HexaBoard(13, "Joueur1", "Joueur2", "", "");
 		}
 		
-		prepareGUI();
-	}
-
-	public static void main(String[] args){
-		
-		AwtControl awtControlDemo = new AwtControl("INTRO");
-		awtControlDemo.showEventDemo();
-	}
-
-	private void prepareGUI(){
-		
+		//Prépare le cadre principale
 		mainFrame = new Frame("The Filler Game");
 		mainFrame.setSize(1440,1440);
 		
@@ -52,31 +52,52 @@ public class AwtControl{
 			}        
 		});
 
+		//Créé le panneau de contrôle, qui acceuillera les différents boutons, et l'ajoute au cadre principale
 		controlPanel = new Panel();
-
 		mainFrame.add(controlPanel);
-		
-		mainFrame.setVisible(true);  
+		mainFrame.setVisible(true);
 	}
 
-	private void showEventDemo(){
+	/**
+	 * Cette fonction est la fonction principale/d'entrée ...
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args){
+		
+		AwtControl awtControl = new AwtControl("INTRO");
+		awtControl.show();
+	}
+
+	/**
+	 * Cette fonction permet l'affichages des différents éléments graphiques : le cadre principale, la barre de menu, le tableau et les boutons 
+	 * 
+	 * @see setMenu()
+	 * @see setBoardAndButtons()
+	 */
+	private void show(){
 
 		controlPanel.setBackground(Color.black);
 		controlPanel.setSize(board.getHauteur(),board.getLargeur());
 		
 		mainFrame.setSize(board.getHauteur()+10,board.getLargeur()+270);
 		
-		setButtons();
-		
 		setMenu();
+		setBoardAndButtons();
 
 		mainFrame.setVisible(true); 
 	}
 	
-	private void setButtons(){
+	/**
+	 * Cette fonction paramètre et affiche le tableau et les boutons (en créant ces derniers)
+	 * 
+	 * @see ButtonClickListener : classe interne gérant l'écoute des boutons
+	 */
+	private void setBoardAndButtons(){
 		
-		if(this.board.getJoueur1() != null && this.board.getJoueur2() != null){
+		if(this.board.getJoueur1() != null && this.board.getJoueur2() != null){	// Si on veut afficher un tableau qui nécessite des boutons ...
 			
+			//Création des boutons et définition de leur couleur
 			Button redButton 		= new Button("ROUGE");		redButton.setBackground(Color.red);
 			Button orangeButton 	= new Button("ORANGE");		orangeButton.setBackground(Color.orange);
 			Button yellowButton		= new Button("JAUNE");		yellowButton.setBackground(Color.yellow);
@@ -84,6 +105,7 @@ public class AwtControl{
 			Button blueButton 		= new Button("BLEU");		blueButton.setBackground(Color.blue);
 			Button magentaButton	= new Button("MAGENTA");	magentaButton.setBackground(Color.magenta);
 			
+			//Associaion des boutons à une commande propre et à un écouteur particulier (ButtonClickListener)
 			redButton.setActionCommand("ROUGE");				redButton.addActionListener		(new ButtonClickListener()); 
 			orangeButton.setActionCommand("ORANGE");			orangeButton.addActionListener	(new ButtonClickListener()); 
 			yellowButton.setActionCommand("JAUNE");				yellowButton.addActionListener	(new ButtonClickListener());
@@ -91,10 +113,11 @@ public class AwtControl{
 			blueButton.setActionCommand("BLEU");				blueButton.addActionListener	(new ButtonClickListener()); 
 			magentaButton.setActionCommand("MAGENTA");			magentaButton.addActionListener (new ButtonClickListener()); 
 			
+			//Création d'un type d'agencement en "sac de grille" (GridBagLayout) et ajout des boutons et du tableau dans cette grille
 			GridBagLayout layout = new GridBagLayout();
 			
-			controlPanel.setLayout(layout);        
-			GridBagConstraints gbc = new GridBagConstraints();
+			controlPanel.setLayout(layout);						//Ajoute l'agencement au panneau de contrôle (là où l'on souhaite voir le tableau et les boutons)
+			GridBagConstraints gbc = new GridBagConstraints();	//Créé des contraintes sur les éléments de la grille, ici des contraintes de positionnement :
 			
 			gbc.gridx = 0;
 			gbc.gridy = 0;
@@ -133,6 +156,11 @@ public class AwtControl{
 		}
 	}
 	
+	/**
+	 * Cette fonction paramètre et affiche la barre de menu
+	 * 
+	 * @see MenuItemListener : classe interne gérant l'écoute des menus
+	 */
 	private void setMenu(){
 
 		//Création de la barre de menus
@@ -190,8 +218,17 @@ public class AwtControl{
 		mainFrame.setVisible(true);  
 	}
 
+	/**
+	 * Cette petite classe interne gère l'écoute des boutons et les actions à prendre selon lesquels sont cliqués
+	 */
 	private class ButtonClickListener implements ActionListener{
 		
+		/**
+		 * Cette fonction gère l'action "nextStep" (pour faire progresser le jeux) selon le bouton cliqué
+		 * et appelle la restriction de l'utilisation des boutons selon les couleurs des joueurs
+		 * 
+		 * @see nextStep()
+		 */
 		public void actionPerformed(ActionEvent e) {
 			
 			String command = e.getActionCommand();
@@ -219,61 +256,14 @@ public class AwtControl{
 			setAllowedButtons();
 		}
 		
-		private ArrayList<Color> getColorsFromPlayers(){
-			
-			ArrayList<Color> couleurs = new ArrayList<Color>();
-			
-			Color couleur1 = board.getJoueur1().getCasesCtrl().get(0).getColor();
-			Color couleur2 = board.getJoueur2().getCasesCtrl().get(0).getColor();
-			
-			Color couleur3 = null;
-			Color couleur4 = null;
-			
-			if(board.getJoueur3() != null){
-				couleur3 = board.getJoueur3().getCasesCtrl().get(0).getColor();
-			}
-			if(board.getJoueur4() != null){
-				couleur4 = board.getJoueur4().getCasesCtrl().get(0).getColor();
-			}
-			
-			couleurs.add(couleur1);
-			couleurs.add(couleur2);
-			
-			if(couleur3 != null){ couleurs.add(couleur3); }
-			if(couleur4 != null){ couleurs.add(couleur4); }
-			
-			return couleurs;
-		}
-		
-		private ArrayList<Color> getFreeColors(){
-			
-			ArrayList<Color> couleursLibres = new ArrayList<Color>();
-			ArrayList<Color> couleursOccupees = getColorsFromPlayers();
-			
-			if(!couleursOccupees.contains(Color.red)){
-				couleursLibres.add(Color.red);
-			}
-			if(!couleursOccupees.contains(Color.orange)){
-				couleursLibres.add(Color.orange);
-			}
-			if(!couleursOccupees.contains(Color.yellow)){
-				couleursLibres.add(Color.yellow);
-			}
-			if(!couleursOccupees.contains(Color.green)){
-				couleursLibres.add(Color.green);
-			}
-			if(!couleursOccupees.contains(Color.blue)){
-				couleursLibres.add(Color.blue);
-			}
-			if(!couleursOccupees.contains(Color.magenta)){
-				couleursLibres.add(Color.magenta);
-			}
-			return couleursLibres;
-		}
-		
+		/**
+		 * Cette fonction restreint l'utilisation des boutons selon les couleurs des joueurs
+		 * 
+		 *  @see getColorsFromPlayers()
+		 */
 		private void setRestrictedButtons(){
 			
-			ArrayList<Color> couleursOccupees = getColorsFromPlayers();
+			ArrayList<Color> couleursOccupees = board.getColorsFromPlayers();
 			
 			for(int i = 0; i < couleursOccupees.size(); i++){
 				
@@ -304,9 +294,14 @@ public class AwtControl{
 			}
 		}
 		
+		/**
+		 * Cette fonction permet d'autoriser l'utilisation des boutons selon les couleurs des joueurs 
+		 * 
+		 * @see setAllowedButtons()
+		 */
 		private void setAllowedButtons(){
 			
-			ArrayList<Color> couleursLibres = getFreeColors();
+			ArrayList<Color> couleursLibres = board.getFreeColors();
 			
 			for(int i = 0; i < couleursLibres.size(); i++){
 				
@@ -338,10 +333,15 @@ public class AwtControl{
 		}
 	}
 	
+	/**
+	 * Cette petite classe interne gère l'écoute des menus et les actions à prendre selon lesquels sont cliqués
+	 */
 	class MenuItemListener implements ActionListener {
+		
+		/**
+		 * Cette fonction gère les actions à lancer selon l'item de menu cliqué
+		 */
 		public void actionPerformed(ActionEvent e) {
-			
-			System.out.println(e.getActionCommand() + " MenuItem clicked.");
 			
 			String command = e.getActionCommand();
 			
@@ -349,7 +349,7 @@ public class AwtControl{
 				
 				mainFrame.dispose();
 				AwtControl awtControlDemo = new AwtControl(command);
-				awtControlDemo.showEventDemo();
+				awtControlDemo.show();
 			}
 		}    
 	}

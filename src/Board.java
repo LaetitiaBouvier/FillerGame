@@ -1,9 +1,12 @@
 import java.awt.Color;
+import java.util.ArrayList;
 
 
 public interface Board {
 	
 	public void nextStep(Color couleur);
+	public ArrayList<Color> getColorsFromPlayers();
+	public ArrayList<Color> getFreeColors();
 	
 	public int getHauteur();
 	public int getLargeur();

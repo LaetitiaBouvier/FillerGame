@@ -395,6 +395,58 @@ public class HexaBoard extends Canvas implements Board{
 		repaint();
 	}
 	
+	public ArrayList<Color> getColorsFromPlayers(){
+		
+		ArrayList<Color> couleurs = new ArrayList<Color>();
+		
+		Color couleur1 = this.getJoueur1().getCasesCtrl().get(0).getColor();
+		Color couleur2 = this.getJoueur2().getCasesCtrl().get(0).getColor();
+		
+		Color couleur3 = null;
+		Color couleur4 = null;
+		
+		if(this.getJoueur3() != null){
+			couleur3 = this.getJoueur3().getCasesCtrl().get(0).getColor();
+		}
+		if(this.getJoueur4() != null){
+			couleur4 = this.getJoueur4().getCasesCtrl().get(0).getColor();
+		}
+		
+		couleurs.add(couleur1);
+		couleurs.add(couleur2);
+		
+		if(couleur3 != null){ couleurs.add(couleur3); }
+		if(couleur4 != null){ couleurs.add(couleur4); }
+		
+		return couleurs;
+	}
+	
+	public ArrayList<Color> getFreeColors(){
+		
+		ArrayList<Color> couleursLibres = new ArrayList<Color>();
+		ArrayList<Color> couleursOccupees = this.getColorsFromPlayers();
+		
+		if(!couleursOccupees.contains(Color.red)){
+			couleursLibres.add(Color.red);
+		}
+		if(!couleursOccupees.contains(Color.orange)){
+			couleursLibres.add(Color.orange);
+		}
+		if(!couleursOccupees.contains(Color.yellow)){
+			couleursLibres.add(Color.yellow);
+		}
+		if(!couleursOccupees.contains(Color.green)){
+			couleursLibres.add(Color.green);
+		}
+		if(!couleursOccupees.contains(Color.blue)){
+			couleursLibres.add(Color.blue);
+		}
+		if(!couleursOccupees.contains(Color.magenta)){
+			couleursLibres.add(Color.magenta);
+		}
+		return couleursLibres;
+	}
+	
 	@Override
 	public void paint(Graphics g){
 		
