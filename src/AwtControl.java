@@ -1,6 +1,6 @@
 import java.awt.Button;
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 public class AwtControl{
 
@@ -23,7 +24,7 @@ public class AwtControl{
 
 	public AwtControl(){
 		
-		this.board = new Board(13, "Joueur1", "Joueur2", "", "");
+		
 		prepareGUI();
 	}
 
@@ -45,20 +46,19 @@ public class AwtControl{
 		});
 
 		controlPanel = new Panel();
-		controlPanel.setLayout(new FlowLayout());
 
 		mainFrame.add(controlPanel);
 		
 		mainFrame.setVisible(true);  
 	}
 
+	// Il faudrait peut �tre fractionner d'avantage cette m�thode !
 	private void showEventDemo(){
 
-		Panel panel = new Panel();
-		panel.setBackground(Color.black);
-		panel.setSize(board.getHeight(),board.getWidth());
+		controlPanel.setBackground(Color.black);
+		controlPanel.setSize(board.getHauteur(),board.getLargeur());
 		
-		mainFrame.setSize(board.getHeight()+10,board.getWidth()+270);
+		mainFrame.setSize(board.getHauteur()+10,board.getLargeur()+270);
 		
 		Button redButton 		= new Button("ROUGE");		redButton.setBackground(Color.red);
 		Button orangeButton 	= new Button("ORANGE");		orangeButton.setBackground(Color.orange);
@@ -76,57 +76,38 @@ public class AwtControl{
 		
 		GridBagLayout layout = new GridBagLayout();
 
-		panel.setLayout(layout);        
+		controlPanel.setLayout(layout);        
 		GridBagConstraints gbc = new GridBagConstraints();
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		panel.add(board,gbc);
+		controlPanel.add((Component) board,gbc);
 		
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		panel.add(redButton,gbc); 
+		controlPanel.add(redButton,gbc); 
 
 		gbc.gridx = 0;
 		gbc.gridy = 2;
-		panel.add(orangeButton,gbc); 
+		controlPanel.add(orangeButton,gbc); 
 
 		gbc.gridx = 0;
 		gbc.gridy = 3;       
-		panel.add(yellowButton,gbc);  
+		controlPanel.add(yellowButton,gbc);  
 
 		gbc.gridx = 0;
 		gbc.gridy = 4;      
-		panel.add(greenButton,gbc);
+		controlPanel.add(greenButton,gbc);
 		
 		gbc.gridx = 0;
 		gbc.gridy = 5;      
-		panel.add(blueButton,gbc);
+		controlPanel.add(blueButton,gbc);
 		
 		gbc.gridx = 0;
 		gbc.gridy = 6;      
-		panel.add(magentaButton,gbc);
+		controlPanel.add(magentaButton,gbc);
 
-		controlPanel.add(panel);
-
-		
-		Button okButton = new Button("OK");
-		Button submitButton = new Button("Submit");
-		Button cancelButton = new Button("Cancel");
-
-		okButton.setActionCommand("OK");
-		submitButton.setActionCommand("Submit");
-		cancelButton.setActionCommand("Cancel");
-
-		okButton.addActionListener(new ButtonClickListener()); 
-		submitButton.addActionListener(new ButtonClickListener()); 
-		cancelButton.addActionListener(new ButtonClickListener()); 
-		
-		controlPanel.add(okButton);
-		controlPanel.add(submitButton);
-		controlPanel.add(cancelButton);
-		
 		//create a menu bar
 		final MenuBar menuBar = new MenuBar();
 
@@ -199,7 +180,128 @@ public class AwtControl{
 			if( command.equals( "MAGENTA"	)) {
 				board.nextStep(Color.magenta);
 			}
-		}		
+			
+			setRestrictedButtons();
+			setAllowedButtons();
+		}
+		
+		private ArrayList<Color> getColorsFromPlayers(){
+			
+			ArrayList<Color> couleurs = new ArrayList<Color>();
+			
+			Color couleur1 = board.getJoueur1().getCasesCtrl().get(0).getColor();
+			Color couleur2 = board.getJoueur2().getCasesCtrl().get(0).getColor();
+			
+			Color couleur3 = null;
+			Color couleur4 = null;
+			
+			if(board.getJoueur3() != null){
+				couleur3 = board.getJoueur3().getCasesCtrl().get(0).getColor();
+			}
+			if(board.getJoueur4() != null){
+				couleur4 = board.getJoueur4().getCasesCtrl().get(0).getColor();
+			}
+			
+			couleurs.add(couleur1);
+			couleurs.add(couleur2);
+			
+			if(couleur3 != null){ couleurs.add(couleur3); }
+			if(couleur4 != null){ couleurs.add(couleur4); }
+			
+			return couleurs;
+		}
+		
+		private ArrayList<Color> getFreeColors(){
+			
+			ArrayList<Color> couleursLibres = new ArrayList<Color>();
+			ArrayList<Color> couleursOccupees = getColorsFromPlayers();
+			
+			if(!couleursOccupees.contains(Color.red)){
+				couleursLibres.add(Color.red);
+			}
+			if(!couleursOccupees.contains(Color.orange)){
+				couleursLibres.add(Color.orange);
+			}
+			if(!couleursOccupees.contains(Color.yellow)){
+				couleursLibres.add(Color.yellow);
+			}
+			if(!couleursOccupees.contains(Color.green)){
+				couleursLibres.add(Color.green);
+			}
+			if(!couleursOccupees.contains(Color.blue)){
+				couleursLibres.add(Color.blue);
+			}
+			if(!couleursOccupees.contains(Color.magenta)){
+				couleursLibres.add(Color.magenta);
+			}
+			return couleursLibres;
+		}
+		
+		private void setRestrictedButtons(){
+			
+			ArrayList<Color> couleursOccupees = getColorsFromPlayers();
+			
+			for(int i = 0; i < couleursOccupees.size(); i++){
+				
+				if(couleursOccupees.get(i) == Color.red){
+					controlPanel.getComponent(1).setBackground(Color.black);
+					controlPanel.getComponent(1).setEnabled(false);
+				}
+				if(couleursOccupees.get(i) == Color.orange){
+					controlPanel.getComponent(2).setBackground(Color.black);
+					controlPanel.getComponent(2).setEnabled(false);
+				}
+				if(couleursOccupees.get(i) == Color.yellow){
+					controlPanel.getComponent(3).setBackground(Color.black);
+					controlPanel.getComponent(3).setEnabled(false);
+				}
+				if(couleursOccupees.get(i) == Color.green){
+					controlPanel.getComponent(4).setBackground(Color.black);
+					controlPanel.getComponent(4).setEnabled(false);
+				}
+				if(couleursOccupees.get(i) == Color.blue){
+					controlPanel.getComponent(5).setBackground(Color.black);
+					controlPanel.getComponent(5).setEnabled(false);
+				}
+				if(couleursOccupees.get(i) == Color.magenta){
+					controlPanel.getComponent(6).setBackground(Color.black);
+					controlPanel.getComponent(6).setEnabled(false);
+				}
+			}
+		}
+		
+		private void setAllowedButtons(){
+			
+			ArrayList<Color> couleursLibres = getFreeColors();
+			
+			for(int i = 0; i < couleursLibres.size(); i++){
+				
+				if(couleursLibres.get(i) == Color.red){
+					controlPanel.getComponent(1).setBackground(Color.red);
+					controlPanel.getComponent(1).setEnabled(true);
+				}
+				if(couleursLibres.get(i) == Color.orange){
+					controlPanel.getComponent(2).setBackground(Color.orange);
+					controlPanel.getComponent(2).setEnabled(true);
+				}
+				if(couleursLibres.get(i) == Color.yellow){
+					controlPanel.getComponent(3).setBackground(Color.yellow);
+					controlPanel.getComponent(3).setEnabled(true);
+				}
+				if(couleursLibres.get(i) == Color.green){
+					controlPanel.getComponent(4).setBackground(Color.green);
+					controlPanel.getComponent(4).setEnabled(true);
+				}
+				if(couleursLibres.get(i) == Color.blue){
+					controlPanel.getComponent(5).setBackground(Color.blue);
+					controlPanel.getComponent(5).setEnabled(true);
+				}
+				if(couleursLibres.get(i) == Color.magenta){
+					controlPanel.getComponent(6).setBackground(Color.magenta);
+					controlPanel.getComponent(6).setEnabled(true);
+				}
+			}
+		}
 	}
 	
 	class MenuItemListener implements ActionListener {
