@@ -1,15 +1,18 @@
 import java.awt.Button;
+import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Label;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.Panel;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -32,14 +35,14 @@ public class AwtControl{
 	 * 
 	 * @param tableau 	 : chaîne de caractères représentant le nom du tableau que l'on souhaite voir
 	 */
-	public AwtControl(String tableau){
+	public AwtControl(String tableau, int nb){
 		
 		//Sélectionne le tableau à générer
-		if(tableau.equals("INTRO")){
+		if(tableau.equals("INTRO") || tableau.contains("PARAM")){
 			this.board = new IntroBoard(500, 500);
 		}
 		if(tableau.equals("HEXA")){
-			this.board = new HexaBoard(12, "Joueur1", "Joueur2", "", "");
+			this.board = new HexaBoard(nb, "Joueur1", "Joueur2", "", "");
 		}
 		
 		//Prépare le cadre principale
@@ -65,8 +68,8 @@ public class AwtControl{
 	 */
 	public static void main(String[] args){
 		
-		AwtControl awtControl = new AwtControl("INTRO");
-		awtControl.show();
+		AwtControl awtControl = new AwtControl("INTRO", 0);
+		awtControl.show("INTRO");
 	}
 
 	/**
@@ -75,7 +78,7 @@ public class AwtControl{
 	 * @see setMenu()
 	 * @see setBoardAndButtons()
 	 */
-	private void show(){
+	private void show(String tableau){
 
 		controlPanel.setBackground(Color.black);
 		controlPanel.setSize(board.getHauteur(),board.getLargeur());
@@ -83,7 +86,7 @@ public class AwtControl{
 		mainFrame.setSize(board.getHauteur()+30,board.getLargeur()+270);
 		
 		setMenu();
-		setBoardAndButtons();
+		setBoardAndButtons(tableau);
 
 		mainFrame.setVisible(true); 
 	}
@@ -93,9 +96,9 @@ public class AwtControl{
 	 * 
 	 * @see ButtonClickListener : classe interne gérant l'écoute des boutons
 	 */
-	private void setBoardAndButtons(){
+	private void setBoardAndButtons(String tableau){
 		
-		if(this.board.getJoueur1() != null && this.board.getJoueur2() != null){	// Si on veut afficher un tableau qui nécessite des boutons ...
+		if(this.board.getJoueur1() != null && this.board.getJoueur2() != null){	// Si on veut afficher un tableau qui nécessite des boutons pour jouer...
 			
 			//Création des boutons et définition de leur couleur
 			Button redButton 		= new Button("ROUGE");		redButton.setBackground(Color.red);
@@ -148,6 +151,45 @@ public class AwtControl{
 			gbc.gridy = 6;      
 			controlPanel.add(magentaButton,gbc);
 		}
+		else if (tableau.equals("HEXA_PARAM")){
+			
+			FlowLayout layout = new FlowLayout();
+			controlPanel.setLayout(layout);
+			
+			controlPanel.add((Component) board);
+			
+			Label intro = new Label("Veuillez entrez les paramètres de la prochaine partie que vous souhaitez jouer :", Label.CENTER);
+			intro.setForeground(Color.white);
+			
+			Label nb = new Label("Taille d'un côté (min: 12, max: 100", Label.RIGHT);
+			nb.setForeground(Color.white);
+			final TextField nbText = new TextField(2);
+
+			final Choice choice = new Choice();
+
+			choice.add("Hexa");
+			choice.add("Square");
+			choice.add("Diamond");
+			choice.add("Mixte");
+			
+			Button play = new Button("Play");
+			play.setActionCommand("PLAY");
+			play.addActionListener(new ButtonClickListener());
+			
+			play.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	 
+		            mainFrame.dispose();
+					AwtControl awtControlDemo = new AwtControl("HEXA", Integer.parseInt(nbText.getText()));
+					awtControlDemo.show("HEXA");
+		         }
+		      });
+			
+			controlPanel.add(intro);
+			controlPanel.add(nb);
+			controlPanel.add(nbText);
+			controlPanel.add(play);
+		}
 		else{
 			FlowLayout layout = new FlowLayout();
 			controlPanel.setLayout(layout);
@@ -186,7 +228,7 @@ public class AwtControl{
 		
 		//Création des items du menu "Play"
 		MenuItem hexaMenuItem = new MenuItem("Hexa");
-		hexaMenuItem.setActionCommand("HEXA");
+		hexaMenuItem.setActionCommand("HEXA_PARAM");
 
 		//Création d'un écouteur d'item, et mise sur écoute des items créés
 		MenuItemListener menuItemListener = new MenuItemListener();
@@ -235,25 +277,38 @@ public class AwtControl{
 			
 			if( command.equals( "ROUGE"	)) {
 				board.nextStep(Color.red);
+				setAllowedButtons();
+				setRestrictedButtons();
 			}
 			if( command.equals( "ORANGE")) {
 				board.nextStep(Color.orange);
+				setAllowedButtons();
+				setRestrictedButtons();
 			}
 			if( command.equals( "JAUNE"	)) {
 				board.nextStep(Color.yellow);
+				setAllowedButtons();
+				setRestrictedButtons();
 			}
 			if( command.equals( "VERT"  )) {
 				board.nextStep(Color.green);
+				setAllowedButtons();
+				setRestrictedButtons();
 			}
 			if( command.equals( "BLEU"  )) {
 				board.nextStep(Color.blue);
+				setAllowedButtons();
+				setRestrictedButtons();
 			}
 			if( command.equals( "MAGENTA"	)) {
 				board.nextStep(Color.magenta);
+				setAllowedButtons();
+				setRestrictedButtons();
 			}
 			
-			setAllowedButtons();
-			setRestrictedButtons();
+			if( command.equals( "PLAY" )){
+				
+			}
 		}
 		
 		/**
@@ -345,11 +400,11 @@ public class AwtControl{
 			
 			String command = e.getActionCommand();
 			
-			if(command.equals("HEXA")){
+			if(command.equals("HEXA_PARAM")){
 				
 				mainFrame.dispose();
-				AwtControl awtControlDemo = new AwtControl(command);
-				awtControlDemo.show();
+				AwtControl awtControlDemo = new AwtControl(command, 0);
+				awtControlDemo.show(command);
 			}
 		}    
 	}
