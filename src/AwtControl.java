@@ -1,5 +1,5 @@
 import java.awt.Button;
-import java.awt.Choice;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -59,6 +59,7 @@ public class AwtControl{
 		controlPanel = new Panel();
 		mainFrame.add(controlPanel);
 		mainFrame.setVisible(true);
+		//mainFrame.setResizable(false);
 	}
 
 	/**
@@ -83,7 +84,7 @@ public class AwtControl{
 		controlPanel.setBackground(Color.black);
 		controlPanel.setSize(board.getHauteur(),board.getLargeur());
 		
-		mainFrame.setSize(board.getHauteur()+30,board.getLargeur()+270);
+		mainFrame.setSize(board.getHauteur()+25,board.getLargeur()+450);
 		
 		setMenu();
 		setBoardAndButtons(tableau);
@@ -153,25 +154,56 @@ public class AwtControl{
 		}
 		else if (tableau.equals("HEXA_PARAM")){
 			
-			FlowLayout layout = new FlowLayout();
-			controlPanel.setLayout(layout);
+			GridBagLayout layout = new GridBagLayout();
 			
-			controlPanel.add((Component) board);
+			controlPanel.setLayout(layout);						//Ajoute l'agencement au panneau de contrôle (là où l'on souhaite voir le tableau et les boutons)
+			GridBagConstraints gbc = new GridBagConstraints();	//Créé des contraintes sur les éléments de la grille, ici des contraintes de positionnement :
 			
 			Label intro = new Label("Veuillez entrez les paramètres de la prochaine partie que vous souhaitez jouer :", Label.CENTER);
 			intro.setForeground(Color.white);
 			
-			Label nb = new Label("Taille d'un côté (min: 12, max: 100", Label.RIGHT);
+			Label nb = new Label("Taille d'un côté :", Label.RIGHT);
 			nb.setForeground(Color.white);
 			final TextField nbText = new TextField(2);
-
-			final Choice choice = new Choice();
-
-			choice.add("Hexa");
-			choice.add("Square");
-			choice.add("Diamond");
-			choice.add("Mixte");
 			
+			Label j1 = new Label("Entrez le nom du joueur 1 :");
+			j1.setForeground(Color.white);
+			final TextField j1Text = new TextField(16);
+			
+			Label j2 = new Label("Entrez le nom du joueur 2 :");
+			j2.setForeground(Color.white);
+			final TextField j2Text = new TextField(16);
+			
+			Label j3 = new Label("Entrez le nom du joueur 3 : (laissez vide si vous ne souhaitez pas en ajouter)");
+			j3.setForeground(Color.white);
+			final TextField j3Text = new TextField(16);
+			
+			Label j4 = new Label("Entrez le nom du joueur 4 : (laissez vide si vous ne souhaitez pas en ajouter)");
+			j4.setForeground(Color.white);
+			final TextField j4Text = new TextField(16);
+			
+			Label ia1 = new Label("Cochez cette case si vous souhaitez que le joueur 1 soit une IA :");
+			ia1.setForeground(Color.white);
+			
+			Label ia2 = new Label("Cochez cette case si vous souhaitez que le joueur 2 soit une IA :");
+			ia2.setForeground(Color.white);
+			
+			Label ia3 = new Label("Cochez cette case si vous souhaitez que le joueur 3 soit une IA :");
+			ia3.setForeground(Color.white);
+			
+			Label ia4 = new Label("Cochez cette case si vous souhaitez que le joueur 4 soit une IA :");
+			ia4.setForeground(Color.white);
+			
+			Label vide1 = new Label("");
+			Label vide2 = new Label("");
+			Label vide3 = new Label("");
+			Label vide4 = new Label("");
+
+			Checkbox choixIA1 = new Checkbox("IA1");
+			Checkbox choixIA2 = new Checkbox("IA2");
+			Checkbox choixIA3 = new Checkbox("IA3");
+			Checkbox choixIA4 = new Checkbox("IA4");
+
 			Button play = new Button("Play");
 			play.setActionCommand("PLAY");
 			play.addActionListener(new ButtonClickListener());
@@ -185,10 +217,110 @@ public class AwtControl{
 		         }
 		      });
 			
-			controlPanel.add(intro);
-			controlPanel.add(nb);
-			controlPanel.add(nbText);
-			controlPanel.add(play);
+			gbc.anchor = GridBagConstraints.CENTER;
+			
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			controlPanel.add((Component) board, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 1;
+			controlPanel.add(intro, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 2;
+			controlPanel.add(vide1, gbc);
+			
+			gbc.anchor = GridBagConstraints.LINE_START;
+			gbc.weightx = 0.25;
+			
+			gbc.gridx = 0;
+			gbc.gridy = 3;
+			controlPanel.add(nb, gbc);
+			
+			gbc.gridx = 1;
+			gbc.gridy = 3;
+			controlPanel.add(nbText, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 4;
+			controlPanel.add(vide2, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 5;
+			controlPanel.add(j1, gbc);
+			
+			gbc.gridx = 1;
+			gbc.gridy = 5;
+			controlPanel.add(j1Text, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 6;
+			controlPanel.add(j2, gbc);
+			
+			gbc.gridx = 1;
+			gbc.gridy = 6;
+			controlPanel.add(j2Text, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 7;
+			controlPanel.add(j3, gbc);
+			
+			gbc.gridx = 1;
+			gbc.gridy = 7;
+			controlPanel.add(j3Text, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 8;
+			controlPanel.add(j4, gbc);
+			
+			gbc.gridx = 1;
+			gbc.gridy = 8;
+			controlPanel.add(j4Text, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 9;
+			controlPanel.add(vide3, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 10;
+			controlPanel.add(ia1, gbc);
+			
+			gbc.gridx = 1;
+			gbc.gridy = 10;
+			controlPanel.add(choixIA1, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 11;
+			controlPanel.add(ia2, gbc);
+			
+			gbc.gridx = 1;
+			gbc.gridy = 11;
+			controlPanel.add(choixIA2, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 12;
+			controlPanel.add(ia3, gbc);
+			
+			gbc.gridx = 1;
+			gbc.gridy = 12;
+			controlPanel.add(choixIA3, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 13;
+			controlPanel.add(ia4, gbc);
+			
+			gbc.gridx = 1;
+			gbc.gridy = 13;
+			controlPanel.add(choixIA4, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 14;
+			controlPanel.add(vide4, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 15;
+			controlPanel.add(play, gbc);
 		}
 		else{
 			FlowLayout layout = new FlowLayout();
