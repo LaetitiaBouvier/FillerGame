@@ -35,14 +35,14 @@ public class AwtControl{
 	 * 
 	 * @param tableau 	 : chaîne de caractères représentant le nom du tableau que l'on souhaite voir
 	 */
-	public AwtControl(String tableau, int nb){
+	public AwtControl(String tableau, int nb, String joueur1, String joueur2, String joueur3, String joueur4, boolean ia1, boolean ia2, boolean i3, boolean i4){
 		
 		//Sélectionne le tableau à générer
 		if(tableau.equals("INTRO") || tableau.contains("PARAM")){
 			this.board = new IntroBoard(500, 500);
 		}
 		if(tableau.equals("HEXA")){
-			this.board = new HexaBoard(nb, "Joueur1", "Joueur2", "", "");
+			this.board = new HexaBoard(nb, joueur1, joueur2, joueur3, joueur4);
 		}
 		
 		//Prépare le cadre principale
@@ -69,7 +69,7 @@ public class AwtControl{
 	 */
 	public static void main(String[] args){
 		
-		AwtControl awtControl = new AwtControl("INTRO", 0);
+		AwtControl awtControl = new AwtControl("INTRO", 0, "", "", "", "", false, false, false, false);
 		awtControl.show("INTRO");
 	}
 
@@ -151,6 +151,10 @@ public class AwtControl{
 			gbc.gridx = 0;
 			gbc.gridy = 6;      
 			controlPanel.add(magentaButton,gbc);
+			
+			ButtonClickListener b = new ButtonClickListener();
+			b.setAllowedButtons();
+			b.setRestrictedButtons();
 		}
 		else if (tableau.equals("HEXA_PARAM")){
 			
@@ -199,23 +203,24 @@ public class AwtControl{
 			Label vide3 = new Label("");
 			Label vide4 = new Label("");
 
-			Checkbox choixIA1 = new Checkbox("IA1");
-			Checkbox choixIA2 = new Checkbox("IA2");
-			Checkbox choixIA3 = new Checkbox("IA3");
-			Checkbox choixIA4 = new Checkbox("IA4");
+			final Checkbox choixIA1 = new Checkbox("IA1");
+			final Checkbox choixIA2 = new Checkbox("IA2");
+			final Checkbox choixIA3 = new Checkbox("IA3");
+			final Checkbox choixIA4 = new Checkbox("IA4");
 
 			Button play = new Button("Play");
 			play.setActionCommand("PLAY");
 			play.addActionListener(new ButtonClickListener());
 			
 			play.addActionListener(new ActionListener() {
-		         public void actionPerformed(ActionEvent e) {
-		        	 
-		            mainFrame.dispose();
-					AwtControl awtControlDemo = new AwtControl("HEXA", Integer.parseInt(nbText.getText()));
-					awtControlDemo.show("HEXA");
-		         }
-		      });
+				public void actionPerformed(ActionEvent e) {
+
+					mainFrame.dispose();
+					AwtControl awtControl = new AwtControl("HEXA", Integer.parseInt(nbText.getText()), j1Text.getText(), j2Text.getText(), j3Text.getText(), j4Text.getText(),
+															choixIA1.getState(), choixIA2.getState(), choixIA3.getState(), choixIA4.getState());
+					awtControl.show("HEXA");
+				}
+			});
 			
 			gbc.anchor = GridBagConstraints.CENTER;
 			
@@ -437,10 +442,6 @@ public class AwtControl{
 				setAllowedButtons();
 				setRestrictedButtons();
 			}
-			
-			if( command.equals( "PLAY" )){
-				
-			}
 		}
 		
 		/**
@@ -448,7 +449,7 @@ public class AwtControl{
 		 * 
 		 *  @see getColorsFromPlayers()
 		 */
-		private void setRestrictedButtons(){
+		public void setRestrictedButtons(){
 			
 			ArrayList<Color> couleursOccupees = board.getColorsFromPlayers();
 			
@@ -486,7 +487,7 @@ public class AwtControl{
 		 * 
 		 * @see setAllowedButtons()
 		 */
-		private void setAllowedButtons(){
+		public void setAllowedButtons(){
 			
 			ArrayList<Color> couleursLibres = board.getFreeColors();
 			
@@ -535,7 +536,7 @@ public class AwtControl{
 			if(command.equals("HEXA_PARAM")){
 				
 				mainFrame.dispose();
-				AwtControl awtControlDemo = new AwtControl(command, 0);
+				AwtControl awtControlDemo = new AwtControl(command, 0, "", "", "", "", false, false, false, false);
 				awtControlDemo.show(command);
 			}
 		}    

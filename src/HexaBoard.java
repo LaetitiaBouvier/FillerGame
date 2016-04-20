@@ -40,7 +40,7 @@ public class HexaBoard extends Canvas implements Board{
 	public HexaBoard(int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4) {
 		
 		int h = 20*nb +30;
-		int l = 20*nb +30;
+		int l = 20*nb +80;
 		
 		// Settings :
 		setBackground (Color.black);
@@ -64,6 +64,7 @@ public class HexaBoard extends Canvas implements Board{
 	private void initialisationGrille(int nb){
 		
 		int decalageX = 0;
+		int margeY = 50;
 		
 		this.grille = new Hexa[nb][nb];
 		
@@ -93,7 +94,7 @@ public class HexaBoard extends Canvas implements Board{
 					color = Color.magenta;
 				}
 				
-				grille[i][j] = new Hexa(30+i*20+decalageX, 25+j*20, color, null, null, null, null, null, null);
+				grille[i][j] = new Hexa(30+i*20+decalageX, 30+j*20+margeY, color, null, null, null, null, null, null);
 			}
 		}
 	}
@@ -392,6 +393,17 @@ public class HexaBoard extends Canvas implements Board{
 		
 		super.paint(g);
 		
+		g.setColor(Color.white);
+		g.drawString("Joueur1 : \""+joueur1.getNom()+"\"      |      Score : "+joueur1.getCasesCtrl().size(), 10, 10);
+		g.drawString("Joueur2 : \""+joueur2.getNom()+"\"      |      Score : "+joueur2.getCasesCtrl().size(), 10, 25);
+		
+		if(joueur3 != null){
+			g.drawString("Joueur3 : \""+joueur3.getNom()+"\"      |      Score : "+joueur3.getCasesCtrl().size(), 10, 40);
+		}
+		if(joueur4 != null){
+			g.drawString("Joueur4 : \""+joueur4.getNom()+"\"      |      Score : "+joueur4.getCasesCtrl().size(), 10, 55);
+		}
+		
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j< grille[0].length; j++){
 				
@@ -403,6 +415,23 @@ public class HexaBoard extends Canvas implements Board{
 				
 				g.setColor(Color.black);
 				g.drawPolygon(x, y, 6);
+				
+				if(joueur1.getCasesCtrl().contains(grille[i][j])){
+					g.drawString("1", grille[i][j].getCentreX()-2, grille[i][j].getCentreY()+5);
+				}
+				if(joueur2.getCasesCtrl().contains(grille[i][j])){
+					g.drawString("2", grille[i][j].getCentreX()-2, grille[i][j].getCentreY()+5);
+				}
+				if(joueur3 != null){
+					if(joueur3.getCasesCtrl().contains(grille[i][j])){
+						g.drawString("3", grille[i][j].getCentreX()-2, grille[i][j].getCentreY()+5);
+					}
+				}
+				if(joueur4 != null){
+					if(joueur4.getCasesCtrl().contains(grille[i][j])){
+						g.drawString("4", grille[i][j].getCentreX()-2, grille[i][j].getCentreY()+5);
+					}
+				}
 			}
 		}
 	}
