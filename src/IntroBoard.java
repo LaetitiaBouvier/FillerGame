@@ -22,7 +22,10 @@ public class IntroBoard extends Canvas implements Board{
 	}
 	
 	@Override
-	public void nextStep(Color couleur) { }
+	public Player nextMove(Color couleur) { return null; }
+	
+	@Override
+	public Color nextIntermediateIAMove(Player joueur) { return null; }
 	
 	@Override
 	public ArrayList<Color> getColorsFromPlayers() { return null; }

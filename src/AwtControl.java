@@ -35,14 +35,14 @@ public class AwtControl{
 	 * 
 	 * @param tableau 	 : chaîne de caractères représentant le nom du tableau que l'on souhaite voir
 	 */
-	public AwtControl(String tableau, int nb, String joueur1, String joueur2, String joueur3, String joueur4, boolean ia1, boolean ia2, boolean i3, boolean i4){
+	public AwtControl(String tableau, int nb, String joueur1, String joueur2, String joueur3, String joueur4, boolean isIA1, boolean isIA2, boolean isIA3, boolean isIA4){
 		
 		//Sélectionne le tableau à générer
 		if(tableau.equals("INTRO") || tableau.contains("PARAM")){
 			this.board = new IntroBoard(500, 500);
 		}
 		if(tableau.equals("HEXA")){
-			this.board = new HexaBoard(nb, joueur1, joueur2, joueur3, joueur4);
+			this.board = new HexaBoard(nb, joueur1, joueur2, joueur3, joueur4, isIA1, isIA2, isIA3, isIA4);
 		}
 		
 		//Prépare le cadre principale
@@ -152,9 +152,8 @@ public class AwtControl{
 			gbc.gridy = 6;      
 			controlPanel.add(magentaButton,gbc);
 			
-			ButtonClickListener b = new ButtonClickListener();
-			b.setAllowedButtons();
-			b.setRestrictedButtons();
+			setAllowedButtons();
+			setRestrictedButtons();
 		}
 		else if (tableau.equals("HEXA_PARAM")){
 			
@@ -396,6 +395,82 @@ public class AwtControl{
 
 		mainFrame.setVisible(true);  
 	}
+	
+	/**
+	 * Cette fonction restreint l'utilisation des boutons selon les couleurs des joueurs
+	 * 
+	 *  @see getColorsFromPlayers()
+	 */
+	public void setRestrictedButtons(){
+		
+		ArrayList<Color> couleursOccupees = board.getColorsFromPlayers();
+		
+		for(int i = 0; i < couleursOccupees.size(); i++){
+			
+			if(couleursOccupees.get(i) == Color.red){
+				controlPanel.getComponent(1).setBackground(Color.black);
+				controlPanel.getComponent(1).setEnabled(false);
+			}
+			if(couleursOccupees.get(i) == Color.orange){
+				controlPanel.getComponent(2).setBackground(Color.black);
+				controlPanel.getComponent(2).setEnabled(false);
+			}
+			if(couleursOccupees.get(i) == Color.yellow){
+				controlPanel.getComponent(3).setBackground(Color.black);
+				controlPanel.getComponent(3).setEnabled(false);
+			}
+			if(couleursOccupees.get(i) == Color.green){
+				controlPanel.getComponent(4).setBackground(Color.black);
+				controlPanel.getComponent(4).setEnabled(false);
+			}
+			if(couleursOccupees.get(i) == Color.blue){
+				controlPanel.getComponent(5).setBackground(Color.black);
+				controlPanel.getComponent(5).setEnabled(false);
+			}
+			if(couleursOccupees.get(i) == Color.magenta){
+				controlPanel.getComponent(6).setBackground(Color.black);
+				controlPanel.getComponent(6).setEnabled(false);
+			}
+		}
+	}
+	
+	/**
+	 * Cette fonction permet d'autoriser l'utilisation des boutons selon les couleurs des joueurs 
+	 * 
+	 * @see setAllowedButtons()
+	 */
+	public void setAllowedButtons(){
+		
+		ArrayList<Color> couleursLibres = board.getFreeColors();
+		
+		for(int i = 0; i < couleursLibres.size(); i++){
+			
+			if(couleursLibres.get(i) == Color.red){
+				controlPanel.getComponent(1).setBackground(Color.red);
+				controlPanel.getComponent(1).setEnabled(true);
+			}
+			if(couleursLibres.get(i) == Color.orange){
+				controlPanel.getComponent(2).setBackground(Color.orange);
+				controlPanel.getComponent(2).setEnabled(true);
+			}
+			if(couleursLibres.get(i) == Color.yellow){
+				controlPanel.getComponent(3).setBackground(Color.yellow);
+				controlPanel.getComponent(3).setEnabled(true);
+			}
+			if(couleursLibres.get(i) == Color.green){
+				controlPanel.getComponent(4).setBackground(Color.green);
+				controlPanel.getComponent(4).setEnabled(true);
+			}
+			if(couleursLibres.get(i) == Color.blue){
+				controlPanel.getComponent(5).setBackground(Color.blue);
+				controlPanel.getComponent(5).setEnabled(true);
+			}
+			if(couleursLibres.get(i) == Color.magenta){
+				controlPanel.getComponent(6).setBackground(Color.magenta);
+				controlPanel.getComponent(6).setEnabled(true);
+			}
+		}
+	}
 
 	/**
 	 * Cette petite classe interne gère l'écoute des boutons et les actions à prendre selon lesquels sont cliqués
@@ -403,119 +478,79 @@ public class AwtControl{
 	private class ButtonClickListener implements ActionListener{
 		
 		/**
-		 * Cette fonction gère l'action "nextStep" (pour faire progresser le jeux) selon le bouton cliqué
+		 * Cette fonction gère l'action "nextMove" (pour faire progresser le jeux) selon le bouton cliqué
 		 * et appelle la restriction de l'utilisation des boutons selon les couleurs des joueurs
 		 * 
-		 * @see nextStep()
+		 * @see nextMove()
 		 */
 		public void actionPerformed(ActionEvent e) {
 			
 			String command = e.getActionCommand();
 			
 			if( command.equals( "ROUGE"	)) {
-				board.nextStep(Color.red);
+				Player nextPlayer = board.nextMove(Color.red);
 				setAllowedButtons();
 				setRestrictedButtons();
+				
+				if(nextPlayer != null){
+					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+					setAllowedButtons();
+					setRestrictedButtons();
+				}
 			}
 			if( command.equals( "ORANGE")) {
-				board.nextStep(Color.orange);
+				Player nextPlayer = board.nextMove(Color.orange);
 				setAllowedButtons();
 				setRestrictedButtons();
+				
+				if(nextPlayer != null){
+					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+					setAllowedButtons();
+					setRestrictedButtons();
+				}
 			}
 			if( command.equals( "JAUNE"	)) {
-				board.nextStep(Color.yellow);
+				Player nextPlayer = board.nextMove(Color.yellow);
 				setAllowedButtons();
 				setRestrictedButtons();
+				
+				if(nextPlayer != null){
+					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+					setAllowedButtons();
+					setRestrictedButtons();
+				}
 			}
 			if( command.equals( "VERT"  )) {
-				board.nextStep(Color.green);
+				Player nextPlayer = board.nextMove(Color.green);
 				setAllowedButtons();
 				setRestrictedButtons();
+				
+				if(nextPlayer != null){
+					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+					setAllowedButtons();
+					setRestrictedButtons();
+				}
 			}
 			if( command.equals( "BLEU"  )) {
-				board.nextStep(Color.blue);
+				Player nextPlayer = board.nextMove(Color.blue);
 				setAllowedButtons();
 				setRestrictedButtons();
+				
+				if(nextPlayer != null){
+					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+					setAllowedButtons();
+					setRestrictedButtons();
+				}
 			}
 			if( command.equals( "MAGENTA"	)) {
-				board.nextStep(Color.magenta);
+				Player nextPlayer = board.nextMove(Color.magenta);
 				setAllowedButtons();
 				setRestrictedButtons();
-			}
-		}
-		
-		/**
-		 * Cette fonction restreint l'utilisation des boutons selon les couleurs des joueurs
-		 * 
-		 *  @see getColorsFromPlayers()
-		 */
-		public void setRestrictedButtons(){
-			
-			ArrayList<Color> couleursOccupees = board.getColorsFromPlayers();
-			
-			for(int i = 0; i < couleursOccupees.size(); i++){
 				
-				if(couleursOccupees.get(i) == Color.red){
-					controlPanel.getComponent(1).setBackground(Color.black);
-					controlPanel.getComponent(1).setEnabled(false);
-				}
-				if(couleursOccupees.get(i) == Color.orange){
-					controlPanel.getComponent(2).setBackground(Color.black);
-					controlPanel.getComponent(2).setEnabled(false);
-				}
-				if(couleursOccupees.get(i) == Color.yellow){
-					controlPanel.getComponent(3).setBackground(Color.black);
-					controlPanel.getComponent(3).setEnabled(false);
-				}
-				if(couleursOccupees.get(i) == Color.green){
-					controlPanel.getComponent(4).setBackground(Color.black);
-					controlPanel.getComponent(4).setEnabled(false);
-				}
-				if(couleursOccupees.get(i) == Color.blue){
-					controlPanel.getComponent(5).setBackground(Color.black);
-					controlPanel.getComponent(5).setEnabled(false);
-				}
-				if(couleursOccupees.get(i) == Color.magenta){
-					controlPanel.getComponent(6).setBackground(Color.black);
-					controlPanel.getComponent(6).setEnabled(false);
-				}
-			}
-		}
-		
-		/**
-		 * Cette fonction permet d'autoriser l'utilisation des boutons selon les couleurs des joueurs 
-		 * 
-		 * @see setAllowedButtons()
-		 */
-		public void setAllowedButtons(){
-			
-			ArrayList<Color> couleursLibres = board.getFreeColors();
-			
-			for(int i = 0; i < couleursLibres.size(); i++){
-				
-				if(couleursLibres.get(i) == Color.red){
-					controlPanel.getComponent(1).setBackground(Color.red);
-					controlPanel.getComponent(1).setEnabled(true);
-				}
-				if(couleursLibres.get(i) == Color.orange){
-					controlPanel.getComponent(2).setBackground(Color.orange);
-					controlPanel.getComponent(2).setEnabled(true);
-				}
-				if(couleursLibres.get(i) == Color.yellow){
-					controlPanel.getComponent(3).setBackground(Color.yellow);
-					controlPanel.getComponent(3).setEnabled(true);
-				}
-				if(couleursLibres.get(i) == Color.green){
-					controlPanel.getComponent(4).setBackground(Color.green);
-					controlPanel.getComponent(4).setEnabled(true);
-				}
-				if(couleursLibres.get(i) == Color.blue){
-					controlPanel.getComponent(5).setBackground(Color.blue);
-					controlPanel.getComponent(5).setEnabled(true);
-				}
-				if(couleursLibres.get(i) == Color.magenta){
-					controlPanel.getComponent(6).setBackground(Color.magenta);
-					controlPanel.getComponent(6).setEnabled(true);
+				if(nextPlayer != null){
+					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+					setAllowedButtons();
+					setRestrictedButtons();
 				}
 			}
 		}

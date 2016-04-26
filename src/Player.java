@@ -9,14 +9,16 @@ public class Player {
 	private int nbCases;
 	private ArrayList<Hexa> casesCtrl;
 	private boolean myTurn;
+	private boolean isIA;
 	
-	public Player(String nom, Color couleur, int nbCases, ArrayList<Hexa> casesCtrl){
+	public Player(String nom, Color couleur, int nbCases, ArrayList<Hexa> casesCtrl, boolean isIA){
 		
 		this.nom = nom;
 		this.couleur = couleur;
 		this.nbCases = nbCases;
 		this.casesCtrl = casesCtrl;
 		this.myTurn = false;
+		this.isIA = isIA;
 	}
 	
 	public String getNom() {
@@ -50,5 +52,13 @@ public class Player {
 
 	public void setMyTurn(boolean myTurn) {
 		this.myTurn = myTurn;
+	}
+
+	public boolean isIA() {
+		return isIA;
+	}
+
+	public void setIA(boolean isIA) {
+		this.isIA = isIA;
 	}
 }

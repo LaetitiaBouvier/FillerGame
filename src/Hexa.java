@@ -15,6 +15,8 @@ public class Hexa {
 	private Hexa voisinGauche;
 	private Hexa voisinGaucheHaut;
 	
+	private Player ctrlBy;
+	
 	/**
 	 * 
 	 * @param centreX			: bidul
@@ -40,6 +42,8 @@ public class Hexa {
 		this.voisinGaucheBas 	= voisinGaucheBas;
 		this.voisinGauche 		= voisinGauche;
 		this.voisinGaucheHaut 	= voisinGaucheHaut;
+		
+		this.ctrlBy = null;
 	}
 	
 	
@@ -126,5 +130,17 @@ public class Hexa {
 
 	public void setColor(Color color) {
 		this.color = color;
+	}
+
+
+
+	public Player getCtrlBy() {
+		return ctrlBy;
+	}
+
+
+
+	public void setCtrlBy(Player ctrlBy) {
+		this.ctrlBy = ctrlBy;
 	}
 }

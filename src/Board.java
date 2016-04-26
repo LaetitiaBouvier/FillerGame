@@ -6,7 +6,8 @@ import java.util.ArrayList;
  */
 public interface Board {
 	
-	public void nextStep(Color couleur);
+	public Player nextMove(Color couleur);
+	public Color nextIntermediateIAMove(Player joueur);
 	public ArrayList<Color> getColorsFromPlayers();
 	public ArrayList<Color> getFreeColors();
 	
