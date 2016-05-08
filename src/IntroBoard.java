@@ -28,6 +28,9 @@ public class IntroBoard extends Canvas implements Board{
 	public Color nextIntermediateIAMove(Player joueur) { return null; }
 	
 	@Override
+	public Color nextAdvancedIAMove() { return null; }
+	
+	@Override
 	public ArrayList<Color> getColorsFromPlayers() { return null; }
 
 	@Override

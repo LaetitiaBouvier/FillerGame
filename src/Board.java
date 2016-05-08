@@ -8,6 +8,7 @@ public interface Board {
 	
 	public Player nextMove(Color couleur);
 	public Color nextIntermediateIAMove(Player joueur);
+	public Color nextAdvancedIAMove();
 	public ArrayList<Color> getColorsFromPlayers();
 	public ArrayList<Color> getFreeColors();
 	
