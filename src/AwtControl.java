@@ -491,7 +491,6 @@ public class AwtControl{
 				Player nextPlayer = board.nextMove(Color.red);
 				setAllowedButtons();
 				setRestrictedButtons();
-				board.nextAdvancedIAMove();
 				
 				if(nextPlayer != null){
 					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
