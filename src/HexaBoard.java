@@ -38,10 +38,10 @@ public class HexaBoard extends Canvas implements Board{
 	 * @see defVoisins(int nb)
 	 * @see defJoueurs(int nb)
 	 */
-	public HexaBoard(int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, boolean isIA1, boolean isIA2, boolean isIA3, boolean isIA4) {
+	public HexaBoard(int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, String IA1, String IA2, String IA3, String IA4) {
 		
-		int h = 20*nb +30;
-		int l = 20*nb +80;
+		int h = 20*nb +60;
+		int l = 20*nb +180;
 		
 		// Settings :
 		setBackground (Color.black);
@@ -54,7 +54,7 @@ public class HexaBoard extends Canvas implements Board{
 		
 		this.grille = defVoisins(this.grille);
 		
-		defJoueurs(nb, nomJoueur1, nomJoueur2, nomJoueur3, nomJoueur4, isIA1, isIA2, isIA3, isIA4);
+		defJoueurs(nb, nomJoueur1, nomJoueur2, nomJoueur3, nomJoueur4, IA1, IA2, IA3, IA4);
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class HexaBoard extends Canvas implements Board{
 	private void initialisationGrille(int nb){
 		
 		int decalageX = 0;
-		int margeY = 50;
+		int margeY = 120;
 		
 		this.grille = new HexaCell[nb][nb];
 		
@@ -142,7 +142,7 @@ public class HexaBoard extends Canvas implements Board{
 	 * 
 	 * @see getConnectedSameColorHexas(ArrayList<Hexa> listeHexa)
 	 */
-	private void defJoueurs( int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, boolean isIA1, boolean isIA2, boolean isIA3, boolean isIA4){
+	private void defJoueurs( int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, String IA1, String IA2, String IA3, String IA4){
 		
 		ArrayList<HexaCell> listeInitialeJ1 = new ArrayList<HexaCell>();
 		ArrayList<HexaCell> listeInitialeJ2 = new ArrayList<HexaCell>();
@@ -150,13 +150,13 @@ public class HexaBoard extends Canvas implements Board{
 		listeInitialeJ1.add(grille[0][0]);			grille[0][0].setCtrlBy(nomJoueur1);
 		listeInitialeJ1 = getConnectedCellsOfSameColor(listeInitialeJ1);
 		
-		this.joueur1 = new Player(nomJoueur1, grille[0][0].getColor(), listeInitialeJ1.size(), listeInitialeJ1, isIA1);
+		this.joueur1 = new Player(nomJoueur1, grille[0][0].getColor(), listeInitialeJ1.size(), listeInitialeJ1, IA1);
 		this.joueur1.setMyTurn(true);
 		
 		listeInitialeJ2.add(grille[nb-1][nb-1]);	grille[nb-1][nb-1].setCtrlBy(nomJoueur2);
 		listeInitialeJ2 = getConnectedCellsOfSameColor(listeInitialeJ2);
 		
-		this.joueur2 = new Player(nomJoueur2, grille[nb-1][nb-1].getColor(), listeInitialeJ2.size(), listeInitialeJ2, isIA2);
+		this.joueur2 = new Player(nomJoueur2, grille[nb-1][nb-1].getColor(), listeInitialeJ2.size(), listeInitialeJ2, IA2);
 		
 		if(!nomJoueur3.isEmpty()){
 			
@@ -165,7 +165,7 @@ public class HexaBoard extends Canvas implements Board{
 			listeInitialeJ3.add(grille[nb-1][0]);	grille[nb-1][0].setCtrlBy(nomJoueur3);
 			listeInitialeJ3 = getConnectedCellsOfSameColor(listeInitialeJ3);
 			
-			this.joueur3 = new Player(nomJoueur3, grille[nb-1][0].getColor(), listeInitialeJ3.size(), listeInitialeJ3, isIA3);
+			this.joueur3 = new Player(nomJoueur3, grille[nb-1][0].getColor(), listeInitialeJ3.size(), listeInitialeJ3, IA3);
 		}
 		else{
 			this.joueur3 = null;
@@ -178,7 +178,7 @@ public class HexaBoard extends Canvas implements Board{
 			listeInitialeJ4.add(grille[0][nb-1]);	grille[0][nb-1].setCtrlBy(nomJoueur4);
 			listeInitialeJ4 = getConnectedCellsOfSameColor(listeInitialeJ4);
 			
-			this.joueur4 = new Player(nomJoueur4, grille[0][nb-1].getColor(), listeInitialeJ4.size(), listeInitialeJ4, isIA4);
+			this.joueur4 = new Player(nomJoueur4, grille[0][nb-1].getColor(), listeInitialeJ4.size(), listeInitialeJ4, IA4);
 		}
 		else{
 			this.joueur4 = null;
@@ -338,7 +338,7 @@ public class HexaBoard extends Canvas implements Board{
 		
 		repaint();
 		
-		if(joueurSui.isIA()){
+		if(!joueurSui.getIA().equals("Sans")){
 			
 			return joueurSui;
 		}
@@ -347,7 +347,7 @@ public class HexaBoard extends Canvas implements Board{
 		}
 	}
 	
-	public Color nextSimpleIAMove(){	// IA Aléatoire
+	public Color nextEasyIAMove(){	// IA Aléatoire
 		
 		ArrayList<Color> freeColors = getFreeColors();
 		
@@ -359,7 +359,12 @@ public class HexaBoard extends Canvas implements Board{
 		return color;
 	}
 	
-	public Color nextIntermediateIAMove(Player joueur){
+	public Color nextTroubleIAMove(Player joueur){
+		
+		 return null;
+	}
+	
+	public Color nextHardIAMove(Player joueur){
 		
 		ArrayList<Color> freeColors = getFreeColors();
 		
@@ -741,6 +746,48 @@ public class HexaBoard extends Canvas implements Board{
 		return couleursLibres;
 	}
 	
+	public boolean isTheGameOver(){
+		
+		boolean isTheGameOver = false;
+		
+		int nbJoueurs = 2;
+		
+		if(this.joueur3 != null) nbJoueurs++;
+		if(this.joueur4 != null) nbJoueurs++;
+		
+		if(this.joueur1.getCasesCtrl().size() >= (this.grille.length*this.grille.length / nbJoueurs)){ isTheGameOver = true; }
+		if(this.joueur2.getCasesCtrl().size() >= (this.grille.length*this.grille.length / nbJoueurs)){ isTheGameOver = true; }
+		
+		if(this.joueur3 != null){
+			if(this.joueur3.getCasesCtrl().size() >= (this.grille.length*this.grille.length / nbJoueurs)){ isTheGameOver = true; }
+		}
+		
+		if(this.joueur4 != null){
+			if(this.joueur4.getCasesCtrl().size() >= (this.grille.length*this.grille.length / nbJoueurs)){ isTheGameOver = true; }
+		}
+		
+		if(this.joueur1 == null){ isTheGameOver = false; } // Car dans ce cas la partie n'a même pas commencé...
+		
+		return isTheGameOver;
+	}
+	
+	public Player getWinner(){
+		
+		Player winner = this.joueur1;
+		
+		if(this.joueur2.getCasesCtrl().size() > winner.getCasesCtrl().size()) winner = this.joueur2;
+		
+		if(this.joueur3 != null){
+			if(this.joueur3.getCasesCtrl().size() > winner.getCasesCtrl().size()) winner = this.joueur3;
+		}
+		
+		if(this.joueur4 != null){
+			if(this.joueur4.getCasesCtrl().size() > winner.getCasesCtrl().size()) winner = this.joueur4;
+		}
+		
+		return winner;
+	}
+	
 	@Override
 	/**
 	 * Cette fonction dessine le tableau en tenant compte des coordonées et des couleurs de chaque cellule, ici il s'agit d'un pavage d'hexagones
@@ -750,14 +797,18 @@ public class HexaBoard extends Canvas implements Board{
 		super.paint(g);
 		
 		g.setColor(Color.white);
-		g.drawString("Joueur1 : \""+joueur1.getNom()+"\"      |      Score : "+joueur1.getCasesCtrl().size(), 10, 10);
-		g.drawString("Joueur2 : \""+joueur2.getNom()+"\"      |      Score : "+joueur2.getCasesCtrl().size(), 10, 25);
+		
+		if(isTheGameOver() ) g.drawString("FIN DE LA PARTIE ==> GAGNANT : "+getWinner().getNom(), 10, 15);
+		if(isTheGameOver() ) g.drawString("Cliquez sur \"Play\" pour une nouvelle partie !", 10, 30);
+		
+		g.drawString("Joueur1 : \""+joueur1.getNom()+"\"      |      Score : "+joueur1.getCasesCtrl().size(), 10, 60);
+		g.drawString("Joueur2 : \""+joueur2.getNom()+"\"      |      Score : "+joueur2.getCasesCtrl().size(), 10, 75);
 		
 		if(joueur3 != null){
-			g.drawString("Joueur3 : \""+joueur3.getNom()+"\"      |      Score : "+joueur3.getCasesCtrl().size(), 10, 40);
+			g.drawString("Joueur3 : \""+joueur3.getNom()+"\"     |      Score : "+joueur3.getCasesCtrl().size(), 10, 90);
 		}
 		if(joueur4 != null){
-			g.drawString("Joueur4 : \""+joueur4.getNom()+"\"      |      Score : "+joueur4.getCasesCtrl().size(), 10, 55);
+			g.drawString("Joueur4 : \""+joueur4.getNom()+"\"     |      Score : "+joueur4.getCasesCtrl().size(), 10, 105);
 		}
 		
 		for(int i = 0; i < grille.length; i++){

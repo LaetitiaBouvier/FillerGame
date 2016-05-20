@@ -1,5 +1,5 @@
 import java.awt.Button;
-import java.awt.Checkbox;
+import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -35,14 +35,17 @@ public class AwtControl{
 	 * 
 	 * @param tableau 	 : chaîne de caractères représentant le nom du tableau que l'on souhaite voir
 	 */
-	public AwtControl(String tableau, int nb, String joueur1, String joueur2, String joueur3, String joueur4, boolean isIA1, boolean isIA2, boolean isIA3, boolean isIA4){
+	public AwtControl(String tableau, int nb, String joueur1, String joueur2, String joueur3, String joueur4, String IA1, String IA2, String IA3, String IA4){
 		
 		//Sélectionne le tableau à générer
 		if(tableau.equals("INTRO") || tableau.contains("PARAM")){
-			this.board = new IntroBoard(500, 500);
+			this.board = new IntroBoard(500, 500, false);
+		}
+		if(tableau.contains("ERROR")){
+			this.board = new IntroBoard(500, 500, true);
 		}
 		if(tableau.equals("HEXA")){
-			this.board = new HexaBoard(nb, joueur1, joueur2, joueur3, joueur4, isIA1, isIA2, isIA3, isIA4);
+			this.board = new HexaBoard(nb, joueur1, joueur2, joueur3, joueur4, IA1, IA2, IA3, IA4);
 		}
 		
 		//Prépare le cadre principale
@@ -69,8 +72,8 @@ public class AwtControl{
 	 */
 	public static void main(String[] args){
 		
-		AwtControl awtControl = new AwtControl("INTRO", 0, "", "", "", "", false, false, false, false);
-		awtControl.show("INTRO");
+		AwtControl awtControl = new AwtControl("INTRO", 0, "", "", "", "", "", "", "", "");
+		awtControl.show("INTRO", "");
 	}
 
 	/**
@@ -79,7 +82,7 @@ public class AwtControl{
 	 * @see setMenu()
 	 * @see setBoardAndButtons()
 	 */
-	private void show(String tableau){
+	private void show(String tableau, String choixIAJoueur1){
 
 		controlPanel.setBackground(Color.black);
 		controlPanel.setSize(board.getHauteur(),board.getLargeur());
@@ -89,7 +92,20 @@ public class AwtControl{
 		setMenu();
 		setBoardAndButtons(tableau);
 
-		mainFrame.setVisible(true); 
+		mainFrame.setVisible(true);
+		
+		if(!choixIAJoueur1.equals("Sans") && !choixIAJoueur1.isEmpty()){
+			
+			Player nextPlayer = board.getJoueur1();
+			
+			do{
+				if(nextPlayer.getIA().equals("IA Simple")){			nextPlayer = board.nextMove(board.nextEasyIAMove());				}
+				else if(nextPlayer.getIA().equals("IA Penible")){	nextPlayer = board.nextMove(board.nextTroubleIAMove(nextPlayer));	}
+				else if(nextPlayer.getIA().equals("IA Difficile")){	nextPlayer = board.nextMove(board.nextHardIAMove(nextPlayer));		}
+				setAllowedButtons();
+				setRestrictedButtons();
+			}while(nextPlayer != null);
+		}
 	}
 	
 	/**
@@ -99,7 +115,13 @@ public class AwtControl{
 	 */
 	private void setBoardAndButtons(String tableau){
 		
-		if(this.board.getJoueur1() != null && this.board.getJoueur2() != null){	// Si on veut afficher un tableau qui nécessite des boutons pour jouer...
+		if(tableau.equals("INTRO")){
+			FlowLayout layout = new FlowLayout();
+			controlPanel.setLayout(layout);
+			
+			controlPanel.add((Component) board);
+		}
+		else if(this.board.getJoueur1() != null && this.board.getJoueur2() != null){	// Si on veut afficher un tableau qui nécessite des boutons pour jouer...
 			
 			//Création des boutons et définition de leur couleur
 			Button redButton 		= new Button("ROUGE");		redButton.setBackground(Color.red);
@@ -123,39 +145,26 @@ public class AwtControl{
 			controlPanel.setLayout(layout);						//Ajoute l'agencement au panneau de contrôle (là où l'on souhaite voir le tableau et les boutons)
 			GridBagConstraints gbc = new GridBagConstraints();	//Créé des contraintes sur les éléments de la grille, ici des contraintes de positionnement :
 			
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			controlPanel.add((Component) board,gbc);
+			gbc.gridx = 0; gbc.gridy = 0; 		controlPanel.add((Component) board,gbc);
 			
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.gridx = 0;
-			gbc.gridy = 1;
-			controlPanel.add(redButton,gbc); 
 			
-			gbc.gridx = 0;
-			gbc.gridy = 2;
-			controlPanel.add(orangeButton,gbc); 
+			gbc.gridx = 0; gbc.gridy = 1; 		controlPanel.add(redButton,gbc); 
 			
-			gbc.gridx = 0;
-			gbc.gridy = 3;       
-			controlPanel.add(yellowButton,gbc);  
+			gbc.gridx = 0; gbc.gridy = 2;		controlPanel.add(orangeButton,gbc); 
 			
-			gbc.gridx = 0;
-			gbc.gridy = 4;      
-			controlPanel.add(greenButton,gbc);
+			gbc.gridx = 0; gbc.gridy = 3; 		controlPanel.add(yellowButton,gbc);  
 			
-			gbc.gridx = 0;
-			gbc.gridy = 5;      
-			controlPanel.add(blueButton,gbc);
+			gbc.gridx = 0; gbc.gridy = 4; 		controlPanel.add(greenButton,gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 6;      
-			controlPanel.add(magentaButton,gbc);
+			gbc.gridx = 0; gbc.gridy = 5; 		controlPanel.add(blueButton,gbc);
+			
+			gbc.gridx = 0; gbc.gridy = 6; 		controlPanel.add(magentaButton,gbc);
 			
 			setAllowedButtons();
 			setRestrictedButtons();
 		}
-		else if (tableau.equals("HEXA_PARAM")){
+		else {
 			
 			GridBagLayout layout = new GridBagLayout();
 			
@@ -185,16 +194,16 @@ public class AwtControl{
 			j4.setForeground(Color.white);
 			final TextField j4Text = new TextField(16);
 			
-			Label ia1 = new Label("Cochez cette case si vous souhaitez que le joueur 1 soit une IA :");
+			Label ia1 = new Label("IA du Joueur 1 :");
 			ia1.setForeground(Color.white);
 			
-			Label ia2 = new Label("Cochez cette case si vous souhaitez que le joueur 2 soit une IA :");
+			Label ia2 = new Label("IA du Joueur 2 :");
 			ia2.setForeground(Color.white);
 			
-			Label ia3 = new Label("Cochez cette case si vous souhaitez que le joueur 3 soit une IA :");
+			Label ia3 = new Label("IA du Joueur 3 :");
 			ia3.setForeground(Color.white);
 			
-			Label ia4 = new Label("Cochez cette case si vous souhaitez que le joueur 4 soit une IA :");
+			Label ia4 = new Label("IA du Joueur 4 :");
 			ia4.setForeground(Color.white);
 			
 			Label vide1 = new Label("");
@@ -202,135 +211,113 @@ public class AwtControl{
 			Label vide3 = new Label("");
 			Label vide4 = new Label("");
 
-			final Checkbox choixIA1 = new Checkbox("IA1");
-			final Checkbox choixIA2 = new Checkbox("IA2");
-			final Checkbox choixIA3 = new Checkbox("IA3");
-			final Checkbox choixIA4 = new Checkbox("IA4");
+			final Choice IAList1 = new Choice();
+			final Choice IAList2 = new Choice();
+			final Choice IAList3 = new Choice();
+			final Choice IAList4 = new Choice();
+
+			IAList1.add("Sans");		IAList2.add("Sans");		IAList3.add("Sans");		IAList4.add("Sans");
+			IAList1.add("IA Simple");	IAList2.add("IA Simple");	IAList3.add("IA Simple");	IAList4.add("IA Simple");
+			IAList1.add("IA Penible");	IAList2.add("IA Penible");	IAList3.add("IA Penible");	IAList4.add("IA Penible");
+			IAList1.add("IA Difficile");IAList2.add("IA Difficile");IAList3.add("IA Difficile");IAList4.add("IA Difficile");
 
 			Button play = new Button("Play");
 			play.setActionCommand("PLAY");
 			play.addActionListener(new ButtonClickListener());
 			
-			play.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
+			if (tableau.equals("HEXA_PARAM") || tableau.equals("HEXA_ERROR")){
+				
+				play.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						
+						boolean cond = true;
 
-					mainFrame.dispose();
-					AwtControl awtControl = new AwtControl("HEXA", Integer.parseInt(nbText.getText()), j1Text.getText(), j2Text.getText(), j3Text.getText(), j4Text.getText(),
-															choixIA1.getState(), choixIA2.getState(), choixIA3.getState(), choixIA4.getState());
-					awtControl.show("HEXA");
-				}
-			});
+						if(!IAList1.getItem(IAList1.getSelectedIndex()).equals("Sans") && !IAList2.getItem(IAList2.getSelectedIndex()).equals("Sans")){
+							
+							if(j3Text.getText().isEmpty() && j4Text.getText().isEmpty()){ cond = false; }
+							
+							if(!j3Text.getText().isEmpty() && j4Text.getText().isEmpty()){
+								
+								if(!IAList3.getItem(IAList3.getSelectedIndex()).equals("Sans")){ cond = false; }
+							}
+							
+							if(j3Text.getText().isEmpty() && !j4Text.getText().isEmpty()){
+								
+								if(!IAList4.getItem(IAList4.getSelectedIndex()).equals("Sans")){ cond = false; }
+							}
+							
+							if(!j3Text.getText().isEmpty() && !j4Text.getText().isEmpty()){
+								
+								if(!IAList3.getItem(IAList3.getSelectedIndex()).equals("Sans") && !IAList4.getItem(IAList4.getSelectedIndex()).equals("Sans")){ cond = false; }
+							}
+						}
+						
+						int tailleCote = 8;
+						
+						try{   tailleCote = Integer.parseInt(nbText.getText());   }catch (NumberFormatException ex){ cond = false; }
+						
+						if(tailleCote < 8){ cond = false; }
+						
+						if(cond){
+							mainFrame.dispose();
+							AwtControl awtControl = new AwtControl("HEXA", Integer.parseInt(nbText.getText()), j1Text.getText(), j2Text.getText(), j3Text.getText(), j4Text.getText(),
+									IAList1.getItem(IAList1.getSelectedIndex()), IAList2.getItem(IAList2.getSelectedIndex()), IAList3.getItem(IAList3.getSelectedIndex()), IAList4.getItem(IAList4.getSelectedIndex()));
+							awtControl.show("HEXA", IAList1.getItem(IAList1.getSelectedIndex()));
+						}else{
+							mainFrame.dispose();
+							AwtControl awtControlDemo = new AwtControl("HEXA_ERROR", 0, "", "", "", "", "", "", "", "");
+							awtControlDemo.show("HEXA_ERROR", "");
+						}
+					}
+				} );
+			}
 			
 			gbc.anchor = GridBagConstraints.CENTER;
 			
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			controlPanel.add((Component) board, gbc);
+			gbc.gridx = 0; gbc.gridy = 0; 		controlPanel.add((Component) board, gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 1;
-			controlPanel.add(intro, gbc);
+			gbc.gridx = 0; gbc.gridy = 1; 		controlPanel.add(intro, gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 2;
-			controlPanel.add(vide1, gbc);
+			gbc.gridx = 0; gbc.gridy = 2; 		controlPanel.add(vide1, gbc);
 			
 			gbc.anchor = GridBagConstraints.LINE_START;
 			gbc.weightx = 0.25;
 			
-			gbc.gridx = 0;
-			gbc.gridy = 3;
-			controlPanel.add(nb, gbc);
+			gbc.gridx = 0; gbc.gridy = 3; 		controlPanel.add(nb, gbc);
 			
-			gbc.gridx = 1;
-			gbc.gridy = 3;
-			controlPanel.add(nbText, gbc);
+			gbc.gridx = 1; gbc.gridy = 3; 		controlPanel.add(nbText, gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 4;
-			controlPanel.add(vide2, gbc);
+			gbc.gridx = 0; gbc.gridy = 4; 		controlPanel.add(vide2, gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 5;
-			controlPanel.add(j1, gbc);
+			gbc.gridx = 0; gbc.gridy = 5; 		controlPanel.add(j1, gbc);
+			gbc.gridx = 1; gbc.gridy = 5; 		controlPanel.add(j1Text, gbc);
 			
-			gbc.gridx = 1;
-			gbc.gridy = 5;
-			controlPanel.add(j1Text, gbc);
+			gbc.gridx = 0; gbc.gridy = 6; 		controlPanel.add(j2, gbc);
+			gbc.gridx = 1; gbc.gridy = 6; 		controlPanel.add(j2Text, gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 6;
-			controlPanel.add(j2, gbc);
+			gbc.gridx = 0; gbc.gridy = 7; 		controlPanel.add(j3, gbc);
+			gbc.gridx = 1; gbc.gridy = 7; 		controlPanel.add(j3Text, gbc);
 			
-			gbc.gridx = 1;
-			gbc.gridy = 6;
-			controlPanel.add(j2Text, gbc);
+			gbc.gridx = 0; gbc.gridy = 8; 		controlPanel.add(j4, gbc);
+			gbc.gridx = 1; gbc.gridy = 8; 		controlPanel.add(j4Text, gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 7;
-			controlPanel.add(j3, gbc);
+			gbc.gridx = 0; gbc.gridy = 9; 		controlPanel.add(vide3, gbc);
 			
-			gbc.gridx = 1;
-			gbc.gridy = 7;
-			controlPanel.add(j3Text, gbc);
+			gbc.gridx = 0; gbc.gridy = 10; 		controlPanel.add(ia1, gbc);
+			gbc.gridx = 1; gbc.gridy = 10; 		controlPanel.add(IAList1, gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 8;
-			controlPanel.add(j4, gbc);
+			gbc.gridx = 0; gbc.gridy = 11; 		controlPanel.add(ia2, gbc);
+			gbc.gridx = 1; gbc.gridy = 11; 		controlPanel.add(IAList2, gbc);
 			
-			gbc.gridx = 1;
-			gbc.gridy = 8;
-			controlPanel.add(j4Text, gbc);
+			gbc.gridx = 0; gbc.gridy = 12; 		controlPanel.add(ia3, gbc);
+			gbc.gridx = 1; gbc.gridy = 12; 		controlPanel.add(IAList3, gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 9;
-			controlPanel.add(vide3, gbc);
+			gbc.gridx = 0; gbc.gridy = 13; 		controlPanel.add(ia4, gbc);
+			gbc.gridx = 1; gbc.gridy = 13; 		controlPanel.add(IAList4, gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 10;
-			controlPanel.add(ia1, gbc);
+			gbc.gridx = 0; gbc.gridy = 14; 		controlPanel.add(vide4, gbc);
 			
-			gbc.gridx = 1;
-			gbc.gridy = 10;
-			controlPanel.add(choixIA1, gbc);
-			
-			gbc.gridx = 0;
-			gbc.gridy = 11;
-			controlPanel.add(ia2, gbc);
-			
-			gbc.gridx = 1;
-			gbc.gridy = 11;
-			controlPanel.add(choixIA2, gbc);
-			
-			gbc.gridx = 0;
-			gbc.gridy = 12;
-			controlPanel.add(ia3, gbc);
-			
-			gbc.gridx = 1;
-			gbc.gridy = 12;
-			controlPanel.add(choixIA3, gbc);
-			
-			gbc.gridx = 0;
-			gbc.gridy = 13;
-			controlPanel.add(ia4, gbc);
-			
-			gbc.gridx = 1;
-			gbc.gridy = 13;
-			controlPanel.add(choixIA4, gbc);
-			
-			gbc.gridx = 0;
-			gbc.gridy = 14;
-			controlPanel.add(vide4, gbc);
-			
-			gbc.gridx = 0;
-			gbc.gridy = 15;
-			controlPanel.add(play, gbc);
-		}
-		else{
-			FlowLayout layout = new FlowLayout();
-			controlPanel.setLayout(layout);
-			
-			controlPanel.add((Component) board);
+			gbc.gridx = 0; gbc.gridy = 15; 		controlPanel.add(play, gbc);
 		}
 	}
 	
@@ -471,6 +458,30 @@ public class AwtControl{
 			}
 		}
 	}
+	
+	/**
+	 * Cette fonction met fin à la partie
+	 */
+	public void setAllButtonsToBlack(){
+		
+		controlPanel.getComponent(1).setBackground(Color.black);
+		controlPanel.getComponent(1).setEnabled(false);
+		
+		controlPanel.getComponent(2).setBackground(Color.black);
+		controlPanel.getComponent(2).setEnabled(false);
+		
+		controlPanel.getComponent(3).setBackground(Color.black);
+		controlPanel.getComponent(3).setEnabled(false);
+		
+		controlPanel.getComponent(4).setBackground(Color.black);
+		controlPanel.getComponent(4).setEnabled(false);
+	
+		controlPanel.getComponent(5).setBackground(Color.black);
+		controlPanel.getComponent(5).setEnabled(false);
+		
+		controlPanel.getComponent(6).setBackground(Color.black);
+		controlPanel.getComponent(6).setEnabled(false);
+	}
 
 	/**
 	 * Cette petite classe interne gère l'écoute des boutons et les actions à prendre selon lesquels sont cliqués
@@ -487,71 +498,89 @@ public class AwtControl{
 			
 			String command = e.getActionCommand();
 			
-			if( command.equals( "ROUGE"	)) {
-				Player nextPlayer = board.nextMove(Color.red);
-				setAllowedButtons();
-				setRestrictedButtons();
-				board.nextAdvancedIAMove();
+			if(board.isTheGameOver() && !command.equals("PLAY")){
 				
-				if(nextPlayer != null){
-					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+				setAllButtonsToBlack();
+				
+			}else{
+				
+				if( command.equals( "ROUGE"	)) {
+					Player nextPlayer = board.nextMove(Color.red);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					while(nextPlayer != null){
+						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
+						else if(nextPlayer.getIA().equals("IA Penible")){	nextPlayer = board.nextMove(board.nextTroubleIAMove(nextPlayer));	}
+						else if(nextPlayer.getIA().equals("IA Difficile")){	nextPlayer = board.nextMove(board.nextHardIAMove(nextPlayer));		}
+						setAllowedButtons();
+						setRestrictedButtons();
+					}
 				}
-			}
-			if( command.equals( "ORANGE")) {
-				Player nextPlayer = board.nextMove(Color.orange);
-				setAllowedButtons();
-				setRestrictedButtons();
-				
-				if(nextPlayer != null){
-					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+				else if( command.equals( "ORANGE")) {
+					Player nextPlayer = board.nextMove(Color.orange);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					while(nextPlayer != null){
+						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
+						else if(nextPlayer.getIA().equals("IA Penible")){	nextPlayer = board.nextMove(board.nextTroubleIAMove(nextPlayer));	}
+						else if(nextPlayer.getIA().equals("IA Difficile")){	nextPlayer = board.nextMove(board.nextHardIAMove(nextPlayer));		}
+						setAllowedButtons();
+						setRestrictedButtons();
+					}
 				}
-			}
-			if( command.equals( "JAUNE"	)) {
-				Player nextPlayer = board.nextMove(Color.yellow);
-				setAllowedButtons();
-				setRestrictedButtons();
-				
-				if(nextPlayer != null){
-					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+				else if( command.equals( "JAUNE"	)) {
+					Player nextPlayer = board.nextMove(Color.yellow);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					while(nextPlayer != null){
+						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
+						else if(nextPlayer.getIA().equals("IA Penible")){	nextPlayer = board.nextMove(board.nextTroubleIAMove(nextPlayer));	}
+						else if(nextPlayer.getIA().equals("IA Difficile")){	nextPlayer = board.nextMove(board.nextHardIAMove(nextPlayer));		}
+						setAllowedButtons();
+						setRestrictedButtons();
+					}
 				}
-			}
-			if( command.equals( "VERT"  )) {
-				Player nextPlayer = board.nextMove(Color.green);
-				setAllowedButtons();
-				setRestrictedButtons();
-				
-				if(nextPlayer != null){
-					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+				else if( command.equals( "VERT"  )) {
+					Player nextPlayer = board.nextMove(Color.green);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					while(nextPlayer != null){
+						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
+						else if(nextPlayer.getIA().equals("IA Penible")){	nextPlayer = board.nextMove(board.nextTroubleIAMove(nextPlayer));	}
+						else if(nextPlayer.getIA().equals("IA Difficile")){	nextPlayer = board.nextMove(board.nextHardIAMove(nextPlayer));		}
+						setAllowedButtons();
+						setRestrictedButtons();
+					}
 				}
-			}
-			if( command.equals( "BLEU"  )) {
-				Player nextPlayer = board.nextMove(Color.blue);
-				setAllowedButtons();
-				setRestrictedButtons();
-				
-				if(nextPlayer != null){
-					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+				else if( command.equals( "BLEU"  )) {
+					Player nextPlayer = board.nextMove(Color.blue);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					while(nextPlayer != null){
+						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
+						else if(nextPlayer.getIA().equals("IA Penible")){	nextPlayer = board.nextMove(board.nextTroubleIAMove(nextPlayer));	}
+						else if(nextPlayer.getIA().equals("IA Difficile")){	nextPlayer = board.nextMove(board.nextHardIAMove(nextPlayer));		}
+						setAllowedButtons();
+						setRestrictedButtons();
+					}
 				}
-			}
-			if( command.equals( "MAGENTA"	)) {
-				Player nextPlayer = board.nextMove(Color.magenta);
-				setAllowedButtons();
-				setRestrictedButtons();
-				
-				if(nextPlayer != null){
-					board.nextMove(board.nextIntermediateIAMove(nextPlayer));
+				else if( command.equals( "MAGENTA"	)) {
+					Player nextPlayer = board.nextMove(Color.magenta);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					while(nextPlayer != null){
+						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
+						else if(nextPlayer.getIA().equals("IA Penible")){	nextPlayer = board.nextMove(board.nextTroubleIAMove(nextPlayer));	}
+						else if(nextPlayer.getIA().equals("IA Difficile")){	nextPlayer = board.nextMove(board.nextHardIAMove(nextPlayer));		}
+						setAllowedButtons();
+						setRestrictedButtons();
+					}
 				}
 			}
 		}
@@ -572,8 +601,8 @@ public class AwtControl{
 			if(command.equals("HEXA_PARAM")){
 				
 				mainFrame.dispose();
-				AwtControl awtControlDemo = new AwtControl(command, 0, "", "", "", "", false, false, false, false);
-				awtControlDemo.show(command);
+				AwtControl awtControlDemo = new AwtControl(command, 0, "", "", "", "", "", "", "", "");
+				awtControlDemo.show(command, "");
 			}
 		}    
 	}

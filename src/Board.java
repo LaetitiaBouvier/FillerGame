@@ -7,10 +7,13 @@ import java.util.ArrayList;
 public interface Board {
 	
 	public Player nextMove(Color couleur);
-	public Color nextIntermediateIAMove(Player joueur);
-	public Color nextAdvancedIAMove();
+	public Color nextEasyIAMove();
+	public Color nextTroubleIAMove(Player joueur);
+	public Color nextHardIAMove(Player joueur);
 	public ArrayList<Color> getColorsFromPlayers();
 	public ArrayList<Color> getFreeColors();
+	public boolean isTheGameOver();
+	public Player getWinner();
 	
 	public int getHauteur();
 	public int getLargeur();

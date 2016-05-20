@@ -9,17 +9,17 @@ public class Player implements Cloneable {
 	private int nbCases;
 	private ArrayList<HexaCell> casesCtrl;
 	private boolean myTurn;
-	private boolean isIA;
+	private String IA;
 	private Boolean isWinner;
 	
-	public Player(String nom, Color couleur, int nbCases, ArrayList<HexaCell> casesCtrl, boolean isIA){
+	public Player(String nom, Color couleur, int nbCases, ArrayList<HexaCell> casesCtrl, String IA){
 		
 		this.nom = nom;
 		this.couleur = couleur;
 		this.nbCases = nbCases;
 		this.casesCtrl = casesCtrl;
 		this.myTurn = false;
-		this.isIA = isIA;
+		this.IA = IA;
 		isWinner = null;
 	}
 	
@@ -82,12 +82,12 @@ public class Player implements Cloneable {
 		this.myTurn = myTurn;
 	}
 
-	public boolean isIA() {
-		return isIA;
+	public String getIA() {
+		return IA;
 	}
 
-	public void setIA(boolean isIA) {
-		this.isIA = isIA;
+	public void setIA(String IA) {
+		this.IA = IA;
 	}
 
 	public Boolean getIsWinner() {
