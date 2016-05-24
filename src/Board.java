@@ -13,6 +13,7 @@ public interface Board {
 	public ArrayList<Color> getColorsFromPlayers();
 	public ArrayList<Color> getFreeColors();
 	public boolean isTheGameOver();
+	public String generateSaveString();
 	public Player getWinner();
 	
 	public int getHauteur();

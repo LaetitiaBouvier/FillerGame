@@ -45,6 +45,9 @@ public class IntroBoard extends Canvas implements Board{
 	public boolean isTheGameOver(){ return true; }
 	
 	@Override
+	public String generateSaveString(){ return null; }
+	
+	@Override
 	public Player getWinner(){ return null; }
 	
 	@Override
@@ -96,8 +99,9 @@ public class IntroBoard extends Canvas implements Board{
 			g.drawString("ATTENTION !", mult*30, 30);
 			
 			g.drawString("Les informations que vous avez entré posent problème !", 10, 60);
-			g.drawString("La taille d'un côté de la grille doit être un entier positif !", 10, 75);
-			g.drawString("Vous ne pouvez pas créer une partie composée unisquement d'IA !", 10, 90);
+			g.drawString("==> La taille d'un côté de la grille doit être un entier positif !", 10, 75);
+			g.drawString("==> Vous ne pouvez pas créer une partie composée unisquement d'IA !", 10, 90);
+			g.drawString("==> Deux joueurs ne peuvent pas avoir le même nom !", 10, 105);
 			g.drawString("Veuillez à nouveau entrer les informations nécessaires !", 10, 120);
 			
 			g.drawString("_____________________§_§§________§___§_________§§_§", 10, 150);

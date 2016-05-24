@@ -3,11 +3,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * Cette classe permet la gestion de tableaux de cellules hexagonales
  */
-public class HexaBoard extends Canvas implements Board{
+public class HexaBoard extends Canvas implements Board {
 	
 	private HexaCell[][] grille;		// grille[i][j] : j represente les lignes, i les éléments en colonne de chaque ligne
 	private int hauteur;
@@ -57,6 +58,31 @@ public class HexaBoard extends Canvas implements Board{
 		defJoueurs(nb, nomJoueur1, nomJoueur2, nomJoueur3, nomJoueur4, IA1, IA2, IA3, IA4);
 	}
 	
+	public HexaBoard(String saveStr){
+		
+		Scanner scLine = new Scanner(saveStr);
+		
+		scLine.next();
+		int nb = Integer.parseInt(scLine.next());
+		scLine.close();
+		
+		int h = 20*nb +60;
+		int l = 20*nb +180;
+		
+		// Settings :
+		setBackground (Color.black);
+		setSize(h, l);
+		
+		this.hauteur = h;
+        this.largeur = l;
+		
+		initialisationGrille(nb, saveStr);
+		
+		this.grille = defVoisins(this.grille);
+		
+		defJoueurs(nb, saveStr);
+	}
+	
 	/**
 	 * Cette fonction initialise la grille des cellules (ici un pavage d'hexagones) en créant les cellules à leur place et en leur attribuant une couleur aléatoire
 	 * 
@@ -98,6 +124,45 @@ public class HexaBoard extends Canvas implements Board{
 				grille[i][j] = new HexaCell(30+i*20+decalageX, 30+j*20+margeY, color, null, null, null, null, null, null);
 			}
 		}
+	}
+	
+	public void initialisationGrille(int nb, String saveStr){
+		
+		int decalageX = 0;
+		int margeY = 120;
+		
+		this.grille = new HexaCell[nb][nb];
+		
+		Scanner sc = new Scanner(saveStr);
+		
+		sc.next();
+		sc.next();
+		
+		String[] str =new String[3];
+		String colorStr = "";
+		Color color = Color.black;
+		
+		for(int i = 0; i < grille.length; i++){
+			for(int j = 0; j < grille[0].length; j++){
+				
+				if(j %2 == 0){ decalageX = -10;}
+				if(j %2 == 1){ decalageX = 0;}
+				
+				str = sc.next().split("_");
+				colorStr = str[2];
+				
+				if(colorStr.equals("java.awt.Color[r=255,g=0,b=0]"))	{ color = Color.red; 		}
+				if(colorStr.equals("java.awt.Color[r=255,g=200,b=0]"))	{ color = Color.orange; 	}
+				if(colorStr.equals("java.awt.Color[r=255,g=255,b=0]"))	{ color = Color.yellow; 	}
+				if(colorStr.equals("java.awt.Color[r=0,g=255,b=0]"))	{ color = Color.green; 		}
+				if(colorStr.equals("java.awt.Color[r=0,g=0,b=255]"))	{ color = Color.blue; 		}
+				if(colorStr.equals("java.awt.Color[r=255,g=0,b=255]"))	{ color = Color.magenta;	}
+				
+				grille[i][j] = new HexaCell(30+i*20+decalageX, 30+j*20+margeY, color, null, null, null, null, null, null);
+			}
+		}
+		
+		sc.close();
 	}
 	
 	/**
@@ -182,6 +247,150 @@ public class HexaBoard extends Canvas implements Board{
 		}
 		else{
 			this.joueur4 = null;
+		}
+	}
+	
+	public void defJoueurs(int nb, String saveStr){
+		//TODO
+		
+		Scanner sc = new Scanner(saveStr);
+		
+		sc.next(); // Type partie
+		sc.next(); // Nb
+		for(int i = 0; i < nb; i++){ sc.nextLine(); } // Grille
+		
+		sc.nextLine();
+		sc.nextLine();
+		Scanner scLine = new Scanner(sc.nextLine());
+		String nomJoueur1 = scLine.next();	System.out.println("NOM JOUEUR 1 : "+nomJoueur1);
+		String IA1 = scLine.next(); if(IA1.equals("IA")){ IA1 += " "+scLine.next(); }
+		String isJ1TurnStr = scLine.next();
+		String colorJ1Str = scLine.next();
+		
+		Color colorJ1 = null;
+		if(colorJ1Str.equals("255_0_0"))	{ colorJ1 = Color.red; 		}
+		if(colorJ1Str.equals("255_200_0"))	{ colorJ1 = Color.orange; 	}
+		if(colorJ1Str.equals("255_255_0"))	{ colorJ1 = Color.yellow; 	}
+		if(colorJ1Str.equals("0_255_0"))	{ colorJ1 = Color.green; 	}
+		if(colorJ1Str.equals("0_0_255"))	{ colorJ1 = Color.blue; 	}
+		if(colorJ1Str.equals("255_0_255"))	{ colorJ1 = Color.magenta; 	}
+		
+		ArrayList<HexaCell> listeJ1 = new ArrayList<HexaCell>();
+		
+		String[] ij = new String[2];
+		while(scLine.hasNext()){
+			ij = scLine.next().split("_");
+			
+			int i = Integer.parseInt(ij[0]);
+			int j = Integer.parseInt(ij[1]);
+			
+			this.grille[i][j].setCtrlBy(nomJoueur1);
+			listeJ1.add(grille[i][j]);
+		}
+		
+		this.joueur1 = new Player(nomJoueur1, colorJ1, listeJ1.size(), listeJ1, IA1);
+		if(isJ1TurnStr.equals("true"))	{ this.joueur1.setMyTurn(true); }
+		else							{ this.joueur1.setMyTurn(false);}
+		
+		scLine.close();
+		scLine = new Scanner(sc.nextLine());
+		String nomJoueur2 = scLine.next();	System.out.println("NOM JOUEUR 2 : "+nomJoueur2);
+		String IA2 = scLine.next(); if(IA2.equals("IA")){ IA2 += " "+scLine.next(); }
+		String isJ2TurnStr = scLine.next();
+		String colorJ2Str = scLine.next();
+		
+		Color colorJ2 = null;
+		if(colorJ2Str.equals("255_0_0"))	{ colorJ2 = Color.red; 		}
+		if(colorJ2Str.equals("255_200_0"))	{ colorJ2 = Color.orange; 	}
+		if(colorJ2Str.equals("255_255_0"))	{ colorJ2 = Color.yellow; 	}
+		if(colorJ2Str.equals("0_255_0"))	{ colorJ2 = Color.green; 	}
+		if(colorJ2Str.equals("0_0_255"))	{ colorJ2 = Color.blue; 	}
+		if(colorJ2Str.equals("255_0_255"))	{ colorJ2 = Color.magenta; 	}
+		
+		ArrayList<HexaCell> listeJ2 = new ArrayList<HexaCell>();
+		
+		ij = new String[2];
+		while(scLine.hasNext()){
+			ij = scLine.next().split("_");
+			
+			int i = Integer.parseInt(ij[0]);
+			int j = Integer.parseInt(ij[1]);
+			
+			this.grille[i][j].setCtrlBy(nomJoueur2);
+			listeJ2.add(grille[i][j]);
+		}
+		
+		this.joueur2 = new Player(nomJoueur2, colorJ2, listeJ2.size(), listeJ2, IA2);
+		if(isJ2TurnStr.equals("true"))	{ this.joueur2.setMyTurn(true); }
+		else							{ this.joueur2.setMyTurn(false);}
+		
+		scLine.close();
+		if(sc.hasNextLine()){
+			
+			scLine = new Scanner(sc.nextLine());
+			String nomJoueur3 = scLine.next();	System.out.println("NOM JOUEUR 3 : "+nomJoueur3);
+			String IA3 = scLine.next(); if(IA3.equals("IA")){ IA3 += " "+scLine.next(); }
+			String isJ3TurnStr = scLine.next();
+			String colorJ3Str = scLine.next();
+			
+			Color colorJ3 = null;
+			if(colorJ3Str.equals("255_0_0"))	{ colorJ3 = Color.red; 		}
+			if(colorJ3Str.equals("255_200_0"))	{ colorJ3 = Color.orange; 	}
+			if(colorJ3Str.equals("255_255_0"))	{ colorJ3 = Color.yellow; 	}
+			if(colorJ3Str.equals("0_255_0"))	{ colorJ3 = Color.green; 	}
+			if(colorJ3Str.equals("0_0_255"))	{ colorJ3 = Color.blue; 	}
+			if(colorJ3Str.equals("255_0_255"))	{ colorJ3 = Color.magenta; 	}
+			
+			ArrayList<HexaCell> listeJ3 = new ArrayList<HexaCell>();
+			
+			ij = new String[2];
+			while(scLine.hasNext()){
+				ij = scLine.next().split("_");
+				
+				int i = Integer.parseInt(ij[0]);
+				int j = Integer.parseInt(ij[1]);
+				
+				this.grille[i][j].setCtrlBy(nomJoueur3);
+				listeJ3.add(grille[i][j]);
+			}
+			
+			this.joueur3 = new Player(nomJoueur3, colorJ3, listeJ3.size(), listeJ3, IA3);
+			if(isJ3TurnStr.equals("true"))	{ this.joueur3.setMyTurn(true); }
+			else							{ this.joueur3.setMyTurn(false);}
+		}
+		scLine.close();
+		if(sc.hasNextLine()){
+			
+			scLine = new Scanner(sc.nextLine());
+			String nomJoueur4 = scLine.next();	System.out.println("NOM JOUEUR 4 : "+nomJoueur4);
+			String IA4 = scLine.next(); if(IA4.equals("IA")){ IA4 += " "+scLine.next(); }
+			String isJ4TurnStr = scLine.next();
+			String colorJ4Str = scLine.next();
+			
+			Color colorJ4 = null;
+			if(colorJ4Str.equals("255_0_0"))	{ colorJ4 = Color.red; 		}
+			if(colorJ4Str.equals("255_200_0"))	{ colorJ4 = Color.orange; 	}
+			if(colorJ4Str.equals("255_255_0"))	{ colorJ4 = Color.yellow; 	}
+			if(colorJ4Str.equals("0_255_0"))	{ colorJ4 = Color.green; 	}
+			if(colorJ4Str.equals("0_0_255"))	{ colorJ4 = Color.blue; 	}
+			if(colorJ4Str.equals("255_0_255"))	{ colorJ4 = Color.magenta; 	}
+			
+			ArrayList<HexaCell> listeJ4 = new ArrayList<HexaCell>();
+			
+			ij = new String[2];
+			while(scLine.hasNext()){
+				ij = scLine.next().split("_");
+				
+				int i = Integer.parseInt(ij[0]);
+				int j = Integer.parseInt(ij[1]);
+				
+				this.grille[i][j].setCtrlBy(nomJoueur4);
+				listeJ4.add(grille[i][j]);
+			}
+			
+			this.joueur4 = new Player(nomJoueur4, colorJ4, listeJ4.size(), listeJ4, IA4);
+			if(isJ4TurnStr.equals("true"))	{ this.joueur4.setMyTurn(true); }
+			else							{ this.joueur4.setMyTurn(false);}
 		}
 	}
 	
@@ -361,7 +570,56 @@ public class HexaBoard extends Canvas implements Board{
 	
 	public Color nextTroubleIAMove(Player joueur){
 		
-		 return null;
+		Player nextPlayer = null;
+		
+		if(joueur == this.joueur1){ nextPlayer = this.joueur2; }
+		if(joueur == this.joueur2){
+			if		(this.joueur3 != null)	{ nextPlayer = this.joueur3; }
+			else if (this.joueur4 != null)	{ nextPlayer = this.joueur4; }
+			else							{ nextPlayer = this.joueur1; }
+		}
+		if(joueur == this.joueur3){
+			if(this.joueur4 != null){ nextPlayer = this.joueur4; }
+			else					{ nextPlayer = this.joueur1 ;}
+		}
+		if(joueur == this.joueur4){ nextPlayer = this.joueur1; }
+		
+		
+		ArrayList<Color> freeColors = getFreeColors();
+		
+		int max  = nextPlayer.getCasesCtrl().size();
+		ArrayList<HexaCell> hexasCtrl = nextPlayer.getCasesCtrl();
+		
+		Color colorIni = nextPlayer.getCasesCtrl().get(0).getColor();
+		Color color = Color.black;
+		
+		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.red); 	}
+		int redList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		if( redList >= max 		&& freeColors.contains(Color.red))		{ color = Color.red; 		max = redList;		}
+		
+		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.orange); 	}
+		int orangeList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		if( orangeList >= max 	&& freeColors.contains(Color.orange))	{ color = Color.orange; 	max = orangeList;	}
+		
+		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.yellow); 	}
+		int yellowList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		if( yellowList >= max 	&& freeColors.contains(Color.yellow))	{ color = Color.yellow; 	max = yellowList;	}
+		
+		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.green); 	}
+		int greenList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		if( greenList >= max 	&& freeColors.contains(Color.green))	{ color = Color.green; 		max = greenList;	}
+		
+		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.blue); 	}
+		int blueList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		if( blueList >= max 		&& freeColors.contains(Color.blue))	{ color = Color.blue; 		max = blueList;		}
+		
+		for(int i = 0; i < hexasCtrl.size(); i++){ hexasCtrl.get(i).setColor(Color.magenta); 	}
+		int magentaList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		if( magentaList >= max 	&& freeColors.contains(Color.magenta))	{ color = Color.magenta; 	max = magentaList;	}
+		
+		for(int i = 0; i < hexasCtrl.size(); i++){ hexasCtrl.get(i).setColor(colorIni); }
+		
+		return color;
 	}
 	
 	public Color nextHardIAMove(Player joueur){
@@ -399,8 +657,6 @@ public class HexaBoard extends Canvas implements Board{
 		if( magentaList >= max 	&& freeColors.contains(Color.magenta))	{ color = Color.magenta; 	max = magentaList;	}
 		
 		for(int i = 0; i < hexasCtrl.size(); i++){ hexasCtrl.get(i).setColor(colorIni); }
-		
-		//try { Thread.sleep(50); } catch (InterruptedException e) { e.printStackTrace(); }
 		
 		return color;
 	}
@@ -769,6 +1025,64 @@ public class HexaBoard extends Canvas implements Board{
 		if(this.joueur1 == null){ isTheGameOver = false; } // Car dans ce cas la partie n'a même pas commencé...
 		
 		return isTheGameOver;
+	}
+	
+	public String generateSaveString(){
+		//TODO
+		
+		String saveStr = new String("");
+		
+		ArrayList<String> listeJoueur1 = new ArrayList<String>();
+		ArrayList<String> listeJoueur2 = new ArrayList<String>();
+		ArrayList<String> listeJoueur3 = new ArrayList<String>();
+		ArrayList<String> listeJoueur4 = new ArrayList<String>();
+		
+		// Insère le type de partie
+		saveStr += "HEXA\r\n";
+		
+		// Insère la taille d'un côté 
+		saveStr += this.grille.length+"\r\n";
+		
+		// Insère tous les éléments de la grille
+		for(int i = 0; i < grille.length; i++){
+			for(int j = 0; j < grille[0].length; j++){
+				saveStr += i+"_"+j+"_"+grille[i][j].getColor()+" ";
+				
+				if(!grille[i][j].getCtrlBy().isEmpty()){
+					if(grille[i][j].getCtrlBy().equals(this.joueur1.getNom())){listeJoueur1.add(i+"_"+j);}
+					if(grille[i][j].getCtrlBy().equals(this.joueur2.getNom())){listeJoueur2.add(i+"_"+j);}
+					if(this.joueur3 != null){
+						if(grille[i][j].getCtrlBy().equals(this.joueur3.getNom())){listeJoueur3.add(i+"_"+j);}
+					}
+					if(this.joueur4 != null){
+						if(grille[i][j].getCtrlBy().equals(this.joueur4.getNom())){listeJoueur4.add(i+"_"+j);}
+					}
+				}
+			}
+			saveStr += "\r\n";
+		}
+		
+		// Insère les caractéristiques des différents joueurs
+		saveStr += "\r\n"+this.joueur1.getNom()+" "+this.joueur1.getIA()+" "+this.joueur1.isMyTurn()+" "
+						 +this.joueur1.getCouleur().getRed()+"_"+this.joueur1.getCouleur().getGreen()+"_"+this.joueur1.getCouleur().getBlue()+" ";
+		for(String str : listeJoueur1){ saveStr += str+" "; }
+		
+		saveStr += "\r\n"+this.joueur2.getNom()+" "+this.joueur2.getIA()+" "+this.joueur2.isMyTurn()+" "
+						 +this.joueur2.getCouleur().getRed()+"_"+this.joueur2.getCouleur().getGreen()+"_"+this.joueur2.getCouleur().getBlue()+" ";
+		for(String str : listeJoueur2){ saveStr += str+" "; }
+		
+		if(this.joueur3 != null){
+			saveStr += "\r\n"+this.joueur3.getNom()+" "+this.joueur3.getIA()+" "+this.joueur3.isMyTurn()+" "
+							 +this.joueur3.getCouleur().getRed()+"_"+this.joueur3.getCouleur().getGreen()+"_"+this.joueur3.getCouleur().getBlue()+" ";
+			for(String str : listeJoueur3){ saveStr += str+" "; }
+		}
+		if(this.joueur4 != null){
+			saveStr += "\r\n"+this.joueur4.getNom()+" "+this.joueur4.getIA()+" "+this.joueur3.isMyTurn()+" "
+							 +this.joueur4.getCouleur().getRed()+"_"+this.joueur4.getCouleur().getGreen()+"_"+this.joueur4.getCouleur().getBlue()+" ";
+			for(String str : listeJoueur4){ saveStr += str+" "; }
+		}
+		
+		return saveStr;
 	}
 	
 	public Player getWinner(){
