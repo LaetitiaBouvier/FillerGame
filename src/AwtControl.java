@@ -33,10 +33,7 @@ import javax.swing.JOptionPane;
 
 /* REMARQUES IMPORTANTES :
  * 
- * - Il faut absoluement interdire deux joueurs d'avoir le même nom
  * - Il faudrait une fonction pour vérifier le format d'un fichier texte avant de créer une partie avec.
- * - Si on ajoute des obstacles (cellules "black") il faudra veuiller à modifier "Save" et "Open" avec.
- * 
  */
 
 /**
@@ -289,7 +286,13 @@ public class AwtControl{
 						}
 						
 						if(j1Text.getText().equals(j2Text.getText()) || j1Text.getText().equals(j3Text.getText()) || j1Text.getText().equals(j4Text.getText())
-						|| j2Text.getText().equals(j3Text.getText()) || j2Text.getText().equals(j4Text.getText()) || j3Text.getText().equals(j4Text.getText())){ cond = false; }
+						|| j2Text.getText().equals(j3Text.getText()) || j2Text.getText().equals(j4Text.getText()) ){ cond = false; }
+						
+						if(!j3Text.getText().isEmpty() && !j4Text.getText().isEmpty()){
+							if(j3Text.getText().equals(j4Text.getText())){
+								cond = false;
+							}
+						}
 
 						int tailleCote = 8;
 
