@@ -22,7 +22,6 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
+
+import com.tdebroc.filler.game.Game;
 
 /* REMARQUES IMPORTANTES :
  * 
@@ -54,7 +55,7 @@ public class AwtControl{
 	public AwtControl(String tableau, int nb, String joueur1, String joueur2, String joueur3, String joueur4, String IA1, String IA2, String IA3, String IA4){
 
 		//Sélectionne le tableau à générer
-		if(tableau.equals("INTRO") || tableau.contains("PARAM")){
+		if(tableau.equals("INTRO") || tableau.contains("PARAM") || tableau.equals("WEB")){
 			this.board = new IntroBoard(500, 500, false);
 		}
 		if(tableau.contains("ERROR")){
@@ -88,6 +89,27 @@ public class AwtControl{
 		mainFrame.setVisible(true);
 		//mainFrame.setResizable(false);
 	}
+	
+	public AwtControl(Game game){
+		
+		this.board = new SquareWebBoard(game);
+
+		//Prépare le cadre principale
+		mainFrame = new Frame("The Filler Game");
+		mainFrame.setSize(1440,1440);
+
+		mainFrame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent windowEvent){
+				System.exit(0);
+			}        
+		});
+
+		//Créé le panneau de contrôle, qui acceuillera les différents boutons, et l'ajoute au cadre principale
+		controlPanel = new Panel();
+		mainFrame.add(controlPanel);
+		mainFrame.setVisible(true);
+		//mainFrame.setResizable(false);
+	}
 
 	/**
 	 * Cette fonction est la fonction principale/d'entrée ...
@@ -97,7 +119,7 @@ public class AwtControl{
 	public static void main(String[] args){
 
 		AwtControl awtControl = new AwtControl("INTRO", 0, "", "", "", "", "", "", "", "");
-		awtControl.show("INTRO", "");
+		awtControl.show("INTRO", "", false);
 	}
 
 	/**
@@ -106,9 +128,9 @@ public class AwtControl{
 	 * @see setMenu()
 	 * @see setBoardAndButtons()
 	 */
-	private void show(String tableau, String choixIAJoueur1){
+	private void show(String tableau, String choixIAJoueur1, boolean isWebGame){
 		
-		if(tableau.isEmpty() && choixIAJoueur1.isEmpty()){
+		if(tableau.isEmpty() && choixIAJoueur1.isEmpty() && !isWebGame){
 			
 			choixIAJoueur1 = board.getJoueur1().getIA();
 			
@@ -153,6 +175,97 @@ public class AwtControl{
 			controlPanel.setLayout(layout);
 
 			controlPanel.add((Component) board);
+		}
+		else if(tableau.equals("WEB") || tableau.equals("WEB_ERROR")){
+			
+			GridBagLayout layout = new GridBagLayout();
+
+			controlPanel.setLayout(layout);						//Ajoute l'agencement au panneau de contrôle (là où l'on souhaite voir le tableau et les boutons)
+			GridBagConstraints gbc = new GridBagConstraints();	//Créé des contraintes sur les éléments de la grille, ici des contraintes de positionnement :
+
+			Label intro = new Label("Veuillez paramètrer votre prochaine partie en ligne :", Label.CENTER);
+			intro.setForeground(Color.white);
+
+			Label nb = new Label("Taille d'un côté :", Label.RIGHT);
+			nb.setForeground(Color.white);
+			final TextField nbText = new TextField(2);
+
+			Label joueur = new Label("Entrez votre pseudo :");
+			joueur.setForeground(Color.white);
+			final TextField joueurText = new TextField(16);
+			
+			Label vide1 = new Label("");
+			
+			Button play = new Button("Play");
+			play.setActionCommand("PLAYWEB");
+			play.addActionListener(new ButtonClickListener());
+			
+			play.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					boolean cond = true;
+					int tailleCote = 8;
+					
+					if(joueurText.getText().isEmpty()){ cond = false; }
+
+					try{   tailleCote = Integer.parseInt(nbText.getText());   }catch (NumberFormatException ex){ cond = false; }
+
+					if(tailleCote < 8){ cond = false; }
+					
+					if(cond){
+						Game game = Web.createGame(joueurText.getText(), tailleCote);
+						
+						JOptionPane.showMessageDialog(null, "Vous devez patienter jusqu'à l'arrivée de votre adversaire,"
+							+ "l'ID de votre partie est : "+game.getIdGame(), "Céation partie", JOptionPane.INFORMATION_MESSAGE);
+						
+						mainFrame.dispose();
+						AwtControl awtControl = new AwtControl(game);
+						awtControl.show("", "", true);
+					}else{
+						mainFrame.dispose();
+						AwtControl awtControl = new AwtControl("WEB_ERROR", 0, "", "", "", "", "", "", "", "");
+						awtControl.show("WEB_ERROR", "", false);
+					}
+
+					/*
+					if(cond){
+						mainFrame.dispose();
+						AwtControl awtControl = new AwtControl("HEXA", Integer.parseInt(nbText.getText()), j1Text.getText(), j2Text.getText(), j3Text.getText(), j4Text.getText(),
+								IAList1.getItem(IAList1.getSelectedIndex()), IAList2.getItem(IAList2.getSelectedIndex()), IAList3.getItem(IAList3.getSelectedIndex()), IAList4.getItem(IAList4.getSelectedIndex()));
+						awtControl.show("HEXA", IAList1.getItem(IAList1.getSelectedIndex()));
+					}else{
+						mainFrame.dispose();
+						AwtControl awtControlDemo = new AwtControl("HEXA_ERROR", 0, "", "", "", "", "", "", "", "");
+						awtControlDemo.show("HEXA_ERROR", "");
+					}
+					*/
+				}
+			} );
+			
+			gbc.anchor = GridBagConstraints.CENTER;
+
+			gbc.gridx = 0; gbc.gridy = 0; 		controlPanel.add((Component) board, gbc);
+
+			gbc.gridx = 0; gbc.gridy = 1; 		controlPanel.add(intro, gbc);
+
+			gbc.gridx = 0; gbc.gridy = 2; 		controlPanel.add(vide1, gbc);
+
+			gbc.anchor = GridBagConstraints.LINE_START;
+			gbc.weightx = 0.25;
+
+			gbc.gridx = 0; gbc.gridy = 3; 		controlPanel.add(nb, gbc);
+
+			gbc.gridx = 1; gbc.gridy = 3; 		controlPanel.add(nbText, gbc);
+
+			gbc.gridx = 0; gbc.gridy = 4; 		controlPanel.add(vide1, gbc);
+
+			gbc.gridx = 0; gbc.gridy = 5; 		controlPanel.add(joueur, gbc);
+			gbc.gridx = 1; gbc.gridy = 5; 		controlPanel.add(joueurText, gbc);
+			
+			gbc.gridx = 0; gbc.gridy = 6; 		controlPanel.add(vide1, gbc);
+			
+			gbc.gridx = 0; gbc.gridy = 7; 		controlPanel.add(play, gbc);
+			
 		}
 		else if(this.board.getJoueur1() != null && this.board.getJoueur2() != null){	// Si on veut afficher un tableau qui nécessite des boutons pour jouer...
 
@@ -304,11 +417,11 @@ public class AwtControl{
 							mainFrame.dispose();
 							AwtControl awtControl = new AwtControl("HEXA", Integer.parseInt(nbText.getText()), j1Text.getText(), j2Text.getText(), j3Text.getText(), j4Text.getText(),
 									IAList1.getItem(IAList1.getSelectedIndex()), IAList2.getItem(IAList2.getSelectedIndex()), IAList3.getItem(IAList3.getSelectedIndex()), IAList4.getItem(IAList4.getSelectedIndex()));
-							awtControl.show("HEXA", IAList1.getItem(IAList1.getSelectedIndex()));
+							awtControl.show("HEXA", IAList1.getItem(IAList1.getSelectedIndex()), false);
 						}else{
 							mainFrame.dispose();
 							AwtControl awtControlDemo = new AwtControl("HEXA_ERROR", 0, "", "", "", "", "", "", "", "");
-							awtControlDemo.show("HEXA_ERROR", "");
+							awtControlDemo.show("HEXA_ERROR", "", false);
 						}
 					}
 				} );
@@ -377,6 +490,7 @@ public class AwtControl{
 		Menu fileMenu = new Menu("File");
 		Menu homeMenu = new Menu("Home");
 		Menu playMenu = new Menu("Play");
+		Menu webMenu  = new Menu("Web");
 
 		//Création des items du menu "File"
 		MenuItem newMenuItem = new MenuItem("Create",new MenuShortcut(KeyEvent.VK_C));
@@ -398,6 +512,13 @@ public class AwtControl{
 		//Création des items du menu "Play"
 		MenuItem hexaMenuItem = new MenuItem("Hexa");
 		hexaMenuItem.setActionCommand("HEXA_PARAM");
+		
+		//Création des items du menu "Web"
+		MenuItem createGameMenuItem = new MenuItem("Créer partie");
+		createGameMenuItem.setActionCommand("CREATEGAME");
+		
+		MenuItem joinGameMenuItem = new MenuItem("Rejoindre partie");
+		joinGameMenuItem.setActionCommand("JOINGAME");
 
 		//Création d'un écouteur d'item, et mise sur écoute des items créés
 		MenuItemListener menuItemListener = new MenuItemListener();
@@ -408,6 +529,8 @@ public class AwtControl{
 		exitMenuItem.addActionListener(menuItemListener);
 		homeMenuItem.addActionListener(menuItemListener);
 		hexaMenuItem.addActionListener(menuItemListener);
+		createGameMenuItem.addActionListener(menuItemListener);
+		joinGameMenuItem.addActionListener(menuItemListener);
 
 		//Ajout des items au menu "File"
 		fileMenu.add(newMenuItem);
@@ -421,11 +544,16 @@ public class AwtControl{
 
 		//AJout des items au menu "Play"
 		playMenu.add(hexaMenuItem);
+		
+		//Ajout des item au menu "Web"
+		webMenu.add(createGameMenuItem);
+		webMenu.add(joinGameMenuItem);
 
 		//Ajout des menus à la barre de menus
 		menuBar.add(fileMenu);
 		menuBar.add(homeMenu);
 		menuBar.add(playMenu);
+		menuBar.add(webMenu);
 
 		//Ajout de la barre de menu au cadre
 		mainFrame.setMenuBar(menuBar);
@@ -652,12 +780,12 @@ public class AwtControl{
 
 				mainFrame.dispose();
 				AwtControl awtControlDemo = new AwtControl(command, 0, "", "", "", "", "", "", "", "");
-				awtControlDemo.show(command, "");
+				awtControlDemo.show(command, "", false);
 			}
 			if(command.equals("INTRO")){
 				mainFrame.dispose();
 				AwtControl awtControlDemo = new AwtControl(command, 0, "", "", "", "", "", "", "", "");
-				awtControlDemo.show(command, "");
+				awtControlDemo.show(command, "", false);
 			}
 			if(command.equals("SAVE")){
 				
@@ -731,8 +859,14 @@ public class AwtControl{
 					
 					mainFrame.dispose();
 					AwtControl awtControl = new AwtControl(saveStr, 0, "", "", "", "", "", "", "", "");
-					awtControl.show("", "");
+					awtControl.show("", "", false);
 				}
+			}
+			
+			if(command.equals("CREATEGAME")){
+				
+				AwtControl awtControl = new AwtControl("WEB", 0, "", "", "", "", "", "", "", "");
+				awtControl.show("WEB", "", false);
 			}
 		}    
 	}
