@@ -46,6 +46,7 @@ public class HexaCell implements Cell, Cloneable {
 		this.ctrlBy = "";
 	}
 	
+	//sert à rien
 	public HexaCell clone() {
 		
 		HexaCell hc = null;

@@ -1,6 +1,6 @@
 import java.awt.Color;
 
-public class SquareCell implements Cell{
+public class SquareCell implements Cell, Cloneable{
 	
 	private int centreX;
 	private int centreY;
@@ -28,7 +28,21 @@ public class SquareCell implements Cell{
 		
 		this.ctrlBy = "";
 	}
-	
+	//sert à rien
+		public SquareCell clone() {
+			
+			SquareCell hc = null;
+	    	try {
+	    		hc = (SquareCell) super.clone();
+	    	} catch(CloneNotSupportedException cnse) { cnse.printStackTrace(System.err); }
+
+	    	if(hc.voisinDroite 	!= null)	hc.voisinDroite = null;
+	    	if(hc.voisinBas 	!= null)	hc.voisinBas 	= null;
+	    	if(hc.voisinGauche 		!= null)	hc.voisinGauche 	= null;
+	    	if(hc.voisinHaut 	!= null)	hc.voisinHaut = null;
+
+		    return hc;
+	  	}
 	public SquareCell getVoisinHaut() { return voisinHaut; }
 	public void setVoisinHaut(SquareCell voisinHaut) { this.voisinHaut = voisinHaut; }
 
