@@ -34,9 +34,7 @@ public class Web {
 		String adresse = "";
 		
 		try {
-			String adressesStr;
-			
-			adressesStr = (""+InetAddress.getLocalHost());
+			String adressesStr = (""+InetAddress.getLocalHost());
 			
 			String[] adresses = adressesStr.split("/");
 			adresse = adresses[1];

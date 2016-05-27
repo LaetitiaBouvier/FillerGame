@@ -30,9 +30,6 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
-import com.tdebroc.filler.connector.PlayerConnector;
-import com.tdebroc.filler.game.Game;
-
 /* REMARQUES IMPORTANTES :
  * 
  * - Il faudrait une fonction pour vérifier le format d'un fichier texte avant de créer une partie avec.
@@ -65,6 +62,14 @@ public class AwtControl{
 		if(tableau.equals("HEXA")){
 			this.board = new HexaBoard(nb, joueur1, joueur2, joueur3, joueur4, IA1, IA2, IA3, IA4);
 		}
+		if(tableau.contains("CREATEWEBHEXA")){
+			
+			String[] str = tableau.split("_");
+			String monAdresse = str[1];
+			String sonAdresse = str[2];
+			
+			this.board = new HexaWebBoard(nb, joueur1, joueur2, monAdresse, sonAdresse);
+		}
 		if(tableau.length() > 10){
 			Scanner sc = new Scanner (tableau);
 			if(sc.next().equals("HEXA")){
@@ -81,7 +86,7 @@ public class AwtControl{
 		mainFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent){
 				System.exit(0);
-			}        
+			}
 		});
 
 		//Créé le panneau de contrôle, qui acceuillera les différents boutons, et l'ajoute au cadre principale
@@ -194,28 +199,35 @@ public class AwtControl{
 					
 					if(cond){
 						
-						
+						String monAdresse = Web.obtenirMonAdresse();
+						System.out.println("Mon Adresse : "+monAdresse);
 						
 						boolean wannaPlay = true;
-						boolean j2isNotHere = true;
-						while(j2isNotHere){
 
-							Object[] options = { "OK", "CANCEL" };
-							Object selectedValue = JOptionPane.showOptionDialog(null, "Vous devez patienter jusqu'à ce qu'un ami rejoigne votre partie, ENSUITE cliquez sur OK."
-									+ " L'ID de votre partie est : ", "Céation partie",
-									JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-									null, options, options[0]);
+						Object[] options = { "OK", "CANCEL" };
+						Object selectedValue = JOptionPane.showOptionDialog(null, "Vous deverez patienter jusqu'à ce qu'un ami rejoigne"
+								+ " votre partie, si vous le souhaitez cliquez sur OK sinon cliquez sur CANCEL."
+								+ " L'adresse de votre partie est : "+monAdresse, "Céation partie",
+								JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+								null, options, options[0]);
 
-							if(selectedValue.toString().equals("1")){
-								wannaPlay = false;
-								break;
-							}
-							
+						if(selectedValue.toString().equals("1")){
+							wannaPlay = false;
 						}
 						
 						if(wannaPlay){
 							
+							String ecoute  = Web.ecoutePaquets();
+							String[] split = ecoute.split("_");
 							
+							String sonAdresse = split[0];
+							String nomJoueur2 = split[1];
+							
+							String nomJoueur1 = joueurText.getText();
+							
+							mainFrame.dispose();
+							AwtControl awtControl = new AwtControl("CREATEHEXAWEB_"+monAdresse+"_"+sonAdresse, tailleCote, nomJoueur1, nomJoueur2, "", "", "", "", "", "");
+							awtControl.show("CREATEHEXAWEB", "", true);
 						}else{
 							
 							mainFrame.dispose();
