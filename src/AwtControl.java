@@ -30,6 +30,7 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
+import com.tdebroc.filler.connector.PlayerConnector;
 import com.tdebroc.filler.game.Game;
 
 /* REMARQUES IMPORTANTES :
@@ -90,9 +91,9 @@ public class AwtControl{
 		//mainFrame.setResizable(false);
 	}
 	
-	public AwtControl(Game game, int tailleCote){
+	public AwtControl(PlayerConnector playerConnector, int tailleCote){
 		
-		this.board = new SquareWebBoard(game, tailleCote);
+		this.board = new SquareWebBoard(playerConnector, tailleCote);
 
 		//Prépare le cadre principale
 		mainFrame = new Frame("The Filler Game");
@@ -213,14 +214,35 @@ public class AwtControl{
 					if(tailleCote < 8){ cond = false; }
 					
 					if(cond){
-						Game game = Web.createGame(joueurText.getText(), tailleCote);
 						
-						JOptionPane.showMessageDialog(null, "Vous devez patienter jusqu'à l'arrivée de votre adversaire,"
-							+ "l'ID de votre partie est : "+game.getIdGame(), "Céation partie", JOptionPane.INFORMATION_MESSAGE);
 						
-						mainFrame.dispose();
-						AwtControl awtControl = new AwtControl(game, tailleCote);
-						awtControl.show("", "", true);
+						
+						boolean wannaPlay = true;
+						boolean j2isNotHere = true;
+						while(j2isNotHere){
+
+							Object[] options = { "OK", "CANCEL" };
+							Object selectedValue = JOptionPane.showOptionDialog(null, "Vous devez patienter jusqu'à ce qu'un ami rejoigne votre partie, ENSUITE cliquez sur OK."
+									+ " L'ID de votre partie est : ", "Céation partie",
+									JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+									null, options, options[0]);
+
+							if(selectedValue.toString().equals("1")){
+								wannaPlay = false;
+								break;
+							}
+							
+						}
+						
+						if(wannaPlay){
+							
+							
+						}else{
+							
+							mainFrame.dispose();
+							AwtControl awtControl = new AwtControl("INTRO", 0, "", "", "", "", "", "", "", "");
+							awtControl.show("INTRO", "", false);
+						}
 					}else{
 						mainFrame.dispose();
 						AwtControl awtControl = new AwtControl("WEB_ERROR", 0, "", "", "", "", "", "", "", "");
@@ -506,7 +528,7 @@ public class AwtControl{
 		exitMenuItem.setActionCommand("EXIT");
 
 		//Création de l'item du menu "Home"
-		MenuItem homeMenuItem = new MenuItem("Retour à l'acceuil");
+		MenuItem homeMenuItem = new MenuItem("Retour à l'accueil");
 		homeMenuItem.setActionCommand("INTRO");
 
 		//Création des items du menu "Play"

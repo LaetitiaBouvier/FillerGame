@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
+import com.tdebroc.filler.connector.PlayerConnector;
 import com.tdebroc.filler.game.Game;
 import com.tdebroc.filler.game.Grid;
 
@@ -12,12 +13,13 @@ public class SquareWebBoard extends Canvas implements Board {
 	private int hauteur;
 	private int largeur;
 	
+	private PlayerConnector playerConnector;
+	private Game game;
+	
 	private Player joueur1;
 	private Player joueur2;
 	
-	public SquareWebBoard(Game game, int tailleCote){
-		
-		System.out.println("Taille côté : "+tailleCote);
+	public SquareWebBoard(PlayerConnector playerConnector, int tailleCote){
 		
 		int h = 20*tailleCote +60;
 		int l = 20*tailleCote +180;
@@ -29,11 +31,16 @@ public class SquareWebBoard extends Canvas implements Board {
         this.hauteur = h;
         this.largeur = l;
         
-        initialisationGrille(tailleCote, game.getGrid());
+        this.playerConnector = playerConnector;
+        this.game = playerConnector.getGame();
+        
+        //playerConnector.getGame().initGame();
+        
+        initialisationGrille(tailleCote, playerConnector.getGame().getGrid());
         
         this.grille = defVoisins(this.grille);
         
-        defJoueurs(tailleCote, game.getPlayers().get(0).getPlayerName(), "en attente d'un adversaire ...");
+        defJoueurs(tailleCote, playerConnector.getGame().getPlayers().get(0).getPlayerName(), playerConnector.getGame().getPlayers().get(1).getPlayerName());
 	}
 	
 	private void initialisationGrille(int nb, Grid grid){
@@ -47,7 +54,7 @@ public class SquareWebBoard extends Canvas implements Board {
 				
 				Color color = Color.black;
 				
-				char c = grid.getCell(i, j).getColor(); // r : rouge, o : orange, j : jaune, v : vert, b : bleu, i : indogo
+				char c = grid.getCell(j, i).getColor(); // r : rouge, o : orange, j : jaune, v : vert, b : bleu, i : indogo
 				
 				if(c == 'R')		{ color = Color.red; 	}
 				else if(c == 'O')	{ color = Color.orange; }
@@ -57,6 +64,23 @@ public class SquareWebBoard extends Canvas implements Board {
 				else if(c == 'I')	{ color = Color.magenta;}
 				
 				grille[i][j] = new SquareCell(30+i*20, 30+j*20+margeY, color, null, null, null, null);
+			}
+		}
+	}
+	
+	private void majGrille(Grid grid){
+		
+		for(int i = 0; i < grille.length; i++){
+			for(int j = 0; j < grille[0].length; j++){
+				
+				char c = grid.getCell(j, i).getColor(); // r : rouge, o : orange, j : jaune, v : vert, b : bleu, i : indogo
+				
+				if(c == 'R')		{ grille[i][j].setColor(Color.red);		}
+				else if(c == 'O')	{ grille[i][j].setColor(Color.orange);	}
+				else if(c == 'J')	{ grille[i][j].setColor(Color.yellow);	}
+				else if(c == 'V')	{ grille[i][j].setColor(Color.green);	}
+				else if(c == 'B')	{ grille[i][j].setColor(Color.blue);	}
+				else if(c == 'I')	{ grille[i][j].setColor(Color.magenta);	}
 			}
 		}
 	}
@@ -135,7 +159,69 @@ public class SquareWebBoard extends Canvas implements Board {
 
 	@Override
 	public Player nextMove(Color couleur) {
-		// TODO Auto-generated method stub
+		
+		Player joueurAct = null;
+		Player joueurSui = null;
+		
+		if(this.joueur1.isMyTurn())	{ joueurAct = this.joueur1; joueurSui = this.joueur2; }
+		else						{ joueurAct = this.joueur2; joueurSui = this.joueur1; }
+		
+		ArrayList<Cell> squareCtrl = joueurAct.getCasesCtrl();
+		
+		for(int i = 0; i < squareCtrl.size(); i++){
+			squareCtrl.get(i).setColor(couleur);
+		}
+		
+		squareCtrl = getConnectedCellsOfSameColor(squareCtrl);
+		
+		joueurAct.setCasesCtrl(squareCtrl);
+		for(Cell cell : squareCtrl){
+			cell.setCtrlBy(joueurAct.getNom());
+		}
+		
+		repaint();
+
+		char c = ' ';
+		
+		if(couleur == Color.red)	{ c = 'R'; }
+		if(couleur == Color.orange)	{ c = 'O'; }
+		if(couleur == Color.yellow)	{ c = 'J'; }
+		if(couleur == Color.green)	{ c = 'V'; }
+		if(couleur == Color.blue)	{ c = 'B'; }
+		if(couleur == Color.magenta){ c = 'I'; }
+		
+		this.playerConnector.sendMove(c);
+		
+		this.game = playerConnector.waitOppenentsAndGetTheirMoves();
+		
+		System.out.println(game.currentPlayerPlaying().getPlayerName());
+		int tour = game.getCurrentIdPlayerTurn();	if(tour == 1){ tour = 0; }else{ tour = 1; }
+		char cJnext = game.getPlayers().get(tour).getPlayerColor();
+		
+		Color couleurJnext = null;
+		
+		if(cJnext == 'R')	{ couleurJnext = Color.red; 	}
+		if(cJnext == 'O')	{ couleurJnext = Color.orange; }
+		if(cJnext == 'J')	{ couleurJnext = Color.yellow; }
+		if(cJnext == 'V')	{ couleurJnext = Color.green; 	}
+		if(cJnext == 'B')	{ couleurJnext = Color.blue; 	}
+		if(cJnext == 'I')	{ couleurJnext = Color.magenta;}
+		
+		squareCtrl = joueurSui.getCasesCtrl();
+		
+		for(int i = 0; i < squareCtrl.size(); i++){
+			squareCtrl.get(i).setColor(couleurJnext);
+		}
+		
+		squareCtrl = getConnectedCellsOfSameColor(squareCtrl);
+		
+		joueurSui.setCasesCtrl(squareCtrl);
+		for(Cell cell : squareCtrl){
+			cell.setCtrlBy(joueurSui.getNom());
+		}
+		
+        repaint();
+		
 		return null;
 	}
 
@@ -232,20 +318,20 @@ public class SquareWebBoard extends Canvas implements Board {
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j< grille[0].length; j++){
 				
-				int x[] = {grille[i][j].getCentreX(),		grille[i][j].getCentreX()+10,	grille[i][j].getCentreX()+10,	grille[i][j].getCentreX(), 		grille[i][j].getCentreX()-10, 	grille[i][j].getCentreX()-10};
-				int y[] = {grille[i][j].getCentreY()+15,	grille[i][j].getCentreY()+5, 	grille[i][j].getCentreY()-5, 	grille[i][j].getCentreY()-15, 	grille[i][j].getCentreY()-5, 	grille[i][j].getCentreY()+5};
+				int x[] = {grille[i][j].getCentreX()+10,	grille[i][j].getCentreX()+10,	grille[i][j].getCentreX()-10,	grille[i][j].getCentreX()-10};
+				int y[] = {grille[i][j].getCentreY()+15,	grille[i][j].getCentreY()-5, 	grille[i][j].getCentreY()-5, 	grille[i][j].getCentreY()+15};
 				
 				g.setColor(grille[i][j].getColor());
-				g.fillPolygon(x, y, 6);
+				g.fillPolygon(x, y, 4);
 				
 				g.setColor(Color.black);
-				g.drawPolygon(x, y, 6);
+				g.drawPolygon(x, y, 4);
 				
 				if(joueur1.getCasesCtrl().contains(grille[i][j])){
-					g.drawString("1", grille[i][j].getCentreX()-2, grille[i][j].getCentreY()+5);
+					g.drawString("1", grille[i][j].getCentreX()-2, grille[i][j].getCentreY()+8);
 				}
 				if(joueur2.getCasesCtrl().contains(grille[i][j])){
-					g.drawString("2", grille[i][j].getCentreX()-2, grille[i][j].getCentreY()+5);
+					g.drawString("2", grille[i][j].getCentreX()-2, grille[i][j].getCentreY()+8);
 				}
 			}
 		}
@@ -258,16 +344,10 @@ public class SquareWebBoard extends Canvas implements Board {
 	public void repaint(){ super.repaint(); }
 
 	@Override
-	public int getHauteur() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public int getHauteur() { return this.hauteur; }
 
 	@Override
-	public int getLargeur() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public int getLargeur() { return this.largeur; }
 
 	@Override
 	public Player getJoueur1() { return this.joueur1; }
