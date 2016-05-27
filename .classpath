@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Utilisateur/Documents/ISEP/IA Contest/connector-ia.jar"/>
+	<classpathentry kind="lib" path="D:/ISEP/A1_S2/Algorithmie_Programmation/Eclipse-Workspace/connector-ia.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
