@@ -90,9 +90,9 @@ public class AwtControl{
 		//mainFrame.setResizable(false);
 	}
 	
-	public AwtControl(Game game){
+	public AwtControl(Game game, int tailleCote){
 		
-		this.board = new SquareWebBoard(game);
+		this.board = new SquareWebBoard(game, tailleCote);
 
 		//Prépare le cadre principale
 		mainFrame = new Frame("The Filler Game");
@@ -219,7 +219,7 @@ public class AwtControl{
 							+ "l'ID de votre partie est : "+game.getIdGame(), "Céation partie", JOptionPane.INFORMATION_MESSAGE);
 						
 						mainFrame.dispose();
-						AwtControl awtControl = new AwtControl(game);
+						AwtControl awtControl = new AwtControl(game, tailleCote);
 						awtControl.show("", "", true);
 					}else{
 						mainFrame.dispose();
@@ -865,6 +865,7 @@ public class AwtControl{
 			
 			if(command.equals("CREATEGAME")){
 				
+				mainFrame.dispose();
 				AwtControl awtControl = new AwtControl("WEB", 0, "", "", "", "", "", "", "", "");
 				awtControl.show("WEB", "", false);
 			}

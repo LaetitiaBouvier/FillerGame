@@ -7,12 +7,12 @@ public class Player implements Cloneable {
 	private String nom;
 	private Color couleur;
 	private int nbCases;
-	private ArrayList<HexaCell> casesCtrl;
+	private ArrayList<Cell> casesCtrl;
 	private boolean myTurn;
 	private String IA;
 	private Boolean isWinner;
 	
-	public Player(String nom, Color couleur, int nbCases, ArrayList<HexaCell> casesCtrl, String IA){
+	public Player(String nom, Color couleur, int nbCases, ArrayList<Cell> casesCtrl, String IA){
 		
 		this.nom = nom;
 		this.couleur = couleur;
@@ -30,12 +30,12 @@ public class Player implements Cloneable {
     		player = (Player) super.clone();
     	} catch(CloneNotSupportedException cnse) { cnse.printStackTrace(System.err); }
     	
-    	ArrayList<HexaCell> clone = new ArrayList<HexaCell>();
+    	ArrayList<Cell> clone = new ArrayList<Cell>();
     	
     	for(int i = 0; i < gridSimu.length; i++){
     		for(int j = 0; j < gridSimu[0].length; j++){
     			
-    			for(HexaCell item : casesCtrl){
+    			for(Cell item : casesCtrl){
     				if( (item.getCentreX() == gridSimu[i][j].getCentreX()) && (item.getCentreY() == gridSimu[i][j].getCentreY()) ){
     					
     					clone.add(gridSimu[i][j]); break;
@@ -67,10 +67,10 @@ public class Player implements Cloneable {
 	public void setNbCases(int nbCases) {
 		this.nbCases = nbCases;
 	}
-	public ArrayList<HexaCell> getCasesCtrl() {
+	public ArrayList<Cell> getCasesCtrl() {
 		return casesCtrl;
 	}
-	public void setCasesCtrl(ArrayList<HexaCell> casesCtrl) {
+	public void setCasesCtrl(ArrayList<Cell> casesCtrl) {
 		this.casesCtrl = casesCtrl;
 	}
 

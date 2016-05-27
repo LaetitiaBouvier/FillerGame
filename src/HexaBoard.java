@@ -98,8 +98,6 @@ public class HexaBoard extends Canvas implements Board {
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j < grille[0].length; j++){
 				
-				// ATTENTION il se passe un truc dans les coins : il faut que les 4 coins soient de couleurs diff !
-				
 				if(j %2 == 0){ decalageX = -10;}
 				if(j %2 == 1){ decalageX = 0;}
 				
@@ -209,8 +207,8 @@ public class HexaBoard extends Canvas implements Board {
 	 */
 	private void defJoueurs( int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, String IA1, String IA2, String IA3, String IA4){
 		
-		ArrayList<HexaCell> listeInitialeJ1 = new ArrayList<HexaCell>();
-		ArrayList<HexaCell> listeInitialeJ2 = new ArrayList<HexaCell>();
+		ArrayList<Cell> listeInitialeJ1 = new ArrayList<Cell>();
+		ArrayList<Cell> listeInitialeJ2 = new ArrayList<Cell>();
 		
 		listeInitialeJ1.add(grille[0][0]);			grille[0][0].setCtrlBy(nomJoueur1);
 		listeInitialeJ1 = getConnectedCellsOfSameColor(listeInitialeJ1);
@@ -225,7 +223,7 @@ public class HexaBoard extends Canvas implements Board {
 		
 		if(!nomJoueur3.isEmpty()){
 			
-			ArrayList<HexaCell> listeInitialeJ3 = new ArrayList<HexaCell>();
+			ArrayList<Cell> listeInitialeJ3 = new ArrayList<Cell>();
 			
 			listeInitialeJ3.add(grille[nb-1][0]);	grille[nb-1][0].setCtrlBy(nomJoueur3);
 			listeInitialeJ3 = getConnectedCellsOfSameColor(listeInitialeJ3);
@@ -238,7 +236,7 @@ public class HexaBoard extends Canvas implements Board {
 		
 		if(!nomJoueur4.isEmpty()){
 			
-			ArrayList<HexaCell> listeInitialeJ4 = new ArrayList<HexaCell>();
+			ArrayList<Cell> listeInitialeJ4 = new ArrayList<Cell>();
 			
 			listeInitialeJ4.add(grille[0][nb-1]);	grille[0][nb-1].setCtrlBy(nomJoueur4);
 			listeInitialeJ4 = getConnectedCellsOfSameColor(listeInitialeJ4);
@@ -275,7 +273,7 @@ public class HexaBoard extends Canvas implements Board {
 		if(colorJ1Str.equals("0_0_255"))	{ colorJ1 = Color.blue; 	}
 		if(colorJ1Str.equals("255_0_255"))	{ colorJ1 = Color.magenta; 	}
 		
-		ArrayList<HexaCell> listeJ1 = new ArrayList<HexaCell>();
+		ArrayList<Cell> listeJ1 = new ArrayList<Cell>();
 		
 		String[] ij = new String[2];
 		while(scLine.hasNext()){
@@ -307,7 +305,7 @@ public class HexaBoard extends Canvas implements Board {
 		if(colorJ2Str.equals("0_0_255"))	{ colorJ2 = Color.blue; 	}
 		if(colorJ2Str.equals("255_0_255"))	{ colorJ2 = Color.magenta; 	}
 		
-		ArrayList<HexaCell> listeJ2 = new ArrayList<HexaCell>();
+		ArrayList<Cell> listeJ2 = new ArrayList<Cell>();
 		
 		ij = new String[2];
 		while(scLine.hasNext()){
@@ -341,7 +339,7 @@ public class HexaBoard extends Canvas implements Board {
 			if(colorJ3Str.equals("0_0_255"))	{ colorJ3 = Color.blue; 	}
 			if(colorJ3Str.equals("255_0_255"))	{ colorJ3 = Color.magenta; 	}
 			
-			ArrayList<HexaCell> listeJ3 = new ArrayList<HexaCell>();
+			ArrayList<Cell> listeJ3 = new ArrayList<Cell>();
 			
 			ij = new String[2];
 			while(scLine.hasNext()){
@@ -375,7 +373,7 @@ public class HexaBoard extends Canvas implements Board {
 			if(colorJ4Str.equals("0_0_255"))	{ colorJ4 = Color.blue; 	}
 			if(colorJ4Str.equals("255_0_255"))	{ colorJ4 = Color.magenta; 	}
 			
-			ArrayList<HexaCell> listeJ4 = new ArrayList<HexaCell>();
+			ArrayList<Cell> listeJ4 = new ArrayList<Cell>();
 			
 			ij = new String[2];
 			while(scLine.hasNext()){
@@ -400,15 +398,15 @@ public class HexaBoard extends Canvas implements Board {
 	 * @param liste		: liste des cellules hexagonales à partir desquels on souhaite obtenir la liste "augmentée" 
 	 * @return liste	: liste des cellules hexagonales comprennant la liste de départ et la liste "augmentée"
 	 */
-	public static ArrayList<HexaCell> getConnectedCellsOfSameColor(ArrayList<HexaCell> listeIni){
+	public static ArrayList<Cell> getConnectedCellsOfSameColor(ArrayList<Cell> listeIni){
 		
-		ArrayList<HexaCell> liste = (ArrayList<HexaCell>) listeIni.clone();
+		ArrayList<Cell> liste = (ArrayList<Cell>) listeIni.clone();
 		
 		boolean add = false;
 		
 		for(int i = 0; i < liste.size(); i++){
 			
-			HexaCell hexa = liste.get(i);
+			HexaCell hexa = (HexaCell) liste.get(i);
 			
 			if( hexa.getVoisinDroiteHaut() != null && !liste.contains(hexa.getVoisinDroiteHaut()) ){
 				if( hexa.getVoisinDroiteHaut().getColor().getRGB() == hexa.getColor().getRGB() && hexa.getVoisinDroiteHaut().getCtrlBy().isEmpty()){
@@ -532,7 +530,7 @@ public class HexaBoard extends Canvas implements Board {
 			}
 		}
 		
-		ArrayList<HexaCell> hexasCtrl = joueurAct.getCasesCtrl();
+		ArrayList<Cell> hexasCtrl = joueurAct.getCasesCtrl();
 		
 		for(int i = 0; i < hexasCtrl.size(); i++){
 			hexasCtrl.get(i).setColor(couleur);
@@ -541,8 +539,8 @@ public class HexaBoard extends Canvas implements Board {
 		hexasCtrl = getConnectedCellsOfSameColor(hexasCtrl);
 		
 		joueurAct.setCasesCtrl(hexasCtrl);
-		for(HexaCell hexa : hexasCtrl){
-			hexa.setCtrlBy(joueurAct.getNom());
+		for(Cell cell : hexasCtrl){
+			cell.setCtrlBy(joueurAct.getNom());
 		}
 		
 		repaint();
@@ -588,7 +586,7 @@ public class HexaBoard extends Canvas implements Board {
 		ArrayList<Color> freeColors = getFreeColors();
 		
 		int max  = nextPlayer.getCasesCtrl().size();
-		ArrayList<HexaCell> hexasCtrl = nextPlayer.getCasesCtrl();
+		ArrayList<Cell> hexasCtrl = nextPlayer.getCasesCtrl();
 		
 		Color colorIni = nextPlayer.getCasesCtrl().get(0).getColor();
 		Color color = Color.black;
@@ -627,7 +625,7 @@ public class HexaBoard extends Canvas implements Board {
 		ArrayList<Color> freeColors = getFreeColors();
 		
 		int max  = joueur.getCasesCtrl().size();
-		ArrayList<HexaCell> hexasCtrl = joueur.getCasesCtrl();
+		ArrayList<Cell> hexasCtrl = joueur.getCasesCtrl();
 		
 		Color colorIni = joueur.getCasesCtrl().get(0).getColor();
 		Color color = Color.black;
@@ -825,7 +823,7 @@ public class HexaBoard extends Canvas implements Board {
 		
 		Player player = players[joueurAct];
 		
-		ArrayList<HexaCell> hexasCtrl = player.getCasesCtrl();
+		ArrayList<Cell> hexasCtrl = player.getCasesCtrl();
 		int prevNbHexasCtrl = 0;
 		int actNbHexasCtrl  = 0;
 		
@@ -843,7 +841,7 @@ public class HexaBoard extends Canvas implements Board {
 			if((actNbHexasCtrl > prevNbHexasCtrl)){
 	
 				player.setCasesCtrl(hexasCtrl);
-				for(HexaCell hexa : hexasCtrl){
+				for(Cell hexa : hexasCtrl){
 					hexa.setCtrlBy(player.getNom());
 				}
 	

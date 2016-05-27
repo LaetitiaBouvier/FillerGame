@@ -19,7 +19,7 @@ public class HexaCell implements Cell, Cloneable {
 	
 	/**
 	 * 
-	 * @param centreX			: bidul
+	 * @param centreX			:
 	 * @param centreY
 	 * @param color
 	 * @param voisinDroiteHaut
