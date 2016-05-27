@@ -91,27 +91,6 @@ public class AwtControl{
 		//mainFrame.setResizable(false);
 	}
 	
-	public AwtControl(PlayerConnector playerConnector, int tailleCote){
-		
-		this.board = new SquareWebBoard(playerConnector, tailleCote);
-
-		//Prépare le cadre principale
-		mainFrame = new Frame("The Filler Game");
-		mainFrame.setSize(1440,1440);
-
-		mainFrame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent windowEvent){
-				System.exit(0);
-			}        
-		});
-
-		//Créé le panneau de contrôle, qui acceuillera les différents boutons, et l'ajoute au cadre principale
-		controlPanel = new Panel();
-		mainFrame.add(controlPanel);
-		mainFrame.setVisible(true);
-		//mainFrame.setResizable(false);
-	}
-
 	/**
 	 * Cette fonction est la fonction principale/d'entrée ...
 	 * 
