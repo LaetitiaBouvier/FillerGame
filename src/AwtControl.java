@@ -62,11 +62,14 @@ public class AwtControl{
 		if(tableau.equals("HEXA")){
 			this.board = new HexaBoard(nb, joueur1, joueur2, joueur3, joueur4, IA1, IA2, IA3, IA4);
 		}
-		if(tableau.contains("CREATEWEBHEXA")){
+		if(tableau.contains("CREATEHEXAWEB")){
 			
 			String[] str = tableau.split("_");
 			String monAdresse = str[1];
 			String sonAdresse = str[2];
+			
+			System.out.println("Nb : "+nb);
+			System.out.println("monAdress : "+monAdresse+" | sonAdresse : "+sonAdresse);
 			
 			this.board = new HexaWebBoard(nb, joueur1, joueur2, monAdresse, sonAdresse);
 		}
@@ -125,8 +128,8 @@ public class AwtControl{
 		}
 
 		controlPanel.setBackground(Color.black);
+		
 		controlPanel.setSize(board.getHauteur(),board.getLargeur());
-
 		mainFrame.setSize(board.getHauteur()+25,board.getLargeur()+450);
 
 		setMenu();

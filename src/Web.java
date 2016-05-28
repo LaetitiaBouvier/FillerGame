@@ -69,7 +69,7 @@ public class Web {
 		try {
 			DatagramSocket socket = new DatagramSocket(2048);
 			
-			byte[] buffer = new byte[1024];
+			byte[] buffer = new byte[32768];
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 			
 			socket.receive(packet);
