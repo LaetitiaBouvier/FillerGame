@@ -1,19 +1,17 @@
 import java.awt.Color;
 
 
-public class HexaCell implements Cell, Cloneable {
+public class DiamondCell implements Cell, Cloneable {
 	
 	private int centreX;
 	private int centreY;
 	
 	private Color color;
 	
-	private HexaCell voisinDroiteHaut;
-	private HexaCell voisinDroite;
-	private HexaCell voisinDroiteBas;
-	private HexaCell voisinGaucheBas;
-	private HexaCell voisinGauche;
-	private HexaCell voisinGaucheHaut;
+	private DiamondCell voisinDroiteHaut;
+	private DiamondCell voisinDroiteBas;
+	private DiamondCell voisinGaucheBas;
+	private DiamondCell voisinGaucheHaut;
 	
 	private String ctrlBy;
 	
@@ -23,13 +21,11 @@ public class HexaCell implements Cell, Cloneable {
 	 * @param centreY
 	 * @param color
 	 * @param voisinDroiteHaut
-	 * @param voisinDroite
-	 * @param voisinDroitBas
+	 * @param voisinDroiteBas
 	 * @param voisinGaucheBas
-	 * @param voisinGauche
 	 * @param voisinGaucheHaut
 	 */
-	public HexaCell(int centreX, int centreY, Color color, HexaCell voisinDroiteHaut,HexaCell voisinDroite, HexaCell voisinDroiteBas, HexaCell voisinGaucheBas, HexaCell voisinGauche, HexaCell voisinGaucheHaut){
+	public DiamondCell(int centreX, int centreY, Color color, DiamondCell voisinDroiteHaut, DiamondCell voisinDroiteBas, DiamondCell voisinGaucheBas, DiamondCell voisinGaucheHaut){
 		
 		this.centreX = centreX;
 		this.centreY = centreY;
@@ -37,78 +33,60 @@ public class HexaCell implements Cell, Cloneable {
 		this.color = color;
 		
 		this.voisinDroiteHaut	= voisinDroiteHaut;
-		this.voisinDroite 		= voisinDroite;
 		this.voisinDroiteBas 	= voisinDroiteBas;
 		this.voisinGaucheBas 	= voisinGaucheBas;
-		this.voisinGauche 		= voisinGauche;
 		this.voisinGaucheHaut 	= voisinGaucheHaut;
 		
 		this.ctrlBy = "";
 	}
 	
 	//sert à rien
-	public HexaCell clone() {
+	public DiamondCell clone() {
 		
-		HexaCell hc = null;
+		DiamondCell hc = null;
     	try {
-    		hc = (HexaCell) super.clone();
+    		hc = (DiamondCell) super.clone();
     	} catch(CloneNotSupportedException cnse) { cnse.printStackTrace(System.err); }
 
     	if(hc.voisinDroiteHaut 	!= null)	hc.voisinDroiteHaut = null;
-    	if(hc.voisinDroite 		!= null)	hc.voisinDroite 	= null;
     	if(hc.voisinDroiteBas 	!= null)	hc.voisinDroiteBas 	= null;
     	if(hc.voisinGaucheBas 	!= null)	hc.voisinGaucheBas 	= null;
-    	if(hc.voisinGauche 		!= null)	hc.voisinGauche 	= null;
     	if(hc.voisinGaucheHaut 	!= null)	hc.voisinGaucheHaut = null;
 
 	    return hc;
   	}
 	
-	public HexaCell getVoisinDroiteHaut() {
+	public DiamondCell getVoisinDroiteHaut() {
 		return voisinDroiteHaut;
 	}
 
-	public void setVoisinDroiteHaut(HexaCell voisinDroiteHaut) {
+	public void setVoisinDroiteHaut(DiamondCell voisinDroiteHaut) {
 		this.voisinDroiteHaut = voisinDroiteHaut;
 	}
 
-	public HexaCell getVoisinDroite() {
-		return voisinDroite;
-	}
 
-	public void setVoisinDroite(HexaCell voisinDroite) {
-		this.voisinDroite = voisinDroite;
-	}
-
-	public HexaCell getVoisinDroiteBas() {
+	public DiamondCell getVoisinDroiteBas() {
 		return voisinDroiteBas;
 	}
 
-	public void setVoisinDroiteBas(HexaCell voisinDroitBas) {
+	public void setVoisinDroiteBas(DiamondCell voisinDroitBas) {
 		this.voisinDroiteBas = voisinDroitBas;
 	}
 
-	public HexaCell getVoisinGaucheBas() {
+	public DiamondCell getVoisinGaucheBas() {
 		return voisinGaucheBas;
 	}
 
-	public void setVoisinGaucheBas(HexaCell voisinGaucheBas) {
+	public void setVoisinGaucheBas(DiamondCell voisinGaucheBas) {
 		this.voisinGaucheBas = voisinGaucheBas;
 	}
 
-	public HexaCell getVoisinGauche() {
-		return voisinGauche;
-	}
 
-	public void setVoisinGauche(HexaCell voisinGauche) {
-		this.voisinGauche = voisinGauche;
-	}
-
-	public HexaCell getVoisinGaucheHaut() {
+	public DiamondCell getVoisinGaucheHaut() {
 		return voisinGaucheHaut;
 	}
 
-	public void setVoisinGaucheHaut(HexaCell voisinGaucheHaut) {
+	public void setVoisinGaucheHaut(DiamondCell voisinGaucheHaut) {
 		this.voisinGaucheHaut = voisinGaucheHaut;
 	}
 

@@ -75,6 +75,32 @@ public class Player implements Cloneable {
 	    return player;
   	}
 	
+	public Player clone(DiamondCell[][] gridSimu) {
+		
+    	Player player = null;
+    	try {
+    		player = (Player) super.clone();
+    	} catch(CloneNotSupportedException cnse) { cnse.printStackTrace(System.err); }
+    	
+    	ArrayList<Cell> clone = new ArrayList<Cell>();
+    	
+    	for(int i = 0; i < gridSimu.length; i++){
+    		for(int j = 0; j < gridSimu[0].length; j++){
+    			
+    			for(Cell item : casesCtrl){
+    				if( (item.getCentreX() == gridSimu[i][j].getCentreX()) && (item.getCentreY() == gridSimu[i][j].getCentreY()) ){
+    					
+    					clone.add(gridSimu[i][j]); break;
+    				}
+    			}
+    		}
+    	}
+        
+        player.casesCtrl = clone;
+    	
+	    return player;
+  	}
+	
 	public String getNom() {
 		return nom;
 	}

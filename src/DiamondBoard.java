@@ -6,11 +6,11 @@ import java.util.Random;
 import java.util.Scanner;
 
 /**
- * Cette classe permet la gestion de tableaux de cellules hexagonales
+ * Cette classe permet la gestion de tableaux de cellules diamondgonales
  */
-public class HexaBoard extends Canvas implements Board {
+public class DiamondBoard extends Canvas implements Board {
 	
-	private HexaCell[][] grille;		// grille[i][j] : j represente les lignes, i les éléments en colonne de chaque ligne
+	private DiamondCell[][] grille;		// grille[i][j] : j represente les lignes, i les éléments en colonne de chaque ligne
 	private int hauteur;
 	private int largeur;
 	private Player joueur1;
@@ -39,7 +39,7 @@ public class HexaBoard extends Canvas implements Board {
 	 * @see defVoisins(int nb)
 	 * @see defJoueurs(int nb)
 	 */
-	public HexaBoard(int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, String IA1, String IA2, String IA3, String IA4) {
+	public DiamondBoard(int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, String IA1, String IA2, String IA3, String IA4) {
 		
 		int h = 20*nb +60;
 		int l = 20*nb +180;
@@ -58,7 +58,7 @@ public class HexaBoard extends Canvas implements Board {
 		defJoueurs(nb, nomJoueur1, nomJoueur2, nomJoueur3, nomJoueur4, IA1, IA2, IA3, IA4);
 	}
 	
-	public HexaBoard(String saveStr){
+	public DiamondBoard(String saveStr){
 		
 		Scanner scLine = new Scanner(saveStr);
 		
@@ -84,22 +84,25 @@ public class HexaBoard extends Canvas implements Board {
 	}
 	
 	/**
-	 * Cette fonction initialise la grille des cellules (ici un pavage d'hexagones) en créant les cellules à leur place et en leur attribuant une couleur aléatoire
+	 * Cette fonction initialise la grille des cellules (ici un pavage d'diamondgones) en créant les cellules à leur place et en leur attribuant une couleur aléatoire
 	 * 
 	 * @param nb	: entier représentant la taille d'un côté du tableau
 	 */
 	private void initialisationGrille(int nb){
 		
 		int decalageX = 0;
+		int decalageY = 0;
 		int margeY = 120;
 		
-		this.grille = new HexaCell[nb][nb];
+		this.grille = new DiamondCell[nb][nb];
 		
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j < grille[0].length; j++){
 				
 				if(j %2 == 0){ decalageX = -10;}
 				if(j %2 == 1){ decalageX = 0;}
+				
+				decalageY = j*5;
 				
 				Color color = Color.black;
 				double random = Math.random();
@@ -119,7 +122,7 @@ public class HexaBoard extends Canvas implements Board {
 					color = Color.magenta;
 				}
 				
-				grille[i][j] = new HexaCell(30+i*20+decalageX, 30+j*20+margeY, color, null, null, null, null, null, null);
+				grille[i][j] = new DiamondCell(30+i*20+decalageX, 30+j*20+decalageY+margeY, color, null, null, null, null);
 			}
 		}
 	}
@@ -127,9 +130,10 @@ public class HexaBoard extends Canvas implements Board {
 	public void initialisationGrille(int nb, String saveStr){
 		
 		int decalageX = 0;
+		int decalageY = 0;
 		int margeY = 120;
 		
-		this.grille = new HexaCell[nb][nb];
+		this.grille = new DiamondCell[nb][nb];
 		
 		Scanner sc = new Scanner(saveStr);
 		
@@ -145,6 +149,7 @@ public class HexaBoard extends Canvas implements Board {
 				
 				if(j %2 == 0){ decalageX = -10;}
 				if(j %2 == 1){ decalageX = 0;}
+				decalageY = j*5;
 				
 				
 				str = sc.next().split("_");
@@ -157,7 +162,7 @@ public class HexaBoard extends Canvas implements Board {
 				if(colorStr.equals("java.awt.Color[r=0,g=0,b=255]"))	{ color = Color.blue; 		}
 				if(colorStr.equals("java.awt.Color[r=255,g=0,b=255]"))	{ color = Color.magenta;	}
 				
-				grille[i][j] = new HexaCell(30+i*20+decalageX, 30+j*20+margeY, color, null, null, null, null, null, null);
+				grille[i][j] = new DiamondCell(30+i*20+decalageX, 30+j*20+decalageY+margeY, color, null, null, null, null);
 			}
 		}
 		
@@ -168,25 +173,21 @@ public class HexaBoard extends Canvas implements Board {
 	 * Cette fonction définie les voisins de chaque cellule héxagonale (liaison des cellules entre elles) en fonction de son positionnement sur la grille
 	 * 
 	 */
-	private HexaCell[][] defVoisins(HexaCell[][] grille){
+	private DiamondCell[][] defVoisins(DiamondCell[][] grille){
 		
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j < grille.length; j++){
 				
 				if(j % 2 == 0){
 					try{ grille[i][j].setVoisinDroiteHaut(grille[i][j-1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroiteHaut(null); 	}
-					try{ grille[i][j].setVoisinDroite(grille[i+1][j]); 		}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroite(null); 		}
 					try{ grille[i][j].setVoisinDroiteBas(grille[i][j+1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroiteBas(null); 	}
 					try{ grille[i][j].setVoisinGaucheBas(grille[i-1][j+1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGaucheBas(null); 	}
-					try{ grille[i][j].setVoisinGauche(grille[i-1][j]);		}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGauche(null); 		}
 					try{ grille[i][j].setVoisinGaucheHaut(grille[i-1][j-1]);}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGaucheHaut(null); 	}
 				}
 				if(j % 2 == 1){
 					try{ grille[i][j].setVoisinDroiteHaut(grille[i+1][j-1]);}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroiteHaut(null); 	}
-					try{ grille[i][j].setVoisinDroite(grille[i+1][j]);		}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroite(null); 		}
 					try{ grille[i][j].setVoisinDroiteBas(grille[i+1][j+1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinDroiteBas(null);	}
 					try{ grille[i][j].setVoisinGaucheBas(grille[i][j+1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGaucheBas(null); 	}
-					try{ grille[i][j].setVoisinGauche(grille[i-1][j]);		}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGauche(null); 		}
 					try{ grille[i][j].setVoisinGaucheHaut(grille[i][j-1]);	}catch(ArrayIndexOutOfBoundsException e){ grille[i][j].setVoisinGaucheHaut(null); 	}
 				}
 			}
@@ -204,7 +205,7 @@ public class HexaBoard extends Canvas implements Board {
 	 * @param nomJoueur4	: chaîne de caractère représentant le nom du joueur 4
 	 * @param nb			: entier représentant la taille d'un côté du tableau
 	 * 
-	 * @see getConnectedSameColorHexas(ArrayList<Hexa> listeHexa)
+	 * @see getConnectedSameColorDiamonds(ArrayList<Hexa> listeHexa)
 	 */
 	private void defJoueurs( int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, String IA1, String IA2, String IA3, String IA4){
 		
@@ -394,10 +395,10 @@ public class HexaBoard extends Canvas implements Board {
 	}
 	
 	/**
-	 * Cette fonction récursive permet d'obtenir, à partir d'une liste initiale de celulles hexagonales, une liste "augmentée" : comprennant en plus leurs voisines de même couleur 
+	 * Cette fonction récursive permet d'obtenir, à partir d'une liste initiale de celulles diamondgonales, une liste "augmentée" : comprennant en plus leurs voisines de même couleur 
 	 * 
-	 * @param liste		: liste des cellules hexagonales à partir desquels on souhaite obtenir la liste "augmentée" 
-	 * @return liste	: liste des cellules hexagonales comprennant la liste de départ et la liste "augmentée"
+	 * @param liste		: liste des cellules diamondgonales à partir desquels on souhaite obtenir la liste "augmentée" 
+	 * @return liste	: liste des cellules diamondgonales comprennant la liste de départ et la liste "augmentée"
 	 */
 	public static ArrayList<Cell> getConnectedCellsOfSameColor(ArrayList<Cell> listeIni){
 		
@@ -407,42 +408,32 @@ public class HexaBoard extends Canvas implements Board {
 		
 		for(int i = 0; i < liste.size(); i++){
 			
-			HexaCell hexa = (HexaCell) liste.get(i);
+			DiamondCell diamond = (DiamondCell) liste.get(i);
 			
-			if( hexa.getVoisinDroiteHaut() != null && !liste.contains(hexa.getVoisinDroiteHaut()) ){
-				if( hexa.getVoisinDroiteHaut().getColor().getRGB() == hexa.getColor().getRGB() && hexa.getVoisinDroiteHaut().getCtrlBy().isEmpty()){
+			if( diamond.getVoisinDroiteHaut() != null && !liste.contains(diamond.getVoisinDroiteHaut()) ){
+				if( diamond.getVoisinDroiteHaut().getColor().getRGB() == diamond.getColor().getRGB() && diamond.getVoisinDroiteHaut().getCtrlBy().isEmpty()){
 					
-					liste.add(hexa.getVoisinDroiteHaut());	add = true;
+					liste.add(diamond.getVoisinDroiteHaut());	add = true;
 				}
 			}
-			if( hexa.getVoisinDroite() != null && !liste.contains(hexa.getVoisinDroite()) ){
-				if( hexa.getVoisinDroite().getColor().getRGB() == hexa.getColor().getRGB() && hexa.getVoisinDroite().getCtrlBy().isEmpty()){
+
+			if( diamond.getVoisinDroiteBas() != null && !liste.contains(diamond.getVoisinDroiteBas()) ){
+				if( diamond.getVoisinDroiteBas().getColor().getRGB() == diamond.getColor().getRGB() && diamond.getVoisinDroiteBas().getCtrlBy().isEmpty()){
 					
-					liste.add(hexa.getVoisinDroite());		add = true;
+					liste.add(diamond.getVoisinDroiteBas());	add = true;
 				}
 			}
-			if( hexa.getVoisinDroiteBas() != null && !liste.contains(hexa.getVoisinDroiteBas()) ){
-				if( hexa.getVoisinDroiteBas().getColor().getRGB() == hexa.getColor().getRGB() && hexa.getVoisinDroiteBas().getCtrlBy().isEmpty()){
+			if(diamond.getVoisinGaucheBas() != null && !liste.contains(diamond.getVoisinGaucheBas()) ){
+				if( diamond.getVoisinGaucheBas().getColor().getRGB() == diamond.getColor().getRGB() && diamond.getVoisinGaucheBas().getCtrlBy().isEmpty()){
 					
-					liste.add(hexa.getVoisinDroiteBas());	add = true;
+					liste.add(diamond.getVoisinGaucheBas());	add = true;
 				}
 			}
-			if(hexa.getVoisinGaucheBas() != null && !liste.contains(hexa.getVoisinGaucheBas()) ){
-				if( hexa.getVoisinGaucheBas().getColor().getRGB() == hexa.getColor().getRGB() && hexa.getVoisinGaucheBas().getCtrlBy().isEmpty()){
+
+			if(diamond.getVoisinGaucheHaut() != null && !liste.contains(diamond.getVoisinGaucheHaut()) ){
+				if( diamond.getVoisinGaucheHaut().getColor().getRGB() == diamond.getColor().getRGB() && diamond.getVoisinGaucheHaut().getCtrlBy().isEmpty()){
 					
-					liste.add(hexa.getVoisinGaucheBas());	add = true;
-				}
-			}
-			if(hexa.getVoisinGauche() != null && !liste.contains(hexa.getVoisinGauche()) ){
-				if( hexa.getVoisinGauche().getColor().getRGB() == hexa.getColor().getRGB() && hexa.getVoisinGauche().getCtrlBy().isEmpty()){
-					
-					liste.add(hexa.getVoisinGauche());		add = true;
-				}
-			}
-			if(hexa.getVoisinGaucheHaut() != null && !liste.contains(hexa.getVoisinGaucheHaut()) ){
-				if( hexa.getVoisinGaucheHaut().getColor().getRGB() == hexa.getColor().getRGB() && hexa.getVoisinGaucheHaut().getCtrlBy().isEmpty()){
-					
-					liste.add(hexa.getVoisinGaucheHaut());	add = true;
+					liste.add(diamond.getVoisinGaucheHaut());	add = true;
 				}
 			}
 		}
@@ -456,7 +447,7 @@ public class HexaBoard extends Canvas implements Board {
 	 * Cette fonction fait progresser la partie, étape par étape, selon les couleurs d'actions prises : redéfinissant ainsi les listes de cellules contrôlées par les joueurs
 	 * Cette fonction rafraichit ensuite le tableau (suite au différents changements de couleur) en appelant la fonction "repaint()"
 	 * 
-	 * @see getConnectedSameColorHexas(ArrayList<Hexa> liste)
+	 * @see getConnectedSameColorDiamonds(ArrayList<Hexa> liste)
 	 * @see setCasesCtrl(ArrayList<Hexa> liste)
 	 * @see repaint()
 	 * 
@@ -531,16 +522,16 @@ public class HexaBoard extends Canvas implements Board {
 			}
 		}
 		
-		ArrayList<Cell> hexasCtrl = joueurAct.getCasesCtrl();
+		ArrayList<Cell> diamondsCtrl = joueurAct.getCasesCtrl();
 		
-		for(int i = 0; i < hexasCtrl.size(); i++){
-			hexasCtrl.get(i).setColor(couleur);
+		for(int i = 0; i < diamondsCtrl.size(); i++){
+			diamondsCtrl.get(i).setColor(couleur);
 		}
 		
-		hexasCtrl = getConnectedCellsOfSameColor(hexasCtrl);
+		diamondsCtrl = getConnectedCellsOfSameColor(diamondsCtrl);
 		
-		joueurAct.setCasesCtrl(hexasCtrl);
-		for(Cell cell : hexasCtrl){
+		joueurAct.setCasesCtrl(diamondsCtrl);
+		for(Cell cell : diamondsCtrl){
 			cell.setCtrlBy(joueurAct.getNom());
 		}
 		
@@ -587,36 +578,36 @@ public class HexaBoard extends Canvas implements Board {
 		ArrayList<Color> freeColors = getFreeColors();
 		
 		int max  = nextPlayer.getCasesCtrl().size();
-		ArrayList<Cell> hexasCtrl = nextPlayer.getCasesCtrl();
+		ArrayList<Cell> diamondsCtrl = nextPlayer.getCasesCtrl();
 		
 		Color colorIni = nextPlayer.getCasesCtrl().get(0).getColor();
 		Color color = Color.black;
 		
-		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.red); 	}
-		int redList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++)	{ diamondsCtrl.get(i).setColor(Color.red); 	}
+		int redList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( redList >= max 		&& freeColors.contains(Color.red))		{ color = Color.red; 		max = redList;		}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.orange); 	}
-		int orangeList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++)	{ diamondsCtrl.get(i).setColor(Color.orange); 	}
+		int orangeList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( orangeList >= max 	&& freeColors.contains(Color.orange))	{ color = Color.orange; 	max = orangeList;	}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.yellow); 	}
-		int yellowList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++)	{ diamondsCtrl.get(i).setColor(Color.yellow); 	}
+		int yellowList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( yellowList >= max 	&& freeColors.contains(Color.yellow))	{ color = Color.yellow; 	max = yellowList;	}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.green); 	}
-		int greenList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++)	{ diamondsCtrl.get(i).setColor(Color.green); 	}
+		int greenList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( greenList >= max 	&& freeColors.contains(Color.green))	{ color = Color.green; 		max = greenList;	}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.blue); 	}
-		int blueList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++)	{ diamondsCtrl.get(i).setColor(Color.blue); 	}
+		int blueList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( blueList >= max 		&& freeColors.contains(Color.blue))	{ color = Color.blue; 		max = blueList;		}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++){ hexasCtrl.get(i).setColor(Color.magenta); 	}
-		int magentaList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++){ diamondsCtrl.get(i).setColor(Color.magenta); 	}
+		int magentaList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( magentaList >= max 	&& freeColors.contains(Color.magenta))	{ color = Color.magenta; 	max = magentaList;	}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++){ hexasCtrl.get(i).setColor(colorIni); }
+		for(int i = 0; i < diamondsCtrl.size(); i++){ diamondsCtrl.get(i).setColor(colorIni); }
 		
 		return color;
 	}
@@ -626,36 +617,36 @@ public class HexaBoard extends Canvas implements Board {
 		ArrayList<Color> freeColors = getFreeColors();
 		
 		int max  = joueur.getCasesCtrl().size();
-		ArrayList<Cell> hexasCtrl = joueur.getCasesCtrl();
+		ArrayList<Cell> diamondsCtrl = joueur.getCasesCtrl();
 		
 		Color colorIni = joueur.getCasesCtrl().get(0).getColor();
 		Color color = Color.black;
 		
-		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.red); 	}
-		int redList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++)	{ diamondsCtrl.get(i).setColor(Color.red); 	}
+		int redList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( redList >= max 		&& freeColors.contains(Color.red))		{ color = Color.red; 		max = redList;		}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.orange); 	}
-		int orangeList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++)	{ diamondsCtrl.get(i).setColor(Color.orange); 	}
+		int orangeList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( orangeList >= max 	&& freeColors.contains(Color.orange))	{ color = Color.orange; 	max = orangeList;	}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.yellow); 	}
-		int yellowList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++)	{ diamondsCtrl.get(i).setColor(Color.yellow); 	}
+		int yellowList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( yellowList >= max 	&& freeColors.contains(Color.yellow))	{ color = Color.yellow; 	max = yellowList;	}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.green); 	}
-		int greenList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++)	{ diamondsCtrl.get(i).setColor(Color.green); 	}
+		int greenList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( greenList >= max 	&& freeColors.contains(Color.green))	{ color = Color.green; 		max = greenList;	}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++)	{ hexasCtrl.get(i).setColor(Color.blue); 	}
-		int blueList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++)	{ diamondsCtrl.get(i).setColor(Color.blue); 	}
+		int blueList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( blueList >= max 		&& freeColors.contains(Color.blue))	{ color = Color.blue; 		max = blueList;		}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++){ hexasCtrl.get(i).setColor(Color.magenta); 	}
-		int magentaList = getConnectedCellsOfSameColor(hexasCtrl).size();
+		for(int i = 0; i < diamondsCtrl.size(); i++){ diamondsCtrl.get(i).setColor(Color.magenta); 	}
+		int magentaList = getConnectedCellsOfSameColor(diamondsCtrl).size();
 		if( magentaList >= max 	&& freeColors.contains(Color.magenta))	{ color = Color.magenta; 	max = magentaList;	}
 		
-		for(int i = 0; i < hexasCtrl.size(); i++){ hexasCtrl.get(i).setColor(colorIni); }
+		for(int i = 0; i < diamondsCtrl.size(); i++){ diamondsCtrl.get(i).setColor(colorIni); }
 		
 		return color;
 	}
@@ -664,7 +655,7 @@ public class HexaBoard extends Canvas implements Board {
 		
 		int gridSize = (this.grille.length)*(this.grille.length);
 		
-		HexaCell[][] gridSimu = new HexaCell[grille.length][grille.length];
+		DiamondCell[][] gridSimu = new DiamondCell[grille.length][grille.length];
 		
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j < grille.length; j++){
@@ -818,42 +809,42 @@ public class HexaBoard extends Canvas implements Board {
 	/*
 	 * Création de l'arbre des décisions possibles ...
 	 */
-	public DecisionTree decisionSimu(DecisionTree dt, int gridSize, int nbJoueurs, int joueurAct, Player[] players, HexaCell[][] gridSimu){
+	public DecisionTree decisionSimu(DecisionTree dt, int gridSize, int nbJoueurs, int joueurAct, Player[] players, DiamondCell[][] gridSimu){
 
 		ArrayList<Color> couleursDispo = getFreeSimuColors(players);
 		
 		Player player = players[joueurAct];
 		
-		ArrayList<Cell> hexasCtrl = player.getCasesCtrl();
-		int prevNbHexasCtrl = 0;
-		int actNbHexasCtrl  = 0;
+		ArrayList<Cell> diamondsCtrl = player.getCasesCtrl();
+		int prevNbDiamondsCtrl = 0;
+		int actNbDiamondsCtrl  = 0;
 		
 		for(Color itemColor : couleursDispo){
 			
-			for(int i = 0; i < hexasCtrl.size(); i++){
-				hexasCtrl.get(i).setColor(itemColor);
+			for(int i = 0; i < diamondsCtrl.size(); i++){
+				diamondsCtrl.get(i).setColor(itemColor);
 			}
 			player.setCouleur(itemColor);
 			
-			prevNbHexasCtrl = hexasCtrl.size();
-			hexasCtrl = HexaBoard.getConnectedCellsOfSameColor(hexasCtrl);
-			actNbHexasCtrl  = hexasCtrl.size();
+			prevNbDiamondsCtrl = diamondsCtrl.size();
+			diamondsCtrl = DiamondBoard.getConnectedCellsOfSameColor(diamondsCtrl);
+			actNbDiamondsCtrl  = diamondsCtrl.size();
 	
-			if((actNbHexasCtrl > prevNbHexasCtrl)){
+			if((actNbDiamondsCtrl > prevNbDiamondsCtrl)){
 	
-				player.setCasesCtrl(hexasCtrl);
-				for(Cell hexa : hexasCtrl){
-					hexa.setCtrlBy(player.getNom());
+				player.setCasesCtrl(diamondsCtrl);
+				for(Cell diamond : diamondsCtrl){
+					diamond.setCtrlBy(player.getNom());
 				}
 	
-				if(hexasCtrl.size() > (gridSize/nbJoueurs)){
+				if(diamondsCtrl.size() > (gridSize/nbJoueurs)){
 					player.setIsWinner(true);
 					return dt;
 				}
 	
 				player.setMyTurn(false);
 	
-				gridSimu = new HexaCell[grille.length][grille.length];
+				gridSimu = new DiamondCell[grille.length][grille.length];
 				
 				for(int i = 0; i < grille.length; i++){
 					for(int j = 0; j < grille.length; j++){
@@ -1037,7 +1028,7 @@ public class HexaBoard extends Canvas implements Board {
 		ArrayList<String> listeJoueur4 = new ArrayList<String>();
 		
 		// Insère le type de partie
-		saveStr += "HEXA\r\n";
+		saveStr += "DIAMOND\r\n";
 		
 		// Insère la taille d'un côté 
 		saveStr += this.grille.length+"\r\n";
@@ -1103,7 +1094,7 @@ public class HexaBoard extends Canvas implements Board {
 	
 	@Override
 	/**
-	 * Cette fonction dessine le tableau en tenant compte des coordonées et des couleurs de chaque cellule, ici il s'agit d'un pavage d'hexagones
+	 * Cette fonction dessine le tableau en tenant compte des coordonées et des couleurs de chaque cellule, ici il s'agit d'un pavage d'diamondgones
 	 */
 	public void paint(Graphics g){
 		
@@ -1127,14 +1118,14 @@ public class HexaBoard extends Canvas implements Board {
 		for(int i = 0; i < grille.length; i++){
 			for(int j = 0; j< grille[0].length; j++){
 				
-				int x[] = {grille[i][j].getCentreX(),		grille[i][j].getCentreX()+10,	grille[i][j].getCentreX()+10,	grille[i][j].getCentreX(), 		grille[i][j].getCentreX()-10, 	grille[i][j].getCentreX()-10};
-				int y[] = {grille[i][j].getCentreY()+15,	grille[i][j].getCentreY()+5, 	grille[i][j].getCentreY()-5, 	grille[i][j].getCentreY()-15, 	grille[i][j].getCentreY()-5, 	grille[i][j].getCentreY()+5};
+				int x[] = {grille[i][j].getCentreX(),		grille[i][j].getCentreX()+10,	grille[i][j].getCentreX()+0,	grille[i][j].getCentreX()-10};
+				int y[] = {grille[i][j].getCentreY()+15,	grille[i][j].getCentreY()+0, 	grille[i][j].getCentreY()-15, 	grille[i][j].getCentreY()};
 				
 				g.setColor(grille[i][j].getColor());
-				g.fillPolygon(x, y, 6);
+				g.fillPolygon(x, y, 4);
 				
 				g.setColor(Color.black);
-				g.drawPolygon(x, y, 6);
+				g.drawPolygon(x, y, 4);
 				
 				if(joueur1.getCasesCtrl().contains(grille[i][j])){
 					g.drawString("1", grille[i][j].getCentreX()-2, grille[i][j].getCentreY()+5);
