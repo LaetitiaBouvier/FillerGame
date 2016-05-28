@@ -102,7 +102,7 @@ public class DiamondBoard extends Canvas implements Board {
 				if(j %2 == 0){ decalageX = -10;}
 				if(j %2 == 1){ decalageX = 0;}
 				
-				decalageY = j*5;
+				decalageY = -j*5; //don't touch
 				
 				Color color = Color.black;
 				double random = Math.random();
@@ -162,7 +162,7 @@ public class DiamondBoard extends Canvas implements Board {
 				if(colorStr.equals("java.awt.Color[r=0,g=0,b=255]"))	{ color = Color.blue; 		}
 				if(colorStr.equals("java.awt.Color[r=255,g=0,b=255]"))	{ color = Color.magenta;	}
 				
-				grille[i][j] = new DiamondCell(30+i*20+decalageX, 30+j*20+decalageY+margeY, color, null, null, null, null);
+				grille[i][j] = new DiamondCell(30+i*20+decalageX, 30+j*20-decalageY+margeY, color, null, null, null, null);
 			}
 		}
 		
