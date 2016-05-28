@@ -55,7 +55,7 @@ public class IntroBoard extends Canvas implements Board{
 	@Override
 	public void paint(Graphics g){
 		
-		int mult = 5;
+		int mult = 3;
 		
 		super.paint(g);
 		

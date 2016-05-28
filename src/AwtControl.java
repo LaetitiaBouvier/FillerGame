@@ -49,7 +49,7 @@ public class AwtControl{
 
 		//Sélectionne le tableau à générer
 		if(tableau.equals("INTRO") || tableau.contains("PARAM") || tableau.equals("WEB")){
-			this.board = new IntroBoard(500, 500, false);
+			this.board = new IntroBoard(600, 300, false);
 		}
 		if(tableau.contains("ERROR")){
 			this.board = new IntroBoard(500, 500, true);
