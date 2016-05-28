@@ -34,9 +34,7 @@ public class Web {
 		String adresse = "";
 		
 		try {
-			String adressesStr;
-			
-			adressesStr = (""+InetAddress.getLocalHost());
+			String adressesStr = (""+InetAddress.getLocalHost());
 			
 			String[] adresses = adressesStr.split("/");
 			adresse = adresses[1];
@@ -71,7 +69,7 @@ public class Web {
 		try {
 			DatagramSocket socket = new DatagramSocket(2048);
 			
-			byte[] buffer = new byte[1024];
+			byte[] buffer = new byte[32768];
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 			
 			socket.receive(packet);
