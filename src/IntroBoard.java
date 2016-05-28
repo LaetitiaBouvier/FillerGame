@@ -100,7 +100,7 @@ public class IntroBoard extends Canvas implements Board{
 			
 			g.drawString("Les informations que vous avez entré posent problème !", 10, 60);
 			g.drawString("==> La taille d'un côté de la grille doit être un entier positif !", 10, 75);
-			g.drawString("==> Vous ne pouvez pas créer une partie composée unisquement d'IA !", 10, 90);
+			g.drawString("==> Vous ne pouvez pas créer une partie composée uniquement d'IA !", 10, 90);
 			g.drawString("==> Deux joueurs ne peuvent pas avoir le même nom !", 10, 105);
 			g.drawString("Veuillez à nouveau entrer les informations nécessaires !", 10, 120);
 			

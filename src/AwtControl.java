@@ -62,6 +62,14 @@ public class AwtControl{
 		if(tableau.equals("HEXA")){
 			this.board = new HexaBoard(nb, joueur1, joueur2, joueur3, joueur4, IA1, IA2, IA3, IA4);
 		}
+		if(tableau.length() > 10){
+			Scanner sc = new Scanner (tableau);
+			if(sc.next().equals("HEXA")){
+				this.board = new HexaBoard(tableau);
+			}else{}
+			
+			sc.close();
+		}
 		if(tableau.contains("CREATEHEXAWEB")){
 			
 			String[] str = tableau.split("_");
@@ -73,14 +81,6 @@ public class AwtControl{
 			
 			this.board = new HexaWebBoard(nb, joueur1, joueur2, monAdresse, sonAdresse);
 		}
-		if(tableau.length() > 10){
-			Scanner sc = new Scanner (tableau);
-			if(sc.next().equals("HEXA")){
-				this.board = new HexaBoard(tableau);
-			}else{}
-			
-			sc.close();
-		}
 		if(tableau.equals("SQUARE")){
 			this.board = new SquareBoard(nb, joueur1, joueur2, joueur3, joueur4, IA1, IA2, IA3, IA4);
 		}
@@ -88,6 +88,17 @@ public class AwtControl{
 			Scanner sc = new Scanner (tableau);
 			if(sc.next().equals("SQUARE")){
 				this.board = new SquareBoard(tableau);
+			}else{}
+			
+			sc.close();
+		}
+		if(tableau.equals("DIAMOND")){
+			this.board = new DiamondBoard(nb, joueur1, joueur2, joueur3, joueur4, IA1, IA2, IA3, IA4);
+		}
+		if(tableau.length() > 10){
+			Scanner sc = new Scanner (tableau);
+			if(sc.next().equals("DIAMOND")){
+				this.board = new DiamondBoard(tableau);
 			}else{}
 			
 			sc.close();
@@ -215,56 +226,46 @@ public class AwtControl{
 						String monAdresse = Web.obtenirMonAdresse();
 						System.out.println("Mon Adresse : "+monAdresse);
 						
+						//TODO: ERREUR DE MALADE : A REPRENDRE/VERIFIER JUSQU'A LA LIGNE 288 !!!
 						boolean wannaPlay = true;
-<<<<<<< HEAD
+
 						boolean j2isNotHere = true;
 						while(j2isNotHere){
-
 							Object[] options = { "OK", "CANCEL" };
-							Object selectedValue = JOptionPane.showOptionDialog(null, "Vous devez patienter jusqu'à ce qu'un ami rejoigne votre partie, ENSUITE cliquez sur OK."
-									+ " L'ID de votre partie est : ", "Création partie",
+							Object selectedValue = JOptionPane.showOptionDialog(null, "Vous deverez patienter jusqu'à ce qu'un ami rejoigne"
+									+ " votre partie, si vous le souhaitez cliquez sur OK sinon cliquez sur CANCEL."
+									+ " L'adresse de votre partie est : "+monAdresse, "Création partie",
 									JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 									null, options, options[0]);
-
+	
 							if(selectedValue.toString().equals("1")){
 								wannaPlay = false;
-								break;
+								//break; ???
 							}
+							if(wannaPlay){
+								
 							
-=======
-
-						Object[] options = { "OK", "CANCEL" };
-						Object selectedValue = JOptionPane.showOptionDialog(null, "Vous deverez patienter jusqu'à ce qu'un ami rejoigne"
-								+ " votre partie, si vous le souhaitez cliquez sur OK sinon cliquez sur CANCEL."
-								+ " L'adresse de votre partie est : "+monAdresse, "Céation partie",
-								JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-								null, options, options[0]);
-
-						if(selectedValue.toString().equals("1")){
-							wannaPlay = false;
->>>>>>> origin/master
+								String ecoute  = Web.ecoutePaquets();
+								String[] split = ecoute.split("_");
+								
+								String sonAdresse = split[0];
+								String nomJoueur2 = split[1];
+								
+								String nomJoueur1 = joueurText.getText();
+								
+								mainFrame.dispose();
+								AwtControl awtControl = new AwtControl("CREATEHEXAWEB_"+monAdresse+"_"+sonAdresse, tailleCote, nomJoueur1, nomJoueur2, "", "", "", "", "", "");
+								awtControl.show("CREATEHEXAWEB", "", true);
+							}
+						else{
+								mainFrame.dispose();
+								AwtControl awtControl = new AwtControl("INTRO", 0, "", "", "", "", "", "", "", "");
+								awtControl.show("INTRO", "", false);
+							}
 						}
+					}
 						
-						if(wannaPlay){
-							
-							String ecoute  = Web.ecoutePaquets();
-							String[] split = ecoute.split("_");
-							
-							String sonAdresse = split[0];
-							String nomJoueur2 = split[1];
-							
-							String nomJoueur1 = joueurText.getText();
-							
-							mainFrame.dispose();
-							AwtControl awtControl = new AwtControl("CREATEHEXAWEB_"+monAdresse+"_"+sonAdresse, tailleCote, nomJoueur1, nomJoueur2, "", "", "", "", "", "");
-							awtControl.show("CREATEHEXAWEB", "", true);
-						}else{
-							
-							mainFrame.dispose();
-							AwtControl awtControl = new AwtControl("INTRO", 0, "", "", "", "", "", "", "", "");
-							awtControl.show("INTRO", "", false);
-						}
-					}else{
+					else{
 						mainFrame.dispose();
 						AwtControl awtControl = new AwtControl("WEB_ERROR", 0, "", "", "", "", "", "", "", "");
 						awtControl.show("WEB_ERROR", "", false);
@@ -283,8 +284,9 @@ public class AwtControl{
 					}
 					*/
 				}
-			} );
-			
+				
+			}) ;
+		
 			gbc.anchor = GridBagConstraints.CENTER;
 
 			gbc.gridx = 0; gbc.gridy = 0; 		controlPanel.add((Component) board, gbc);
@@ -455,6 +457,27 @@ public class AwtControl{
 					}
 				} );
 			}
+//version losanges
+			else if(tableau.equals("DIAMOND_PARAM") || tableau.equals("DIAMOND_ERROR")){
+
+				play.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+
+						boolean cond = okCreation(IAList1, IAList2, IAList3, IAList4, j1Text, j2Text, j3Text, j4Text, nbText);
+						
+						if(cond){
+							mainFrame.dispose();
+							AwtControl awtControl = new AwtControl("DIAMOND", Integer.parseInt(nbText.getText()), j1Text.getText(), j2Text.getText(), j3Text.getText(), j4Text.getText(),
+									IAList1.getItem(IAList1.getSelectedIndex()), IAList2.getItem(IAList2.getSelectedIndex()), IAList3.getItem(IAList3.getSelectedIndex()), IAList4.getItem(IAList4.getSelectedIndex()));
+							awtControl.show("DIAMOND", IAList1.getItem(IAList1.getSelectedIndex()), false);
+						}else{
+							mainFrame.dispose();
+							AwtControl awtControlDemo = new AwtControl("DIAMOND_ERROR", 0, "", "", "", "", "", "", "", "");
+							awtControlDemo.show("DIAMOND_ERROR", "", false);
+						}
+					}
+				} );
+			}
 
 			gbc.anchor = GridBagConstraints.CENTER;
 
@@ -582,6 +605,8 @@ public class AwtControl{
 		hexaMenuItem.setActionCommand("HEXA_PARAM");
 		MenuItem squareMenuItem = new MenuItem("Square");
 		squareMenuItem.setActionCommand("SQUARE_PARAM");
+		MenuItem diamondMenuItem = new MenuItem("Diamond");
+		diamondMenuItem.setActionCommand("DIAMOND_PARAM");
 		
 		//Création des items du menu "Web"
 		MenuItem createGameMenuItem = new MenuItem("Créer partie");
@@ -600,6 +625,7 @@ public class AwtControl{
 		homeMenuItem.addActionListener(menuItemListener);
 		hexaMenuItem.addActionListener(menuItemListener);
 		squareMenuItem.addActionListener(menuItemListener);
+		diamondMenuItem.addActionListener(menuItemListener);
 		createGameMenuItem.addActionListener(menuItemListener);
 		joinGameMenuItem.addActionListener(menuItemListener);
 
@@ -615,6 +641,7 @@ public class AwtControl{
 		//AJout des items au menu "Play"
 		playMenu.add(hexaMenuItem);
 		playMenu.add(squareMenuItem);
+		playMenu.add(diamondMenuItem);
 		
 		//Ajout des item au menu "Web"
 		webMenu.add(createGameMenuItem);
@@ -854,6 +881,12 @@ public class AwtControl{
 				awtControlDemo.show(command, "", false);
 			}
 			if(command.equals("SQUARE_PARAM")){
+
+				mainFrame.dispose();
+				AwtControl awtControlDemo = new AwtControl(command, 0, "", "", "", "", "", "", "", "");
+				awtControlDemo.show(command, "", false);
+			}
+			if(command.equals("DIAMOND_PARAM")){
 
 				mainFrame.dispose();
 				AwtControl awtControlDemo = new AwtControl(command, 0, "", "", "", "", "", "", "", "");
