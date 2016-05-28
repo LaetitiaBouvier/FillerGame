@@ -979,6 +979,9 @@ public class AwtControl{
 				AwtControl awtControl = new AwtControl("WEB", 0, "", "", "", "", "", "", "", "");
 				awtControl.show("WEB", "", false);
 			}
+			if(command.equals("EXIT")){
+				mainFrame.dispose();
+			}
 		}    
 	}
 }
