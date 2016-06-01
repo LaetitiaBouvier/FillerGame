@@ -42,7 +42,7 @@ public class HexaWebBoard extends HexaBoard implements Board{
 		hexasCtrl = this.getJoueur2().getCasesCtrl();
 		
 		for(int i = 0; i < hexasCtrl.size(); i++){
-			hexasCtrl.get(i).setColor(this.getJoueur2().getCouleur());²
+			hexasCtrl.get(i).setColor(this.getJoueur2().getCouleur());
 		}
 		
 		hexasCtrl = getConnectedCellsOfSameColor(hexasCtrl);

@@ -1,7 +1,7 @@
 
 public class DecisionTree {
 	
-	private Player player; // celui qui a joué ce coup ..
+	private Board board; // celui qui a joué ce coup ..
 
 	private DecisionTree redChild;
 	private DecisionTree orangeChild;
@@ -12,7 +12,7 @@ public class DecisionTree {
 	
 	public DecisionTree(){
 		
-		this.player = null;
+		this.board = null;
 		
 		this.redChild = null;
 		this.orangeChild = null;
@@ -22,9 +22,9 @@ public class DecisionTree {
 		this.magentaChild = null;
 	}
 	
-	public DecisionTree(Player player){
+	public DecisionTree(Board board){
 		
-		this.player = player;
+		this.board = board;
 		
 		this.redChild = null;
 		this.orangeChild = null;
@@ -34,9 +34,9 @@ public class DecisionTree {
 		this.magentaChild = null;
 	}
 	
-	public DecisionTree(Player player, DecisionTree redChild, DecisionTree orangeChild, DecisionTree yellowChild, DecisionTree greenChild, DecisionTree blueChild, DecisionTree magentaChild){
+	public DecisionTree(Board board, DecisionTree redChild, DecisionTree orangeChild, DecisionTree yellowChild, DecisionTree greenChild, DecisionTree blueChild, DecisionTree magentaChild){
 		
-		this.player = player;
+		this.board = board;
 		
 		this.redChild = redChild;
 		this.orangeChild = orangeChild;
@@ -69,11 +69,11 @@ public class DecisionTree {
 		return max;
 	}
 	
-	public Player getPlayer() {
-		return player;
+	public Board getBoard() {
+		return this.board;
 	}
-	public void setPlayer(Player player) {
-		this.player = player;
+	public void setBoard(Board board) {
+		this.board = board;
 	}
 	
 	public DecisionTree getRedChild() {

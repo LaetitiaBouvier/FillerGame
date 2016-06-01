@@ -8,7 +8,7 @@ import java.util.Scanner;
 /**
  * Cette classe permet la gestion de tableaux de cellules hexagonales
  */
-public class HexaBoard extends Canvas implements Board {
+public class HexaBoard extends Canvas implements Board, Cloneable {
 	
 	private HexaCell[][] grille;		// grille[i][j] : j represente les lignes, i les éléments en colonne de chaque ligne
 	private int hauteur;
@@ -56,6 +56,24 @@ public class HexaBoard extends Canvas implements Board {
 		this.grille = defVoisins(this.grille);
 		
 		defJoueurs(nb, nomJoueur1, nomJoueur2, nomJoueur3, nomJoueur4, IA1, IA2, IA3, IA4);
+		
+		nextIAContestMove();
+	}
+	
+	public HexaBoard(HexaCell[][] grille, Player joueur1, Player joueur2, Player joueur3, Player joueur4){
+		
+		int h = 20*grille.length +60;
+		int l = 20*grille.length +180;
+		
+		this.hauteur = h;
+        this.largeur = l;
+        
+        this.grille = grille;
+        
+        this.joueur1 = joueur1;
+        this.joueur2 = joueur2;
+        this.joueur3 = joueur3;
+        this.joueur4 = joueur4;
 	}
 	
 	public HexaBoard(String saveStr){
@@ -660,283 +678,127 @@ public class HexaBoard extends Canvas implements Board {
 		return color;
 	}
 	
-	public Color nextAdvancedIAMove(){
+	public Color nextIAContestMove(){
 		
-		int gridSize = (this.grille.length)*(this.grille.length);
-		
-		HexaCell[][] gridSimu = new HexaCell[grille.length][grille.length];
-		
-		for(int i = 0; i < grille.length; i++){
-			for(int j = 0; j < grille.length; j++){
-				gridSimu[i][j] = grille[i][j].clone();
-			}
-		}
-		
-		gridSimu = defVoisins(gridSimu);
-		
-		Player playerSimu1 = this.joueur1.clone(gridSimu);
-		Player playerSimu2 = this.joueur2.clone(gridSimu);
-		Player playerSimu3 = null;
-		Player playerSimu4 = null;
-		
-		if(this.joueur3 != null){ playerSimu3 = this.joueur3.clone(gridSimu); }
-		if(this.joueur4 != null){ playerSimu4 = this.joueur4.clone(gridSimu); }
-		
-		Player[] players = {playerSimu1, playerSimu2, playerSimu3, playerSimu4};
-		
-		int nbJoueurs = 2;
-		if(players[2] != null){ nbJoueurs++; }
-		if(players[3] != null){ nbJoueurs++; }
-		
-		//System.out.println("!!! "+playerSimu1.getCasesCtrl().size());
-		
-		DecisionTree dt = new DecisionTree();
-		dt = decisionSimu(dt, gridSize, nbJoueurs, 0, players, gridSimu);
-		
-		int h = DecisionTree.heightTree(dt);
-		
-		System.out.println("hauteur : "+h);
-		
-		printSmallTree(dt, gridSize);
+		IAcontest.nextHexaIAContestMove(this.clone());
 		
 		return null;
 	}
 	
-	public void nextLimitedIAMove(){
+	public HexaBoard clone(){
 		
-		int nbPlayers = 2;
+		// copie de la grille
+		HexaCell[][] grid = new HexaCell[this.grille.length][this.grille[0].length];
 		
-		ArrayList<Color> couleursNonDispo = new ArrayList<Color>();
-		
-		String playerName1 = this.joueur1.getNom();		Color color1 = this.joueur1.getCouleur();	couleursNonDispo.add(color1);
-		String playerName2 = this.joueur2.getNom();		Color color2 = this.joueur2.getCouleur();	couleursNonDispo.add(color2);
-		String playerName3 = ""; 						Color color3 = null;	
-		String playerName4 = ""; 						Color color4 = null;	
-		
-		if(this.joueur3 != null){ playerName3 = this.joueur3.getNom(); color3 = this.joueur3.getCouleur(); couleursNonDispo.add(color3); nbPlayers++;}
-		if(this.joueur4 != null){ playerName4 = this.joueur4.getNom(); color4 = this.joueur4.getCouleur(); couleursNonDispo.add(color4); nbPlayers++;}
-		
-		ArrayList<Color> couleursDispo = getFreeLimitedColors(couleursNonDispo);
-	}
-	
-	public void limitedSimu(){
-		
-	}
-	
-	private ArrayList<Color> getFreeLimitedColors(ArrayList<Color> couleursNonDispo){
-		
-		ArrayList<Color> couleursDispo = new ArrayList<Color>();
-		
-		if(!couleursNonDispo.contains(Color.red)	){ 	couleursDispo.add(Color.red); 		}
-		if(!couleursNonDispo.contains(Color.orange)	){ 	couleursDispo.add(Color.orange); 	}
-		if(!couleursNonDispo.contains(Color.yellow)	){ 	couleursDispo.add(Color.yellow); 	}
-		if(!couleursNonDispo.contains(Color.green)	){ 	couleursDispo.add(Color.green); 	}
-		if(!couleursNonDispo.contains(Color.blue)	){ 	couleursDispo.add(Color.blue); 		}
-		if(!couleursNonDispo.contains(Color.magenta)){	couleursDispo.add(Color.magenta);	}
-		
-		return couleursDispo;
-	}
-	
-	public void printSmallTree(DecisionTree dt, int gridSize){	// Juste pour afficher un arbre d'une grille 4x4, pour voir un peu à quoi ressemble l'arbe...
-	
-		if(gridSize == 16){
-			
-			//for(int i = 0; i < 40; i++) System.out.print(" ");
-			//System.out.print(dt.getPlayer().getNom()+" : "+dt.getPlayer().getCouleur());
-			
-			System.out.print("\n");
-									if(dt.getRedChild() 	!= null){ 	System.out.print(dt.getRedChild().getPlayer().getNom()		+"r"); }else{	System.out.print("  "); }
-			System.out.print("  ");	if(dt.getOrangeChild() 	!= null){	System.out.print(dt.getOrangeChild().getPlayer().getNom()	+"o"); }else{	System.out.print("  "); }
-			System.out.print("  ");	if(dt.getYellowChild()	!= null){ 	System.out.print(dt.getYellowChild().getPlayer().getNom()	+"y"); }else{	System.out.print("  "); }
-			System.out.print("  ");	if(dt.getGreenChild() 	!= null){ 	System.out.print(dt.getGreenChild().getPlayer().getNom()	+"g"); }else{	System.out.print("  "); }
-			System.out.print("  ");	if(dt.getBlueChild() 	!= null){ 	System.out.print(dt.getBlueChild().getPlayer().getNom()		+"b"); }else{	System.out.print("  "); }
-			System.out.print("  ");	if(dt.getMagentaChild() != null){ 	System.out.print(dt.getMagentaChild().getPlayer().getNom()	+"m"); }else{	System.out.print("  "); }
-			
-			System.out.print("\n");
-			if(dt.getRedChild() != null){
+		for(int i = 0; i < grid.length; i++){
+			for(int j = 0; j < grid[0].length; j++){
 				
-				if(dt.getRedChild().getRedChild()     != null) 	System.out.print(dt.getRedChild().getRedChild().getPlayer().getNom()		+"r");
-				if(dt.getRedChild().getOrangeChild()  != null) 	System.out.print(dt.getRedChild().getOrangeChild().getPlayer().getNom()		+"o");
-				if(dt.getRedChild().getYellowChild()  != null) 	System.out.print(dt.getRedChild().getYellowChild().getPlayer().getNom()		+"y");
-				if(dt.getRedChild().getGreenChild()   != null) 	System.out.print(dt.getRedChild().getGreenChild().getPlayer().getNom()		+"g");
-				if(dt.getRedChild().getBlueChild() 	  != null) 	System.out.print(dt.getRedChild().getBlueChild().getPlayer().getNom()		+"b");
-				if(dt.getRedChild().getMagentaChild() != null) 	System.out.print(dt.getRedChild().getMagentaChild().getPlayer().getNom()	+"m");
-			}else{	System.out.print("  "); }
-					System.out.print("  ");
-			if(dt.getOrangeChild() != null){
+				//(int centreX, int centreY, Color color, HexaCell voisinDroiteHaut,HexaCell voisinDroite, HexaCell voisinDroiteBas, HexaCell voisinGaucheBas, HexaCell voisinGauche, HexaCell voisinGaucheHaut){
+				Color colorGrid = null;
+				Color colorGrille = this.grille[i][j].getColor();
+				if		(colorGrille == Color.red) 		colorGrid = Color.red;
+				else if	(colorGrille == Color.orange) 	colorGrid = Color.orange;
+				else if	(colorGrille == Color.yellow) 	colorGrid = Color.yellow;
+				else if	(colorGrille == Color.green) 	colorGrid = Color.green;
+				else if	(colorGrille == Color.blue) 	colorGrid = Color.blue;
+				else if	(colorGrille == Color.magenta) 	colorGrid = Color.magenta;
 				
-				if(dt.getOrangeChild().getRedChild()     != null) 	System.out.print(dt.getOrangeChild().getRedChild().getPlayer().getNom()		+"r");
-				if(dt.getOrangeChild().getOrangeChild()  != null) 	System.out.print(dt.getOrangeChild().getOrangeChild().getPlayer().getNom()	+"o");
-				if(dt.getOrangeChild().getYellowChild()  != null) 	System.out.print(dt.getOrangeChild().getYellowChild().getPlayer().getNom()	+"y");
-				if(dt.getOrangeChild().getGreenChild()   != null) 	System.out.print(dt.getOrangeChild().getGreenChild().getPlayer().getNom()	+"g");
-				if(dt.getOrangeChild().getBlueChild() 	 != null) 	System.out.print(dt.getOrangeChild().getBlueChild().getPlayer().getNom()	+"b");
-				if(dt.getOrangeChild().getMagentaChild() != null) 	System.out.print(dt.getOrangeChild().getMagentaChild().getPlayer().getNom()	+"m");
-			}else{	System.out.print("  "); }
-					System.out.print("  ");
-			if(dt.getYellowChild() != null){
+				String ctrlBy = ""+this.grille[i][j].getCtrlBy();
 				
-				if(dt.getYellowChild().getRedChild()     != null) 	System.out.print(dt.getYellowChild().getRedChild().getPlayer().getNom()		+"r");
-				if(dt.getYellowChild().getOrangeChild()  != null) 	System.out.print(dt.getYellowChild().getOrangeChild().getPlayer().getNom()	+"o");
-				if(dt.getYellowChild().getYellowChild()  != null) 	System.out.print(dt.getYellowChild().getYellowChild().getPlayer().getNom()	+"y");
-				if(dt.getYellowChild().getGreenChild()   != null) 	System.out.print(dt.getYellowChild().getGreenChild().getPlayer().getNom()	+"g");
-				if(dt.getYellowChild().getBlueChild() 	 != null) 	System.out.print(dt.getYellowChild().getBlueChild().getPlayer().getNom()	+"b");
-				if(dt.getYellowChild().getMagentaChild() != null) 	System.out.print(dt.getYellowChild().getMagentaChild().getPlayer().getNom()	+"m");
-			}else{	System.out.print("  "); }
-					System.out.print("  ");
-			if(dt.getGreenChild() != null){
+				int centreX = this.grille[i][j].getCentreX();
+				int centreY = this.grille[i][j].getCentreY();
 				
-				if(dt.getGreenChild().getRedChild()     != null) 	System.out.print(dt.getGreenChild().getRedChild().getPlayer().getNom()		+"r");
-				if(dt.getGreenChild().getOrangeChild()  != null) 	System.out.print(dt.getGreenChild().getOrangeChild().getPlayer().getNom()	+"o");
-				if(dt.getGreenChild().getYellowChild()  != null) 	System.out.print(dt.getGreenChild().getYellowChild().getPlayer().getNom()	+"y");
-				if(dt.getGreenChild().getGreenChild()   != null) 	System.out.print(dt.getGreenChild().getGreenChild().getPlayer().getNom()	+"g");
-				if(dt.getGreenChild().getBlueChild() 	!= null) 	System.out.print(dt.getGreenChild().getBlueChild().getPlayer().getNom()		+"b");
-				if(dt.getGreenChild().getMagentaChild() != null) 	System.out.print(dt.getGreenChild().getMagentaChild().getPlayer().getNom()	+"m");
-			}else{	System.out.print("  "); }
-					System.out.print("  ");
-			if(dt.getBlueChild() != null){
+				grid[i][j] = new HexaCell(centreX, centreY, colorGrid, null, null, null, null, null, null);
 				
-				if(dt.getBlueChild().getRedChild()     	!= null) 	System.out.print(dt.getBlueChild().getRedChild().getPlayer().getNom()		+"r");
-				if(dt.getBlueChild().getOrangeChild()  	!= null) 	System.out.print(dt.getBlueChild().getOrangeChild().getPlayer().getNom()	+"o");
-				if(dt.getBlueChild().getYellowChild()  	!= null) 	System.out.print(dt.getBlueChild().getYellowChild().getPlayer().getNom()	+"y");
-				if(dt.getBlueChild().getGreenChild()   	!= null) 	System.out.print(dt.getBlueChild().getGreenChild().getPlayer().getNom()		+"g");
-				if(dt.getBlueChild().getBlueChild() 	!= null) 	System.out.print(dt.getBlueChild().getBlueChild().getPlayer().getNom()		+"b");
-				if(dt.getBlueChild().getMagentaChild() 	!= null) 	System.out.print(dt.getBlueChild().getMagentaChild().getPlayer().getNom()	+"m");
-			}else{	System.out.print("  "); }
-					System.out.print("  ");
-			if(dt.getMagentaChild() != null){
-				
-				if(dt.getMagentaChild().getRedChild()     	!= null) 	System.out.print(dt.getMagentaChild().getRedChild().getPlayer().getNom()	+"r");
-				if(dt.getMagentaChild().getOrangeChild()  	!= null) 	System.out.print(dt.getMagentaChild().getOrangeChild().getPlayer().getNom()	+"o");
-				if(dt.getMagentaChild().getYellowChild()  	!= null) 	System.out.print(dt.getMagentaChild().getYellowChild().getPlayer().getNom()	+"y");
-				if(dt.getMagentaChild().getGreenChild()   	!= null) 	System.out.print(dt.getMagentaChild().getGreenChild().getPlayer().getNom()	+"g");
-				if(dt.getMagentaChild().getBlueChild() 		!= null) 	System.out.print(dt.getMagentaChild().getBlueChild().getPlayer().getNom()	+"b");
-				if(dt.getMagentaChild().getMagentaChild() 	!= null) 	System.out.print(dt.getMagentaChild().getMagentaChild().getPlayer().getNom()+"m");
-			}
-		}
-	}
-	
-	/*
-	 * Création de l'arbre des décisions possibles ...
-	 */
-	public DecisionTree decisionSimu(DecisionTree dt, int gridSize, int nbJoueurs, int joueurAct, Player[] players, HexaCell[][] gridSimu){
-
-		ArrayList<Color> couleursDispo = getFreeSimuColors(players);
-		
-		Player player = players[joueurAct];
-		
-		ArrayList<Cell> hexasCtrl = player.getCasesCtrl();
-		int prevNbHexasCtrl = 0;
-		int actNbHexasCtrl  = 0;
-		
-		for(Color itemColor : couleursDispo){
-			
-			for(int i = 0; i < hexasCtrl.size(); i++){
-				hexasCtrl.get(i).setColor(itemColor);
-			}
-			player.setCouleur(itemColor);
-			
-			prevNbHexasCtrl = hexasCtrl.size();
-			hexasCtrl = HexaBoard.getConnectedCellsOfSameColor(hexasCtrl);
-			actNbHexasCtrl  = hexasCtrl.size();
-	
-			if((actNbHexasCtrl > prevNbHexasCtrl)){
-	
-				player.setCasesCtrl(hexasCtrl);
-				for(Cell hexa : hexasCtrl){
-					hexa.setCtrlBy(player.getNom());
-				}
-	
-				if(hexasCtrl.size() > (gridSize/nbJoueurs)){
-					player.setIsWinner(true);
-					return dt;
-				}
-	
-				player.setMyTurn(false);
-	
-				gridSimu = new HexaCell[grille.length][grille.length];
-				
-				for(int i = 0; i < grille.length; i++){
-					for(int j = 0; j < grille.length; j++){
-						gridSimu[i][j] = grille[i][j].clone();
-					}
-				}
-				
-				gridSimu = defVoisins(gridSimu);
-	
-				if(itemColor == Color.red) 		{ dt.setRedChild(		new DecisionTree(player.clone(gridSimu)));	}
-				if(itemColor == Color.orange) 	{ dt.setOrangeChild(	new DecisionTree(player.clone(gridSimu)));	}
-				if(itemColor == Color.yellow) 	{ dt.setYellowChild(	new DecisionTree(player.clone(gridSimu)));	}
-				if(itemColor == Color.green) 	{ dt.setGreenChild(		new DecisionTree(player.clone(gridSimu)));	}
-				if(itemColor == Color.blue) 	{ dt.setBlueChild(		new DecisionTree(player.clone(gridSimu)));	}
-				if(itemColor == Color.magenta) 	{ dt.setMagentaChild(	new DecisionTree(player.clone(gridSimu)));	}
-	
-				if(joueurAct == 3)				{ joueurAct = 0; }
-				if(players[joueurAct+1] == null){ joueurAct = 0; }
-				else							{ joueurAct++;   }
-	
-				players[joueurAct].setMyTurn(true);
-				
-				Player[] playersBis = new Player[4];
-				
-				playersBis[0] = players[0].clone(gridSimu);
-				playersBis[1] = players[1].clone(gridSimu);
-				
-				if(players[2] != null){ playersBis[2] = players[2].clone(gridSimu); } else{ playersBis[2] = null; }
-				if(players[3] != null){ playersBis[3] = players[3].clone(gridSimu); } else{ playersBis[3] = null; }
-				
-				if(playersBis[0].getNom().equals(player.getNom())){ playersBis[0] = player.clone(gridSimu); }
-				if(playersBis[1].getNom().equals(player.getNom())){ playersBis[1] = player.clone(gridSimu); }
-				
-				if(playersBis[2] != null){	if(playersBis[2].getNom().equals(player.getNom())){ playersBis[2] = player.clone(gridSimu); }}
-				if(playersBis[3] != null){	if(playersBis[3].getNom().equals(player.getNom())){ playersBis[3] = player.clone(gridSimu); }}
-	
-				if(itemColor == Color.red) 		{ decisionSimu(dt.getRedChild(), 		gridSize, nbJoueurs, joueurAct, playersBis, gridSimu);	}
-				if(itemColor == Color.orange) 	{ decisionSimu(dt.getOrangeChild(), 	gridSize, nbJoueurs, joueurAct, playersBis, gridSimu);	}	
-				if(itemColor == Color.yellow) 	{ decisionSimu(dt.getYellowChild(), 	gridSize, nbJoueurs, joueurAct, playersBis, gridSimu);	}
-				if(itemColor == Color.green) 	{ decisionSimu(dt.getGreenChild(),		gridSize, nbJoueurs, joueurAct, playersBis, gridSimu);	}
-				if(itemColor == Color.blue) 	{ decisionSimu(dt.getBlueChild(),		gridSize, nbJoueurs, joueurAct, playersBis, gridSimu);	}
-				if(itemColor == Color.magenta)	{ decisionSimu(dt.getMagentaChild(),	gridSize, nbJoueurs, joueurAct, playersBis, gridSimu);	}
-				
+				grid[i][j].setCtrlBy(ctrlBy);
 			}
 		}
 		
-		return dt;
-	}
-	
-	
-	public ArrayList<Color> getFreeSimuColors(Player[] players){
+		grid = defVoisins(grid);
 		
-		ArrayList<Color> couleursNonDispo = new ArrayList<Color>();
+		// copie du joueur 1
 		
-		Color couleur1 = players[0].getCasesCtrl().get(0).getColor();
-		Color couleur2 = players[1].getCasesCtrl().get(0).getColor();
+		String nomJ1 = ""+this.joueur1.getNom();
 		
-		Color couleur3 = null;
-		Color couleur4 = null;
+		ArrayList<Cell> casesCtrlJ1 = new ArrayList<Cell>();
+		casesCtrlJ1.add(grid[0][0]);
+		casesCtrlJ1 = getConnectedCellsOfSameColor(casesCtrlJ1);
 		
-		if(this.getJoueur3() != null){
-			couleur3 = players[2].getCasesCtrl().get(0).getColor();
+		int nbCasesJ1 = casesCtrlJ1.size();
+		
+		Color couleurJ1 = grid[0][0].getColor();
+		
+		String IAJ1 = ""+this.joueur1.getIA();
+		
+		Player j1 = new Player(nomJ1, couleurJ1, nbCasesJ1, casesCtrlJ1, IAJ1);
+		j1.setMyTurn(this.joueur1.isMyTurn());
+		
+		// copie du joueur 2
+		
+		String nomJ2 = ""+this.joueur2.getNom();
+		
+		ArrayList<Cell> casesCtrlJ2 = new ArrayList<Cell>();
+		casesCtrlJ2.add(grid[grid.length-1][grid[0].length-1]);
+		casesCtrlJ2 = getConnectedCellsOfSameColor(casesCtrlJ2);
+		
+		int nbCasesJ2 = casesCtrlJ2.size();
+		
+		Color couleurJ2 = grid[grid.length-1][grid[0].length-1].getColor();
+		
+		String IAJ2 = ""+this.joueur2.getIA();
+		
+		Player j2 = new Player(nomJ2, couleurJ2, nbCasesJ2, casesCtrlJ2, IAJ2);
+		j2.setMyTurn(this.joueur2.isMyTurn());
+		
+		// éventuelle copie du joueur 3
+		
+		Player j3 = null;
+		
+		if(this.joueur3 != null){
+			
+			String nomJ3 = ""+this.joueur3.getNom();
+			
+			ArrayList<Cell> casesCtrlJ3 = new ArrayList<Cell>();
+			casesCtrlJ3.add(grid[grid.length-1][0]);
+			casesCtrlJ3 = getConnectedCellsOfSameColor(casesCtrlJ3);
+			
+			int nbCasesJ3 = casesCtrlJ3.size();
+			
+			Color couleurJ3 = grid[grid.length-1][0].getColor();
+			
+			String IAJ3 = ""+this.joueur3.getIA();
+			
+			j3 = new Player(nomJ3, couleurJ3, nbCasesJ3, casesCtrlJ3, IAJ3);
+			j3.setMyTurn(this.joueur3.isMyTurn());
 		}
-		if(this.getJoueur4() != null){
-			couleur4 = players[3].getCasesCtrl().get(0).getColor();
+		
+		// éventuelle copie du joueur 4
+		
+		Player j4 = null;
+		
+		if(this.joueur4 != null){
+			
+			String nomJ4 = ""+this.joueur4.getNom();
+			
+			ArrayList<Cell> casesCtrlJ4 = new ArrayList<Cell>();
+			casesCtrlJ4.add(grid[0][grid.length-1]);
+			casesCtrlJ4 = getConnectedCellsOfSameColor(casesCtrlJ4);
+			
+			int nbCasesJ4 = casesCtrlJ4.size();
+			
+			Color couleurJ4 = grid[0][grid.length-1].getColor();
+			
+			String IAJ4 = ""+this.joueur4.getIA();
+			
+			j4 = new Player(nomJ4, couleurJ4, nbCasesJ4, casesCtrlJ4, IAJ4);
+			j4.setMyTurn(this.joueur4.isMyTurn());
 		}
 		
-		couleursNonDispo.add(couleur1);
-		couleursNonDispo.add(couleur2);
+		// Creation du nouvel HexaBoard :
 		
-		if(players[2] != null){ couleursNonDispo.add(couleur3); }
-		if(players[3] != null){ couleursNonDispo.add(couleur4); }
+		HexaBoard clone = new HexaBoard(grid, j1, j2, j3, j4);
 		
-		ArrayList<Color> couleursDispo = new ArrayList<Color>();
-
-		if(!couleursNonDispo.contains(Color.red))		couleursDispo.add(Color.red);
-		if(!couleursNonDispo.contains(Color.orange))	couleursDispo.add(Color.orange);
-		if(!couleursNonDispo.contains(Color.yellow))	couleursDispo.add(Color.yellow);
-		if(!couleursNonDispo.contains(Color.green))		couleursDispo.add(Color.green);
-		if(!couleursNonDispo.contains(Color.blue))		couleursDispo.add(Color.blue);
-		if(!couleursNonDispo.contains(Color.magenta))	couleursDispo.add(Color.magenta);
-		
-		return couleursDispo;
+		return clone;
 	}
 	
 	/**
@@ -1161,6 +1023,11 @@ public class HexaBoard extends Canvas implements Board {
 	 * Cette fonction permet de raffraichir le dessin du tableau
 	 */
 	public void repaint(){ super.repaint(); }
+	
+	/**
+	 * Getter retournant la grille 
+	 */
+	public HexaCell[][] getGrille(){ return this.grille; }
 	
 	/**
 	 * Getter retournant la hauteur du tableau
