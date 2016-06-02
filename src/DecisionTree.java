@@ -1,7 +1,6 @@
-
 public class DecisionTree {
 	
-	private Board board; // celui qui a joué ce coup ..
+	private SquareCell[][] grid;
 
 	private DecisionTree redChild;
 	private DecisionTree orangeChild;
@@ -12,7 +11,7 @@ public class DecisionTree {
 	
 	public DecisionTree(){
 		
-		this.board = null;
+		this.grid = null;
 		
 		this.redChild = null;
 		this.orangeChild = null;
@@ -22,9 +21,9 @@ public class DecisionTree {
 		this.magentaChild = null;
 	}
 	
-	public DecisionTree(Board board){
+	public DecisionTree(SquareCell[][] grid){
 		
-		this.board = board;
+		this.grid = grid;
 		
 		this.redChild = null;
 		this.orangeChild = null;
@@ -34,9 +33,9 @@ public class DecisionTree {
 		this.magentaChild = null;
 	}
 	
-	public DecisionTree(Board board, DecisionTree redChild, DecisionTree orangeChild, DecisionTree yellowChild, DecisionTree greenChild, DecisionTree blueChild, DecisionTree magentaChild){
+	public DecisionTree(SquareCell[][] grid, DecisionTree redChild, DecisionTree orangeChild, DecisionTree yellowChild, DecisionTree greenChild, DecisionTree blueChild, DecisionTree magentaChild){
 		
-		this.board = board;
+		this.grid = grid;
 		
 		this.redChild = redChild;
 		this.orangeChild = orangeChild;
@@ -69,11 +68,11 @@ public class DecisionTree {
 		return max;
 	}
 	
-	public Board getBoard() {
-		return this.board;
+	public SquareCell[][] getGrid() {
+		return this.grid;
 	}
-	public void setBoard(Board board) {
-		this.board = board;
+	public void setGrid(SquareCell[][] grid) {
+		this.grid = grid;
 	}
 	
 	public DecisionTree getRedChild() {

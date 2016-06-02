@@ -81,6 +81,18 @@ public class AwtControl{
 
 			this.board = new HexaWebBoard(nb, joueur1, joueur2, monAdresse, sonAdresse);
 		}
+		if(tableau.contains("JOINHEXAWEB")){
+			
+			String[] str = tableau.split("_");
+			String monAdresse = str[1];
+			String sonAdresse = str[2];
+			
+			Web.envoiePaquets(sonAdresse, monAdresse+"_J2");
+			
+			String saveStr = Web.ecoutePaquets();
+			
+			this.board = new HexaWebBoard(saveStr, monAdresse, sonAdresse);
+		}
 		if(tableau.equals("SQUARE")){
 			this.board = new SquareBoard(nb, joueur1, joueur2, joueur3, joueur4, IA1, IA2, IA3, IA4);
 		}
@@ -185,7 +197,22 @@ public class AwtControl{
 
 			controlPanel.add((Component) board);
 		}
-		else if(tableau.equals("WEB") || tableau.equals("WEB_ERROR")){
+		else if(tableau.equals("WEBJOIN")){
+			
+			String sonAdresse = JOptionPane.showInputDialog(null, "Vous devez entrez l'adresse de la partie que vous souhaitez rejoindre, "
+					+ "si vous le souhaitez cliquez sur OK sinon cliquez sur CANCEL.", "");
+			
+			String monAdresse = Web.obtenirMonAdresse();
+			
+			if(!sonAdresse.isEmpty() && !sonAdresse.equals("null") && !sonAdresse.equals(" ")){
+				
+				mainFrame.dispose();
+				AwtControl awtControl = new AwtControl("JOINHEXAWEB_"+monAdresse+"_"+sonAdresse, 0, "", "", "", "", "", "", "", "");
+				awtControl.show("JOINHEXAWEB", "", true);
+				//TODO
+			}
+		}
+		else if(tableau.equals("WEBCREATE") || tableau.equals("WEB_ERROR")){
 
 			GridBagLayout layout = new GridBagLayout();
 
@@ -773,6 +800,11 @@ public class AwtControl{
 					Player nextPlayer = board.nextMove(Color.red);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					 if ( board instanceof HexaWebBoard) {
+						 HexaWebBoard hxb = (HexaWebBoard) board;   hxb.waitAndListen();
+						 setAllowedButtons();   setRestrictedButtons();
+					 }
 
 					while(nextPlayer != null){
 						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
@@ -786,6 +818,11 @@ public class AwtControl{
 					Player nextPlayer = board.nextMove(Color.orange);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					if ( board instanceof HexaWebBoard) {
+						 HexaWebBoard hxb = (HexaWebBoard) board;   hxb.waitAndListen();
+						 setAllowedButtons();   setRestrictedButtons();
+					 }
 
 					while(nextPlayer != null){
 						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
@@ -799,6 +836,11 @@ public class AwtControl{
 					Player nextPlayer = board.nextMove(Color.yellow);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					if ( board instanceof HexaWebBoard) {
+						 HexaWebBoard hxb = (HexaWebBoard) board;   hxb.waitAndListen();
+						 setAllowedButtons();   setRestrictedButtons();
+					 }
 
 					while(nextPlayer != null){
 						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
@@ -812,6 +854,11 @@ public class AwtControl{
 					Player nextPlayer = board.nextMove(Color.green);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					if ( board instanceof HexaWebBoard) {
+						 HexaWebBoard hxb = (HexaWebBoard) board;   hxb.waitAndListen();
+						 setAllowedButtons();   setRestrictedButtons();
+					 }
 
 					while(nextPlayer != null){
 						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
@@ -825,6 +872,11 @@ public class AwtControl{
 					Player nextPlayer = board.nextMove(Color.blue);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					if ( board instanceof HexaWebBoard) {
+						 HexaWebBoard hxb = (HexaWebBoard) board;   hxb.waitAndListen();
+						 setAllowedButtons();   setRestrictedButtons();
+					 }
 
 					while(nextPlayer != null){
 						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
@@ -838,6 +890,11 @@ public class AwtControl{
 					Player nextPlayer = board.nextMove(Color.magenta);
 					setAllowedButtons();
 					setRestrictedButtons();
+					
+					if ( board instanceof HexaWebBoard) {
+						 HexaWebBoard hxb = (HexaWebBoard) board;   hxb.waitAndListen();
+						 setAllowedButtons();   setRestrictedButtons();
+					 }
 
 					while(nextPlayer != null){
 						if(nextPlayer.getIA().equals("IA Simple")){		nextPlayer = board.nextMove(board.nextEasyIAMove());				}
@@ -966,8 +1023,16 @@ public class AwtControl{
 
 				mainFrame.dispose();
 				AwtControl awtControl = new AwtControl("WEB", 0, "", "", "", "", "", "", "", "");
-				awtControl.show("WEB", "", false);
+				awtControl.show("WEBCREATE", "", false);
 			}
+			
+			if(command.equals("JOINGAME")){
+				
+				mainFrame.dispose();
+				AwtControl awtControl = new AwtControl("WEB", 0, "", "", "", "", "", "", "", "");
+				awtControl.show("WEBJOIN", "", false);
+			}
+			
 			if(command.equals("EXIT")){
 				mainFrame.dispose();
 			}

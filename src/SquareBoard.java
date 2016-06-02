@@ -8,7 +8,7 @@ import java.util.Scanner;
 /**
  * Cette classe permet la gestion de tableaux de cellules carrées
  */
-public class SquareBoard extends Canvas implements Board {
+public class SquareBoard extends Canvas implements Board, Cloneable {
 	
 	private SquareCell[][] grille;		// grille[i][j] : j represente les lignes, i les éléments en colonne de chaque ligne
 	private int hauteur;
@@ -56,6 +56,22 @@ public class SquareBoard extends Canvas implements Board {
 		this.grille = defVoisins(this.grille);
 		
 		defJoueurs(nb, nomJoueur1, nomJoueur2, nomJoueur3, nomJoueur4, IA1, IA2, IA3, IA4);
+	}
+	
+	public SquareBoard(SquareCell[][] grille, Player joueur1, Player joueur2, Player joueur3, Player joueur4){
+		
+		int h = 20*grille.length +60;
+		int l = 20*grille.length +180;
+		
+		this.hauteur = h;
+        this.largeur = l;
+        
+        this.grille = grille;
+        
+        this.joueur1 = joueur1;
+        this.joueur2 = joueur2;
+        this.joueur3 = joueur3;
+        this.joueur4 = joueur4;
 	}
 	
 	public SquareBoard(String saveStr){
@@ -796,6 +812,122 @@ public class SquareBoard extends Canvas implements Board {
 		}
 		
 		return winner;
+	}
+	
+	@Override
+	public SquareBoard clone(){
+		
+		// copie de la grille
+		SquareCell[][] grid = new SquareCell[this.grille.length][this.grille[0].length];
+		
+		for(int i = 0; i < grid.length; i++){
+			for(int j = 0; j < grid[0].length; j++){
+				
+				Color colorGrid = null;
+				Color colorGrille = this.grille[i][j].getColor();
+				if		(colorGrille == Color.red) 		colorGrid = Color.red;
+				else if	(colorGrille == Color.orange) 	colorGrid = Color.orange;
+				else if	(colorGrille == Color.yellow) 	colorGrid = Color.yellow;
+				else if	(colorGrille == Color.green) 	colorGrid = Color.green;
+				else if	(colorGrille == Color.blue) 	colorGrid = Color.blue;
+				else if	(colorGrille == Color.magenta) 	colorGrid = Color.magenta;
+				
+				String ctrlBy = ""+this.grille[i][j].getCtrlBy();
+				
+				int centreX = this.grille[i][j].getCentreX();
+				int centreY = this.grille[i][j].getCentreY();
+				
+				grid[i][j] = new SquareCell(centreX, centreY, colorGrid, null, null, null, null);
+				
+				grid[i][j].setCtrlBy(ctrlBy);
+			}
+		}
+		
+		grid = defVoisins(grid);
+		
+		// copie du joueur 1
+		
+		String nomJ1 = ""+this.joueur1.getNom();
+		
+		ArrayList<Cell> casesCtrlJ1 = new ArrayList<Cell>();
+		casesCtrlJ1.add(grid[0][0]);
+		casesCtrlJ1 = getConnectedCellsOfSameColor(casesCtrlJ1);
+		
+		int nbCasesJ1 = casesCtrlJ1.size();
+		
+		Color couleurJ1 = grid[0][0].getColor();
+		
+		String IAJ1 = ""+this.joueur1.getIA();
+		
+		Player j1 = new Player(nomJ1, couleurJ1, nbCasesJ1, casesCtrlJ1, IAJ1);
+		j1.setMyTurn(this.joueur1.isMyTurn());
+		
+		// copie du joueur 2
+		
+		String nomJ2 = ""+this.joueur2.getNom();
+		
+		ArrayList<Cell> casesCtrlJ2 = new ArrayList<Cell>();
+		casesCtrlJ2.add(grid[grid.length-1][grid[0].length-1]);
+		casesCtrlJ2 = getConnectedCellsOfSameColor(casesCtrlJ2);
+		
+		int nbCasesJ2 = casesCtrlJ2.size();
+		
+		Color couleurJ2 = grid[grid.length-1][grid[0].length-1].getColor();
+		
+		String IAJ2 = ""+this.joueur2.getIA();
+		
+		Player j2 = new Player(nomJ2, couleurJ2, nbCasesJ2, casesCtrlJ2, IAJ2);
+		j2.setMyTurn(this.joueur2.isMyTurn());
+		
+		// éventuelle copie du joueur 3
+		
+		Player j3 = null;
+		
+		if(this.joueur3 != null){
+			
+			String nomJ3 = ""+this.joueur3.getNom();
+			
+			ArrayList<Cell> casesCtrlJ3 = new ArrayList<Cell>();
+			casesCtrlJ3.add(grid[grid.length-1][0]);
+			casesCtrlJ3 = getConnectedCellsOfSameColor(casesCtrlJ3);
+			
+			int nbCasesJ3 = casesCtrlJ3.size();
+			
+			Color couleurJ3 = grid[grid.length-1][0].getColor();
+			
+			String IAJ3 = ""+this.joueur3.getIA();
+			
+			j3 = new Player(nomJ3, couleurJ3, nbCasesJ3, casesCtrlJ3, IAJ3);
+			j3.setMyTurn(this.joueur3.isMyTurn());
+		}
+		
+		// éventuelle copie du joueur 4
+		
+		Player j4 = null;
+		
+		if(this.joueur4 != null){
+			
+			String nomJ4 = ""+this.joueur4.getNom();
+			
+			ArrayList<Cell> casesCtrlJ4 = new ArrayList<Cell>();
+			casesCtrlJ4.add(grid[0][grid.length-1]);
+			casesCtrlJ4 = getConnectedCellsOfSameColor(casesCtrlJ4);
+			
+			int nbCasesJ4 = casesCtrlJ4.size();
+			
+			Color couleurJ4 = grid[0][grid.length-1].getColor();
+			
+			String IAJ4 = ""+this.joueur4.getIA();
+			
+			j4 = new Player(nomJ4, couleurJ4, nbCasesJ4, casesCtrlJ4, IAJ4);
+			j4.setMyTurn(this.joueur4.isMyTurn());
+		}
+		
+		// Creation du nouvel SquareBoard :
+		
+		SquareBoard clone = new SquareBoard(grid, j1, j2, j3, j4);
+		
+		return clone;
 	}
 	
 	@Override

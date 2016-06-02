@@ -1,5 +1,7 @@
+import java.awt.Canvas;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class HexaWebBoard extends HexaBoard implements Board{
 	
@@ -63,17 +65,102 @@ public class HexaWebBoard extends HexaBoard implements Board{
 	 * 
 	 * @param saveStr
 	 */
-	public HexaWebBoard(String saveStr){
+	public HexaWebBoard(String saveStr, String monAdresse, String sonAdresse){
 		
 		super(saveStr);
+		
+		setMonAdresse(monAdresse);
+		setSonAdresse(sonAdresse);
+		setIdLocal(2);
+		
+		System.out.println("La cell [0][0] est ctrl par : "+this.grille[0][0].getCtrlBy());
+		
+		saveStr = Web.ecoutePaquets();
+		
+		Scanner scLine = new Scanner(saveStr);
+		
+		scLine.next();
+		int nb = Integer.parseInt(scLine.next());
+		scLine.close();
+		
+		initialisationGrille(nb, saveStr);
+		
+		this.grille = defVoisins(this.grille);
+		
+		defJoueurs(nb, saveStr);
 	}
 	
 	@Override
 	public Player nextMove(Color couleur){
 		
 		//TODO
+
+		boolean flag = true;
+		
+		Player joueurAct = null;
+		Player joueurSui = null;
+		
+		if(this.joueur1.isMyTurn() && flag){
+			
+			flag = false;
+			
+			joueurAct = this.joueur1;
+			
+			this.joueur1.setMyTurn(false);
+			this.joueur2.setMyTurn(true);
+			joueurSui = this.joueur2;
+		}
+		
+		if(this.joueur2.isMyTurn() && flag){
+			
+			flag = false;
+			
+			joueurAct = this.joueur2;
+
+			this.joueur2.setMyTurn(false);
+			this.joueur1.setMyTurn(true);
+			joueurSui = this.joueur1;
+		}
+		
+		ArrayList<Cell> hexasCtrl = joueurAct.getCasesCtrl();
+		
+		for(int i = 0; i < hexasCtrl.size(); i++){
+			hexasCtrl.get(i).setColor(couleur);
+		}
+		
+		hexasCtrl = getConnectedCellsOfSameColor(hexasCtrl);
+		
+		joueurAct.setCasesCtrl(hexasCtrl);
+		for(Cell cell : hexasCtrl){
+			cell.setCtrlBy(joueurAct.getNom());
+		}
+		
+		String saveStr = generateSaveString();
+		
+		Web.envoiePaquets(sonAdresse, saveStr);
+		
+		update(this.getGraphics());
 		
 		return null;
+	}
+	
+	public void waitAndListen(){
+		
+		String saveStr = Web.ecoutePaquets();
+		
+		Scanner scLine = new Scanner(saveStr);
+		
+		scLine.next();
+		int nb = Integer.parseInt(scLine.next());
+		scLine.close();
+		
+		initialisationGrille(nb, saveStr);
+		
+		this.grille = defVoisins(this.grille);
+		
+		defJoueurs(nb, saveStr);
+		
+		update(this.getGraphics());
 	}
 
 	public String getMonAdresse() {
