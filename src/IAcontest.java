@@ -13,7 +13,7 @@ public class IAcontest {
 
 	public static void main(String[] args) {
 
-		PlayerConnector playerConnector = new PlayerConnector(153, BASE_URL);
+		PlayerConnector playerConnector = new PlayerConnector(174, BASE_URL);
 		playerConnector.registerPlayer(NOM_IA);
 
 		Game game = playerConnector.getGame();
@@ -45,10 +45,73 @@ public class IAcontest {
 			
 		} while (!game.isFinished());
 	}
+	
+	public static char nextHardIAMove(SquareCell[][] original, int[] indicesPosi){
+		
+		System.out.println("INDICE POSITION : "+indicesPosi[0]);
+		
+		ArrayList<Color> couleursDispo = getCouleursDispo(original);
+		
+		ArrayList<Cell> squaresCtrl = new ArrayList<Cell>();
+		ArrayList<Cell> squaresAdvr = new ArrayList<Cell>();
+		
+		if(indicesPosi[0] == 1){
+			squaresCtrl.add(original[0][0]);									squaresAdvr.add(original[original.length-1][original.length-1]);
+			squaresCtrl = getConnectedCellsOfSameColor(squaresCtrl);			squaresAdvr = getConnectedCellsOfSameColor(squaresAdvr);
+		}else{
+			squaresCtrl.add(original[original.length-1][original.length-1]);	squaresAdvr.add(original[0][0]);
+			squaresCtrl = getConnectedCellsOfSameColor(squaresCtrl);			squaresAdvr = getConnectedCellsOfSameColor(squaresAdvr);
+		}
+		int maxCtrl = squaresCtrl.size();
+		
+		Color colorIniCtrl = squaresCtrl.get(0).getColor();
+		Color colorIniAdvr = squaresAdvr.get(0).getColor();
+		Color color = Color.black;
+		
+		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.red); 	}
+		int redList = getConnectedCellsOfSameColor(squaresCtrl).size();			System.out.println("Red score : "+redList);
+		if( redList >= maxCtrl 		&& couleursDispo.contains(Color.red))		{ color = Color.red; 		maxCtrl = redList;		}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.orange); 	}
+		int orangeList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Orange score : "+orangeList);
+		if( orangeList >= maxCtrl 	&& couleursDispo.contains(Color.orange))	{ color = Color.orange; 	maxCtrl = orangeList;	}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.yellow); 	}
+		int yellowList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Yellow score : "+yellowList);
+		if( yellowList >= maxCtrl 	&& couleursDispo.contains(Color.yellow))	{ color = Color.yellow; 	maxCtrl = yellowList;	}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.green); 	}
+		int greenList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Green score : "+greenList);
+		if( greenList >= maxCtrl 	&& couleursDispo.contains(Color.green))	{ color = Color.green; 			maxCtrl = greenList;	}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.blue); 	}
+		int blueList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Blue score : "+blueList);
+		if( blueList >= maxCtrl 		&& couleursDispo.contains(Color.blue))	{ color = Color.blue; 		maxCtrl = blueList;		}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++){ squaresCtrl.get(i).setColor(Color.magenta); 	}
+		int magentaList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Magenta score : "+magentaList);
+		if( magentaList >= maxCtrl 	&& couleursDispo.contains(Color.magenta))	{ color = Color.magenta; 	maxCtrl = magentaList;	}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++){ squaresCtrl.get(i).setColor(colorIniCtrl); }
+		
+		char c = ' ';
+		
+		if(color == Color.red) 		c = 'R';
+		if(color == Color.orange) 	c = 'O';
+		if(color == Color.yellow) 	c = 'J';
+		if(color == Color.green) 	c = 'V';
+		if(color == Color.blue) 	c = 'B';
+		if(color == Color.magenta) 	c = 'I';
+		
+		return c;
+	}
 
 	public static char nextSquareIAContestMove(SquareCell[][] original, int[] indicesPosi){
 
-		//TODO
+		ArrayList<Color> couleursNonDispo = new ArrayList<Color>();
+		couleursNonDispo.add(original[0][0].getColor());
+		couleursNonDispo.add(original[original.length-1][original.length-1].getColor());
+		
 		
 		ArrayList<Integer> scoreRedMove 	= new ArrayList<Integer>();
 		ArrayList<Integer> scoreOrangeMove 	= new ArrayList<Integer>();
@@ -1139,28 +1202,58 @@ public class IAcontest {
 		System.out.print("\n___\n");
 		
 		int redScore = 0;
-		for(Integer score : scoreRedMove){ redScore += score; }
-		if(scoreRedMove.size() > 0) redScore /= scoreRedMove.size();
+		if(!couleursNonDispo.contains(Color.red)) {
+			
+			for(Integer score : scoreRedMove){ redScore += score; }
+			if(scoreRedMove.size() > 0) redScore /= scoreRedMove.size();
+		}else{
+			redScore = -(original.length * original.length);
+		}																				System.out.println("Score redMove : "+redScore);
 		
 		int orangeScore = 0;
-		for(Integer score : scoreOrangeMove){ orangeScore += score; }
-		if(scoreOrangeMove.size() > 0) orangeScore /= scoreOrangeMove.size();
+		if(!couleursNonDispo.contains(Color.orange)) {
+			
+			for(Integer score : scoreOrangeMove){ orangeScore += score; }
+			if(scoreOrangeMove.size() > 0) orangeScore /= scoreOrangeMove.size();
+		}else{
+			orangeScore = -(original.length * original.length);
+		}																				System.out.println("Score orangeMove : "+orangeScore);
 		
 		int yellowScore = 0;
-		for(Integer score : scoreYellowMove){ yellowScore += score; }
-		if(scoreYellowMove.size() > 0) yellowScore /= scoreYellowMove.size();
+		if(!couleursNonDispo.contains(Color.yellow)) {
+			
+			for(Integer score : scoreYellowMove){ yellowScore += score; }
+			if(scoreYellowMove.size() > 0) yellowScore /= scoreYellowMove.size();				
+		}else{
+			yellowScore = -(original.length * original.length);
+		}																				System.out.println("Score yellowMove : "+yellowScore);
 		
 		int greenScore = 0;
-		for(Integer score : scoreGreenMove){ greenScore += score; }
-		if(scoreGreenMove.size() > 0) greenScore /= scoreGreenMove.size();
+		if(!couleursNonDispo.contains(Color.green)) {
+			
+			for(Integer score : scoreGreenMove){ greenScore += score; }
+			if(scoreGreenMove.size() > 0) greenScore /= scoreGreenMove.size();					
+		}else{
+			greenScore = -(original.length * original.length);
+		}																				System.out.println("Score greenMove : "+greenScore);
 		
 		int blueScore = 0;
-		for(Integer score : scoreBlueMove){ blueScore += score; }
-		if(scoreBlueMove.size() > 0) blueScore /= scoreBlueMove.size();
+		if(!couleursNonDispo.contains(Color.blue)) {
+			
+			for(Integer score : scoreBlueMove){ blueScore += score; }
+			if(scoreBlueMove.size() > 0) blueScore /= scoreBlueMove.size();						
+		}else{
+			blueScore = -(original.length * original.length);
+		}																				System.out.println("Score blueMove : "+blueScore);
 		
 		int magentaScore = 0;
-		for(Integer score : scoreMagentaMove){ magentaScore += score; }
-		if(scoreMagentaMove.size() > 0) magentaScore /= scoreMagentaMove.size();
+		if(!couleursNonDispo.contains(Color.magenta)) {
+			
+			for(Integer score : scoreMagentaMove){ magentaScore += score; }
+			if(scoreMagentaMove.size() > 0) magentaScore /= scoreMagentaMove.size();			
+		}else{
+			magentaScore = -(original.length * original.length);
+		}																				System.out.println("Score magentaMove : "+magentaScore);
 		
 		char bestMove = ' ';
 		
@@ -1218,12 +1311,12 @@ public class IAcontest {
 				if(indiceJoueurAct == 2) { square.setCtrlBy("2"); }
 			}
 
-			if		(itemColor == Color.red) 	{ dt.setRedChild(		new DecisionTree(cloneBis));	}
-			else if	(itemColor == Color.orange) { dt.setOrangeChild(	new DecisionTree(cloneBis));	}
-			else if	(itemColor == Color.yellow) { dt.setYellowChild(	new DecisionTree(cloneBis));	}
-			else if	(itemColor == Color.green) 	{ dt.setGreenChild(		new DecisionTree(cloneBis));	}
-			else if	(itemColor == Color.blue) 	{ dt.setBlueChild(		new DecisionTree(cloneBis));	}
-			else if	(itemColor == Color.magenta){ dt.setMagentaChild(	new DecisionTree(cloneBis));	}
+			if		(itemColor == Color.red) 	{ dt.setRedChild(		new DecisionTree(cloneGrid(cloneBis)));	}
+			else if	(itemColor == Color.orange) { dt.setOrangeChild(	new DecisionTree(cloneGrid(cloneBis)));	}
+			else if	(itemColor == Color.yellow) { dt.setYellowChild(	new DecisionTree(cloneGrid(cloneBis)));	}
+			else if	(itemColor == Color.green) 	{ dt.setGreenChild(		new DecisionTree(cloneGrid(cloneBis)));	}
+			else if	(itemColor == Color.blue) 	{ dt.setBlueChild(		new DecisionTree(cloneGrid(cloneBis)));	}
+			else if	(itemColor == Color.magenta){ dt.setMagentaChild(	new DecisionTree(cloneGrid(cloneBis)));	}
 		}
 
 		return dt;
@@ -1417,25 +1510,25 @@ public class IAcontest {
 			SquareCell square = (SquareCell) liste.get(i);
 			
 			if( square.getVoisinDroite() != null && !liste.contains(square.getVoisinDroite()) ){
-				if( square.getVoisinDroite().getColor().getRGB() == square.getColor().getRGB() && square.getVoisinDroite().getCtrlBy().isEmpty()){
+				if( square.getVoisinDroite().getColor().getRGB() == square.getColor().getRGB()){
 					
 					liste.add(square.getVoisinDroite());	add = true;
 				}
 			}
 			if( square.getVoisinHaut() != null && !liste.contains(square.getVoisinHaut()) ){
-				if( square.getVoisinHaut().getColor().getRGB() == square.getColor().getRGB() && square.getVoisinHaut().getCtrlBy().isEmpty()){
+				if( square.getVoisinHaut().getColor().getRGB() == square.getColor().getRGB()){
 					
 					liste.add(square.getVoisinHaut());		add = true;
 				}
 			}
 			if( square.getVoisinGauche() != null && !liste.contains(square.getVoisinGauche()) ){
-				if( square.getVoisinGauche().getColor().getRGB() == square.getColor().getRGB() && square.getVoisinGauche().getCtrlBy().isEmpty()){
+				if( square.getVoisinGauche().getColor().getRGB() == square.getColor().getRGB()){
 					
 					liste.add(square.getVoisinGauche());	add = true;
 				}
 			}
 			if(square.getVoisinBas() != null && !liste.contains(square.getVoisinBas()) ){
-				if( square.getVoisinBas().getColor().getRGB() == square.getColor().getRGB() && square.getVoisinBas().getCtrlBy().isEmpty()){
+				if( square.getVoisinBas().getColor().getRGB() == square.getColor().getRGB()){
 					
 					liste.add(square.getVoisinBas());	add = true;
 				}
