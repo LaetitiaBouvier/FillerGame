@@ -65,7 +65,7 @@ public class IAcontest {
 		int maxCtrl = squaresCtrl.size();
 		
 		Color colorIniCtrl = squaresCtrl.get(0).getColor();
-		Color colorIniAdvr = squaresAdvr.get(0).getColor();
+//		Color colorIniAdvr = squaresAdvr.get(0).getColor();
 		Color color = Color.black;
 		
 		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.red); 	}

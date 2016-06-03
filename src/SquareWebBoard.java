@@ -9,6 +9,8 @@ import com.tdebroc.filler.game.Grid;
 
 public class SquareWebBoard extends Canvas implements Board {
 	
+	private static final long serialVersionUID = 1L;
+	
 	private SquareCell[][] grille;
 	private int hauteur;
 	private int largeur;
@@ -68,22 +70,22 @@ public class SquareWebBoard extends Canvas implements Board {
 		}
 	}
 	
-	private void majGrille(Grid grid){
-		
-		for(int i = 0; i < grille.length; i++){
-			for(int j = 0; j < grille[0].length; j++){
-				
-				char c = grid.getCell(j, i).getColor(); // r : rouge, o : orange, j : jaune, v : vert, b : bleu, i : indogo
-				
-				if(c == 'R')		{ grille[i][j].setColor(Color.red);		}
-				else if(c == 'O')	{ grille[i][j].setColor(Color.orange);	}
-				else if(c == 'J')	{ grille[i][j].setColor(Color.yellow);	}
-				else if(c == 'V')	{ grille[i][j].setColor(Color.green);	}
-				else if(c == 'B')	{ grille[i][j].setColor(Color.blue);	}
-				else if(c == 'I')	{ grille[i][j].setColor(Color.magenta);	}
-			}
-		}
-	}
+//	private void majGrille(Grid grid){
+//		
+//		for(int i = 0; i < grille.length; i++){
+//			for(int j = 0; j < grille[0].length; j++){
+//				
+//				char c = grid.getCell(j, i).getColor(); // r : rouge, o : orange, j : jaune, v : vert, b : bleu, i : indogo
+//				
+//				if(c == 'R')		{ grille[i][j].setColor(Color.red);		}
+//				else if(c == 'O')	{ grille[i][j].setColor(Color.orange);	}
+//				else if(c == 'J')	{ grille[i][j].setColor(Color.yellow);	}
+//				else if(c == 'V')	{ grille[i][j].setColor(Color.green);	}
+//				else if(c == 'B')	{ grille[i][j].setColor(Color.blue);	}
+//				else if(c == 'I')	{ grille[i][j].setColor(Color.magenta);	}
+//			}
+//		}
+//	}
 	
 	private SquareCell[][] defVoisins(SquareCell[][] grille){
 		
@@ -119,6 +121,7 @@ public class SquareWebBoard extends Canvas implements Board {
 	
 	public static ArrayList<Cell> getConnectedCellsOfSameColor(ArrayList<Cell> listeIni){
 		
+		@SuppressWarnings("unchecked")
 		ArrayList<Cell> liste = (ArrayList<Cell>) listeIni.clone();
 		
 		boolean add = false;

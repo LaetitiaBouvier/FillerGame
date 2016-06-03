@@ -1,9 +1,10 @@
-import java.awt.Canvas;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class HexaWebBoard extends HexaBoard implements Board{
+	
+	private static final long serialVersionUID = 1L;
 	
 	private String monAdresse;
 	private String sonAdresse;
@@ -93,12 +94,9 @@ public class HexaWebBoard extends HexaBoard implements Board{
 	@Override
 	public Player nextMove(Color couleur){
 		
-		//TODO
-
 		boolean flag = true;
 		
 		Player joueurAct = null;
-		Player joueurSui = null;
 		
 		if(this.joueur1.isMyTurn() && flag){
 			
@@ -108,7 +106,6 @@ public class HexaWebBoard extends HexaBoard implements Board{
 			
 			this.joueur1.setMyTurn(false);
 			this.joueur2.setMyTurn(true);
-			joueurSui = this.joueur2;
 		}
 		
 		if(this.joueur2.isMyTurn() && flag){
@@ -119,7 +116,6 @@ public class HexaWebBoard extends HexaBoard implements Board{
 
 			this.joueur2.setMyTurn(false);
 			this.joueur1.setMyTurn(true);
-			joueurSui = this.joueur1;
 		}
 		
 		ArrayList<Cell> hexasCtrl = joueurAct.getCasesCtrl();

@@ -8,6 +8,8 @@ import java.util.ArrayList;
  */
 public class IntroBoard extends Canvas implements Board{
 	
+	private static final long serialVersionUID = 1L;
+	
 	private int hauteur;
 	private int largeur;
 	private boolean isError;

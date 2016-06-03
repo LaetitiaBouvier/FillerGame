@@ -30,11 +30,6 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
-/* REMARQUES IMPORTANTES :
- * 
- * - Il faudrait une fonction pour vérifier le format d'un fichier texte avant de créer une partie avec.
- */
-
 /**
  *	Cette classe est la classe principale du logiciel "The Filler Game".
  *	Elle permet la gestion de tous les composants graphiques et de l'utilisation général du programme.
@@ -209,7 +204,6 @@ public class AwtControl{
 				mainFrame.dispose();
 				AwtControl awtControl = new AwtControl("JOINHEXAWEB_"+monAdresse+"_"+sonAdresse, 0, "", "", "", "", "", "", "", "");
 				awtControl.show("JOINHEXAWEB", "", true);
-				//TODO
 			}
 		}
 		else if(tableau.equals("WEBCREATE") || tableau.equals("WEB_ERROR")){
