@@ -199,7 +199,7 @@ public class AwtControl{
 			
 			String monAdresse = Web.obtenirMonAdresse();
 			
-			if(!sonAdresse.isEmpty() && !sonAdresse.equals("null") && !sonAdresse.equals(" ")){
+			if(sonAdresse != null && !sonAdresse.isEmpty() && !sonAdresse.equals("null") && !sonAdresse.equals(" ")){
 				
 				mainFrame.dispose();
 				AwtControl awtControl = new AwtControl("JOINHEXAWEB_"+monAdresse+"_"+sonAdresse, 0, "", "", "", "", "", "", "", "");
@@ -250,7 +250,7 @@ public class AwtControl{
 						boolean wannaPlay = true;
 						Object[] options = { "OK", "CANCEL" };
 						Object selectedValue = JOptionPane.showOptionDialog(null, "Vous deverez patienter jusqu'à ce qu'un ami rejoigne"
-								+ " votre partie, si vous le souhaitez cliquez sur OK sinon cliquez sur CANCEL."
+								+ " votre partie, CLIQUEZ SUR OK AVANT QUE VOTRE AMI NE VALIDE VOTRE ADRESSE, sinon cliquez sur CANCEL."
 								+ " L'adresse de votre partie est : "+monAdresse, "Céation partie",
 								JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 								null, options, options[0]);

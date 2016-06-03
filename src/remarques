@@ -1,0 +1,20 @@
+REMARQUES : LES AMELIORATIONS :
+
+
+
+Le code se répète beaucoup sur les différents tableaux et les différentes cellules car :
+
+- On aurait pu utiliser une "Cell" générique, avec une liste de voisins en attribut plutôt qu'une combinaison spécifique
+  selon que ce soit héxa, carré, en losange...
+- On aurait pu utiliser un "Board" générique, avec pour attribut une grille de Cell plutôt qu'une grille spécifique,
+  et en ajoutant juste un attribut typeCell (HEXA, SQUARE, DIAMOND)
+
+==> On ne s'en est pas rendu compte à temps, car au début on s'était concentré sur le jeux avec des hexagones, pour l'adapter par la suite ...
+
+
+
+Certaines fonctions du code semblent un peu lourdes/longues dans les différents tableaux car :
+
+- On aurait du avoir en attribut un tableau de joueurs, plutôt que chaque joueur : un par un.
+  Du coup tout les traitement concernant les joueurs sont beaucoup trop long...
+ (ça ressemble un peu à l'erreur qu'on a fait avec les voisins des Cell...)
