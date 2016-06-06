@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * <b> </b>
+ * <b> Cette classe permet de joueur en ligne avec un tableau hexagonale </b>
  */
 public class HexaWebBoard extends HexaBoard implements Board{
 	

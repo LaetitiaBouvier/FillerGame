@@ -7,10 +7,17 @@ import java.net.UnknownHostException;
 import com.tdebroc.filler.connector.PlayerConnector;
 import com.tdebroc.filler.game.Game;
 
+/**
+ * <b> Cette classe permet de réaliser la plupart des fonctions de gestion de réseau</b>
+ *
+ */
 public class Web {
 	
 	final static String baseURL = "http://62.210.105.118:8081";
 
+	/**
+	 * Cette fonction permet de créer une partie pour l'IA compétitive
+	 */
 	public static PlayerConnector createGame(String pseudo, int taille){
 		
 		int gameID = PlayerConnector.addGame(baseURL, taille);
@@ -22,6 +29,9 @@ public class Web {
 		return playerConnector;
 	}
 	
+	/**
+	 * Cette fonction permet de récupérer une partie lancée pour l'IA compétitive
+	 */
 	public static Game getGame(int gameID){
 		
 		PlayerConnector playerConnector = new PlayerConnector(gameID, baseURL);
@@ -29,6 +39,11 @@ public class Web {
 		return playerConnector.getGame();
 	}
 	
+	/**
+	 * Cette fonction permet de récupérer l'adresse réseau d'un joueur
+	 * 
+	 * @return ( String ) Retourne l'adresse réseau d'un joueur
+	 */
 	public static String obtenirMonAdresse(){
 		
 		String adresse = "";
@@ -45,6 +60,12 @@ public class Web {
 		return adresse;
 	}
 	
+	/**
+	 * Cette fonction permet d'envoyer un message à son adversaire en réseau
+	 * 
+	 * @param adresse 	( String ) : <br> adresse réseau de l'adversaire </br><br>
+	 * @param msg		( String ) : <br> message destiné à l'adversaire </br><br>
+	 */
 	public static void envoiePaquets(String adresse, String msg){
 		
 		try {
@@ -62,6 +83,11 @@ public class Web {
 		} catch (IOException e) { e.printStackTrace(); }
 	}
 	
+	/**
+	 * Cette fonction permet d'écouter les messages envoyés par l'adversaire
+	 * 
+	 * @return ( String ) Retourne le message envoyé par l'adversaire
+	 */
 	public static String ecoutePaquets(){
 		
 		String msg = "";
