@@ -6,13 +6,13 @@ import java.util.Random;
 import java.util.Scanner;
 
 /**
- * Cette classe permet la gestion de tableaux de cellules diamondgonales
+ * <b>Cette classe permet la gestion de tableaux de cellules en losanges </b>
  */
 public class DiamondBoard extends Canvas implements Board {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private DiamondCell[][] grille;		// grille[i][j] : j represente les lignes, i les éléments en colonne de chaque ligne
+	private DiamondCell[][] grille;
 	private int hauteur;
 	private int largeur;
 	private Player joueur1;
@@ -20,26 +20,24 @@ public class DiamondBoard extends Canvas implements Board {
 	private Player joueur3;
 	private Player joueur4;
 	
-	/*REMARQUE :
-	 * Joueur1 : en haut à hauche de la grille
-	 * Joueur2 : en bas  à droite de la grille
-	 * Joueur3 : en haut à droite de la grille
-	 * Joueur4 : en bas  à gaucge de la grille
-	 */
-	
 	/**
-	 * Ce constructeur permet la création d'un tableau en appelant l'initialisation de la grille, la définition des voisins des cellules héxagonales (liaison des cellules entre elles)
+	 * Ce constructeur permet de créer un tableau en appelant l'initialisation de la grille,
+	 * en apelant la définition des voisins des cellules héxagonales (liaison des cellules entre elles)
 	 * et en appelant la définition des joueurs liés au tableau
 	 * 
-	 * @param nb			: entier représentant la taille d'un côté du tableau
-	 * @param nomJoueur1	: chaîne de caractères représentant le nom du joueur 1
-	 * @param nomJoueur2	: chaîne de caractères représentant le nom du joueur 2
-	 * @param nomJoueur3	: chaîne de caractères représentant le nom du joueur 3
-	 * @param nomJoueur4	: chaîne de caractères représentant le nom du joueur 4
+	 * @param nb			( int ) 	: <br> taille d'un côté du tableau  </br><br>
+	 * @param nomJoueur1	( String ) 	: <br> nom du joueur 1 				</br><br>
+	 * @param nomJoueur2	( String ) 	: <br> nom du joueur 2 				</br><br>
+	 * @param nomJoueur3	( String ) 	: <br> nom du joueur 3 				</br><br>
+	 * @param nomJoueur4	( String ) 	: <br> nom du joueur 4 				</br><br>
+	 * @param IA1			( String )	: <br> type d'IA associée au joueur1</br><br>
+	 * @param IA2			( String )	: <br> type d'IA associée au joueur2</br><br>
+	 * @param IA3			( String )	: <br> type d'IA associée au joueur3</br><br>
+	 * @param IA4			( String )	: <br> type d'IA associée au joueur4</br><br>
 	 * 
-	 * @see initialisationGrille(int nb)
-	 * @see defVoisins(int nb)
-	 * @see defJoueurs(int nb)
+	 * @see #initialisationGrille(int nb)
+	 * @see #defVoisins(int nb)
+	 * @see #defJoueurs(int nb)
 	 */
 	public DiamondBoard(int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, String IA1, String IA2, String IA3, String IA4) {
 		
@@ -60,6 +58,11 @@ public class DiamondBoard extends Canvas implements Board {
 		defJoueurs(nb, nomJoueur1, nomJoueur2, nomJoueur3, nomJoueur4, IA1, IA2, IA3, IA4);
 	}
 	
+	/**
+	 * Ce constructeur permet de créer un tableau à partir d'une sauvegarde
+	 * 
+	 * @param saveStr ( String ) : <br> sauvegarde du tableau à réstituer </br><br>
+	 */
 	public DiamondBoard(String saveStr){
 		
 		Scanner scLine = new Scanner(saveStr);
@@ -86,7 +89,7 @@ public class DiamondBoard extends Canvas implements Board {
 	}
 	
 	/**
-	 * Cette fonction initialise la grille des cellules (ici un pavage d'diamondgones) en créant les cellules à leur place et en leur attribuant une couleur aléatoire
+	 * Cette fonction initialise la grille des cellules (ici un pavage de losanges) en créant les cellules à leur place et en leur attribuant une couleur aléatoire
 	 * 
 	 * @param nb	: entier représentant la taille d'un côté du tableau
 	 */
@@ -129,6 +132,12 @@ public class DiamondBoard extends Canvas implements Board {
 		}
 	}
 	
+	/**
+	 * Cette fonction permet de ré-initialiser une grille de cellules à partir d'une sauvegarde
+	 * 
+	 * @param nb		( int )		: <br> taille d'un côté du tableau 		</br><br>
+	 * @param saveStr	( String )	: <br> sauvegarde du tableau à réstituer</br><br>
+	 */
 	public void initialisationGrille(int nb, String saveStr){
 		
 		int decalageX = 0;
@@ -171,8 +180,9 @@ public class DiamondBoard extends Canvas implements Board {
 	}
 	
 	/**
-	 * Cette fonction définie les voisins de chaque cellule héxagonale (liaison des cellules entre elles) en fonction de son positionnement sur la grille
+	 * Cette fonction définie les voisins de chaque cellule héxagonale (liaison des cellules entre elles) en fonction de leur positionnement sur la grille
 	 * 
+	 * @param grille ( HexaCell[][] ) : <br> grille contenant toutes les cellules du tableau 	</br><br>
 	 */
 	private DiamondCell[][] defVoisins(DiamondCell[][] grille){
 		
@@ -200,13 +210,17 @@ public class DiamondBoard extends Canvas implements Board {
 	/**
 	 * Cette fonction définie les joueurs liés au tableau en les créant 
 	 * 
-	 * @param nomJoueur1	: chaîne de caractère représentant le nom du joueur 1
-	 * @param nomJoueur2	: chaîne de caractère représentant le nom du joueur 2
-	 * @param nomJoueur3	: chaîne de caractère représentant le nom du joueur 3
-	 * @param nomJoueur4	: chaîne de caractère représentant le nom du joueur 4
-	 * @param nb			: entier représentant la taille d'un côté du tableau
+	 * @param nb			( int )		: <br> taille d'un côté du tableau		</br><br>
+	 * @param nomJoueur1	( String ) 	: <br> nom du joueur 1					</br><br>
+	 * @param nomJoueur2	( String ) 	: <br> nom du joueur 2					</br><br>
+	 * @param nomJoueur3	( String )	: <br> nom du joueur 3					</br><br>
+	 * @param nomJoueur4	( String ) 	: <br> nom du joueur 4					</br><br>
+	 * @param IA1			( String )	: <br> type d'IA associée au joueur 1	</br><br>
+	 * @param IA2			( String )	: <br> type d'IA associée au joueur 2	</br><br>
+	 * @param IA3			( String )	: <br> type d'IA associée au joueur 3	</br><br>
+	 * @param IA4			( String )	: <br> type d'IA associée au joueur 4	</br><br>
 	 * 
-	 * @see getConnectedSameColorDiamonds(ArrayList<Hexa> listeHexa)
+	 * @see #getConnectedSameColorHexas(ArrayList<Hexa> listeHexa)
 	 */
 	private void defJoueurs( int nb, String nomJoueur1, String nomJoueur2, String nomJoueur3, String nomJoueur4, String IA1, String IA2, String IA3, String IA4){
 		
@@ -251,6 +265,12 @@ public class DiamondBoard extends Canvas implements Board {
 		}
 	}
 	
+	/**
+	 * Cette fonction permet de redéfinir les joueurs liés au tableau en les recréant à partir d'une sauvegarde
+	 * 
+	 * @param nb		( int )		: <br> taille d'un côté du tableau 		</br><br>
+	 * @param saveStr	( String )	: <br> sauvegarde du tableau à réstituer</br><br>
+	 */
 	public void defJoueurs(int nb, String saveStr){
 		
 		Scanner sc = new Scanner(saveStr);
@@ -397,10 +417,11 @@ public class DiamondBoard extends Canvas implements Board {
 	}
 	
 	/**
-	 * Cette fonction récursive permet d'obtenir, à partir d'une liste initiale de celulles diamondgonales, une liste "augmentée" : comprennant en plus leurs voisines de même couleur 
+	 * Cette fonction récursive permet d'obtenir, à partir d'une liste initiale de celulles en losanges, une liste "augmentée" : comprennant en plus leurs voisines de même couleur 
 	 * 
-	 * @param liste		: liste des cellules diamondgonales à partir desquels on souhaite obtenir la liste "augmentée" 
-	 * @return liste	: liste des cellules diamondgonales comprennant la liste de départ et la liste "augmentée"
+	 * @param listeIni ( ArrayList< Cell > ) : liste des cellules en losanges à partir desquels on souhaite obtenir la liste "augmentée" 
+	 * 
+	 * @return ( ArrayList< Cell > ) Retourne la liste des cellules en losanges comprennant la liste de départ et la liste "augmentée"
 	 */
 	public static ArrayList<Cell> getConnectedCellsOfSameColor(ArrayList<Cell> listeIni){
 		
@@ -450,12 +471,16 @@ public class DiamondBoard extends Canvas implements Board {
 	 * Cette fonction fait progresser la partie, étape par étape, selon les couleurs d'actions prises : redéfinissant ainsi les listes de cellules contrôlées par les joueurs
 	 * Cette fonction rafraichit ensuite le tableau (suite au différents changements de couleur) en appelant la fonction "repaint()"
 	 * 
-	 * @see getConnectedSameColorDiamonds(ArrayList<Hexa> liste)
-	 * @see setCasesCtrl(ArrayList<Hexa> liste)
-	 * @see repaint()
+	 * @param couleur ( Color ) : <br> couleur de l'action qu'on a décidé de prendre ce tour ci </br><br>
 	 * 
-	 * @param couleur	: couleur de l'action qu'on a décidé de prendre ce tour ci
+	 * @return ( Player ) Retourne le prochain joueur devant jouer s'il s'agit d'une IA
+	 * 
+	 * @see #getConnectedSameColorHexas(ArrayList<Hexa> liste)
+	 * @see #setCasesCtrl(ArrayList<Hexa> liste)
+	 * @see #repaint()
+	 * 
 	 */
+	@Override
 	public Player nextMove(Color couleur){
 		
 		boolean flag = true;
@@ -549,6 +574,9 @@ public class DiamondBoard extends Canvas implements Board {
 		}
 	}
 	
+	/**
+	 */
+	@Override
 	public Color nextEasyIAMove(){	// IA Aléatoire
 		
 		ArrayList<Color> freeColors = getFreeColors();
@@ -561,6 +589,9 @@ public class DiamondBoard extends Canvas implements Board {
 		return color;
 	}
 	
+	/**
+	 */
+	@Override
 	public Color nextTroubleIAMove(Player joueur){
 		
 		Player nextPlayer = null;
@@ -615,6 +646,9 @@ public class DiamondBoard extends Canvas implements Board {
 		return color;
 	}
 	
+	/**
+	 */
+	@Override
 	public Color nextHardIAMove(Player joueur){
 		
 		ArrayList<Color> freeColors = getFreeColors();
@@ -656,10 +690,8 @@ public class DiamondBoard extends Canvas implements Board {
 	
 	
 	/**
-	 * Cette fonction retourne les couleurs occupées par tous les joueurs présents
-	 * 
-	 * @return couleurs		: retourne les couleurs de tous les joueurs autour du tableau
 	 */
+	@Override
 	public ArrayList<Color> getColorsFromPlayers(){
 		
 		ArrayList<Color> couleurs = new ArrayList<Color>();
@@ -687,10 +719,8 @@ public class DiamondBoard extends Canvas implements Board {
 	}
 	
 	/**
-	 * Cette fonction retourne les couleurs libres qu'aucun joueur n'occupe
-	 * 
-	 * @return couleursLibres	: retourne les couleurs libres du tableau
 	 */
+	@Override
 	public ArrayList<Color> getFreeColors(){
 		
 		ArrayList<Color> couleursLibres = new ArrayList<Color>();
@@ -717,6 +747,9 @@ public class DiamondBoard extends Canvas implements Board {
 		return couleursLibres;
 	}
 	
+	/**
+	 */
+	@Override
 	public boolean isTheGameOver(){
 		
 		boolean isTheGameOver = false;
@@ -742,6 +775,9 @@ public class DiamondBoard extends Canvas implements Board {
 		return isTheGameOver;
 	}
 	
+	/**
+	 */
+	@Override
 	public String generateSaveString(){
 		
 		String saveStr = new String("");
@@ -842,6 +878,9 @@ public class DiamondBoard extends Canvas implements Board {
 		return saveStr;
 	}
 	
+	/**
+	 */
+	@Override
 	public Player getWinner(){
 		
 		Player winner = this.joueur1;
@@ -859,10 +898,10 @@ public class DiamondBoard extends Canvas implements Board {
 		return winner;
 	}
 	
-	@Override
 	/**
-	 * Cette fonction dessine le tableau en tenant compte des coordonées et des couleurs de chaque cellule, ici il s'agit d'un pavage d'diamondgones
+	 * Cette fonction dessine le tableau en tenant compte des coordonées et des couleurs de chaque cellule, ici il s'agit d'un pavage de losanges
 	 */
+	@Override
 	public void paint(Graphics g){
 		
 		super.paint(g);
@@ -914,10 +953,10 @@ public class DiamondBoard extends Canvas implements Board {
 		}
 	}
 	
-	@Override
 	/**
 	 * Cette fonction permet de raffraichir le dessin du tableau
 	 */
+	@Override
 	public void repaint(){ super.repaint(); }
 	
 	/**

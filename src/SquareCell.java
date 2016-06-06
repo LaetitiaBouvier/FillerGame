@@ -14,6 +14,17 @@ public class SquareCell implements Cell, Cloneable{
 	
 	private String ctrlBy;
 	
+	/**
+	 * Ce constructeur permet de créer une cellule carré en définissant les paramètres suivants :
+	 * 
+	 * @param centreX		( int ) 		: <br> abscisse du centre de la cellule 	</br><br>
+	 * @param centreY		( int ) 		: <br> ordonnée du centre de la cellule 	</br><br>
+	 * @param color			( Color ) 		: <br> couleur de la cellule 				</br><br>
+	 * @param voisinHaut	( SquareCell )	: <br> cellule voisine en haut 				</br><br>
+	 * @param voisinDroite	( SquareCell )	: <br> cellule voisine à droite 			</br><br>
+	 * @param voisinBas		( SquareCell )	: <br> cellule voisine en bas  				</br><br>
+	 * @param voisinGauche	( SquareCell )	: <br> cellule voisine à gauche 			</br><br>
+	 */
 	public SquareCell(int centreX, int centreY, Color color, SquareCell voisinHaut, SquareCell voisinDroite, SquareCell voisinBas, SquareCell voisinGauche){
 		
 		this.centreX = centreX;
@@ -28,55 +39,117 @@ public class SquareCell implements Cell, Cloneable{
 		
 		this.ctrlBy = "";
 	}
-	//sert à rien
-		public SquareCell clone() {
-			
-			SquareCell hc = null;
-	    	try {
-	    		hc = (SquareCell) super.clone();
-	    	} catch(CloneNotSupportedException cnse) { cnse.printStackTrace(System.err); }
+	
+	/**
+	 * Cette fonction est le getter permettant d'accéder au voisin situé en haut
+	 * 
+	 * @return ( SquareCell ) Retourne la cellule voisine du haut
+	 */
+	public SquareCell getVoisinHaut() {
+		return voisinHaut;
+	}
+	
+	/**
+	 * Cette fonction est le setter permettant de paramètrer le voisin situé en haut
+	 * 
+	 * @param voisinDroite ( SquareCell) : <br> cellule voisine en haut	</br><br>
+	 */
+	public void setVoisinHaut(SquareCell voisinHaut) {
+		this.voisinHaut = voisinHaut;
+	}
 
-	    	if(hc.voisinDroite 	!= null)	hc.voisinDroite = null;
-	    	if(hc.voisinBas 	!= null)	hc.voisinBas 	= null;
-	    	if(hc.voisinGauche 		!= null)	hc.voisinGauche 	= null;
-	    	if(hc.voisinHaut 	!= null)	hc.voisinHaut = null;
+	/**
+	 * Cette fonction est le getter permettant d'accéder au voisin situé à droite
+	 * 
+	 * @return ( SquareCell ) Retourne la cellule voisine de droite
+	 */
+	public SquareCell getVoisinDroite() {
+		return voisinDroite;
+	}
+	
+	/**
+	 * Cette fonction est le setter permettant de paramètrer le voisin situé à droite
+	 * 
+	 * @param voisinDroite ( SquareCell) : <br> cellule voisine à droite 	</br><br>
+	 */
+	public void setVoisinDroite(SquareCell voisinDroite) {
+		this.voisinDroite = voisinDroite;
+	}
 
-		    return hc;
-	  	}
-	public SquareCell getVoisinHaut() { return voisinHaut; }
-	public void setVoisinHaut(SquareCell voisinHaut) { this.voisinHaut = voisinHaut; }
+	/**
+	 * Cette fonction est le getter permettant d'accéder au voisin situé en bas
+	 * 
+	 * @return ( SquareCell ) Retourne la cellule voisine du bas
+	 */
+	public SquareCell getVoisinBas() {
+		return voisinBas;
+	}
+	
+	/**
+	 * Cette fonction est le setter permettant de paramètrer le voisin situé en bas
+	 * 
+	 * @param voisinDroite ( SquareCell) : <br> cellule voisine en bas 	</br><br>
+	 */
+	public void setVoisinBas(SquareCell voisinBas) {
+		this.voisinBas = voisinBas;
+	}
 
-	public SquareCell getVoisinDroite() { return voisinDroite; }
-	public void setVoisinDroite(SquareCell voisinDroite) { this.voisinDroite = voisinDroite; }
+	
+	/**
+	 * Cette fonction est le getter permettant d'accéder au voisin situé à gauche
+	 * 
+	 * @return ( HexaCell ) Retourne la cellule voisine de gauche
+	 */
+	public SquareCell getVoisinGauche() {
+		return voisinGauche;
+	}
+	
+	/**
+	 * Cette fonction est le setter permettant de paramètrer le voisin situé à gauche
+	 * 
+	 * @param voisinGauche ( HexaCell) : <br> cellule voisine de gauche </br><br>
+	 */
+	public void setVoisinGauche(SquareCell voisinGauche) {
+		this.voisinGauche = voisinGauche;
+	}
 
-	public SquareCell getVoisinBas() { return voisinBas; }
-	public void setVoisinBas(SquareCell voisinBas) { this.voisinBas = voisinBas; }
-
-	public SquareCell getVoisinGauche() { return voisinGauche; }
-	public void setVoisinGauche(SquareCell voisinGauche) { this.voisinGauche = voisinGauche; }
-
+	/**
+	 */
 	@Override
 	public int getCentreX() { return this.centreX; }
 
+	/**
+	 */
 	@Override
 	public void setCentreX(int centreX) { this.centreX = centreX; }
 
+	/**
+	 */
 	@Override
 	public int getCentreY() { return this.centreY; }
 
+	/**
+	 */
 	@Override
 	public void setCentreY(int centreY) { this.centreY = centreY; }
-
+	
+	/**
+	 */
 	@Override
 	public Color getColor() { return this.color; }
 
+	/**
+	 */
 	@Override
 	public void setColor(Color color) { this.color = color; }
 
+	/**
+	 */
 	@Override
 	public String getCtrlBy() { return this.ctrlBy; }
 
+	/**
+	 */
 	@Override
 	public void setCtrlBy(String ctrlBy) { this.ctrlBy = ctrlBy; }
-
 }

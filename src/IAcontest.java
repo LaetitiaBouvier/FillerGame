@@ -11,9 +11,11 @@ public class IAcontest {
 	static final String NOM_IA = "Steph_Laeti";
 	static String indicePositionIA;
 
+	// Tester avec les deux différentes façons de compter le score !
+	
 	public static void main(String[] args) {
 
-		PlayerConnector playerConnector = new PlayerConnector(174, BASE_URL);
+		PlayerConnector playerConnector = new PlayerConnector(189, BASE_URL);
 		playerConnector.registerPlayer(NOM_IA);
 
 		Game game = playerConnector.getGame();
@@ -39,6 +41,11 @@ public class IAcontest {
 			
 			char c = nextSquareIAContestMove(grid, indicesPosi);
 			
+			
+			nextSuperSquareIAContestMove(grid, indicesPosi);
+			
+			try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
+			
 			playerConnector.sendMove(c);
 			
 			game = playerConnector.getGame();
@@ -46,66 +53,17 @@ public class IAcontest {
 		} while (!game.isFinished());
 	}
 	
-	public static char nextHardIAMove(SquareCell[][] original, int[] indicesPosi){
+	public static char nextSuperSquareIAContestMove(SquareCell[][] original, int[] indicesPosi){
 		
-		System.out.println("INDICE POSITION : "+indicesPosi[0]);
 		
-		ArrayList<Color> couleursDispo = getCouleursDispo(original);
-		
-		ArrayList<Cell> squaresCtrl = new ArrayList<Cell>();
-		ArrayList<Cell> squaresAdvr = new ArrayList<Cell>();
-		
-		if(indicesPosi[0] == 1){
-			squaresCtrl.add(original[0][0]);									squaresAdvr.add(original[original.length-1][original.length-1]);
-			squaresCtrl = getConnectedCellsOfSameColor(squaresCtrl);			squaresAdvr = getConnectedCellsOfSameColor(squaresAdvr);
-		}else{
-			squaresCtrl.add(original[original.length-1][original.length-1]);	squaresAdvr.add(original[0][0]);
-			squaresCtrl = getConnectedCellsOfSameColor(squaresCtrl);			squaresAdvr = getConnectedCellsOfSameColor(squaresAdvr);
-		}
-		int maxCtrl = squaresCtrl.size();
-		
-		Color colorIniCtrl = squaresCtrl.get(0).getColor();
-//		Color colorIniAdvr = squaresAdvr.get(0).getColor();
-		Color color = Color.black;
-		
-		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.red); 	}
-		int redList = getConnectedCellsOfSameColor(squaresCtrl).size();			System.out.println("Red score : "+redList);
-		if( redList >= maxCtrl 		&& couleursDispo.contains(Color.red))		{ color = Color.red; 		maxCtrl = redList;		}
-		
-		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.orange); 	}
-		int orangeList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Orange score : "+orangeList);
-		if( orangeList >= maxCtrl 	&& couleursDispo.contains(Color.orange))	{ color = Color.orange; 	maxCtrl = orangeList;	}
-		
-		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.yellow); 	}
-		int yellowList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Yellow score : "+yellowList);
-		if( yellowList >= maxCtrl 	&& couleursDispo.contains(Color.yellow))	{ color = Color.yellow; 	maxCtrl = yellowList;	}
-		
-		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.green); 	}
-		int greenList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Green score : "+greenList);
-		if( greenList >= maxCtrl 	&& couleursDispo.contains(Color.green))	{ color = Color.green; 			maxCtrl = greenList;	}
-		
-		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.blue); 	}
-		int blueList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Blue score : "+blueList);
-		if( blueList >= maxCtrl 		&& couleursDispo.contains(Color.blue))	{ color = Color.blue; 		maxCtrl = blueList;		}
-		
-		for(int i = 0; i < squaresCtrl.size(); i++){ squaresCtrl.get(i).setColor(Color.magenta); 	}
-		int magentaList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Magenta score : "+magentaList);
-		if( magentaList >= maxCtrl 	&& couleursDispo.contains(Color.magenta))	{ color = Color.magenta; 	maxCtrl = magentaList;	}
-		
-		for(int i = 0; i < squaresCtrl.size(); i++){ squaresCtrl.get(i).setColor(colorIniCtrl); }
-		
-		char c = ' ';
-		
-		if(color == Color.red) 		c = 'R';
-		if(color == Color.orange) 	c = 'O';
-		if(color == Color.yellow) 	c = 'J';
-		if(color == Color.green) 	c = 'V';
-		if(color == Color.blue) 	c = 'B';
-		if(color == Color.magenta) 	c = 'I';
-		
-		return c;
-	}
+		SquareCell[][] clone = cloneGrid(original);
+		DecisionTree dt = new DecisionTree(clone);
 
+		dt = decisionTreeGeneration(indicesPosi, dt, 3, 1);
+		
+		return ' ';
+	}
+	
 	public static char nextSquareIAContestMove(SquareCell[][] original, int[] indicesPosi){
 
 		ArrayList<Color> couleursNonDispo = new ArrayList<Color>();
@@ -1278,6 +1236,66 @@ public class IAcontest {
 
 		return bestMove;
 	}
+	
+	public static char nextHardIAMove(SquareCell[][] original, int[] indicesPosi){
+		
+		System.out.println("INDICE POSITION : "+indicesPosi[0]);
+		
+		ArrayList<Color> couleursDispo = getCouleursDispo(original);
+		
+		ArrayList<Cell> squaresCtrl = new ArrayList<Cell>();
+		ArrayList<Cell> squaresAdvr = new ArrayList<Cell>();
+		
+		if(indicesPosi[0] == 1){
+			squaresCtrl.add(original[0][0]);									squaresAdvr.add(original[original.length-1][original.length-1]);
+			squaresCtrl = getConnectedCellsOfSameColor(squaresCtrl);			squaresAdvr = getConnectedCellsOfSameColor(squaresAdvr);
+		}else{
+			squaresCtrl.add(original[original.length-1][original.length-1]);	squaresAdvr.add(original[0][0]);
+			squaresCtrl = getConnectedCellsOfSameColor(squaresCtrl);			squaresAdvr = getConnectedCellsOfSameColor(squaresAdvr);
+		}
+		int maxCtrl = squaresCtrl.size();
+		
+		Color colorIniCtrl = squaresCtrl.get(0).getColor();
+//		Color colorIniAdvr = squaresAdvr.get(0).getColor();
+		Color color = Color.black;
+		
+		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.red); 	}
+		int redList = getConnectedCellsOfSameColor(squaresCtrl).size();			System.out.println("Red score : "+redList);
+		if( redList >= maxCtrl 		&& couleursDispo.contains(Color.red))		{ color = Color.red; 		maxCtrl = redList;		}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.orange); 	}
+		int orangeList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Orange score : "+orangeList);
+		if( orangeList >= maxCtrl 	&& couleursDispo.contains(Color.orange))	{ color = Color.orange; 	maxCtrl = orangeList;	}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.yellow); 	}
+		int yellowList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Yellow score : "+yellowList);
+		if( yellowList >= maxCtrl 	&& couleursDispo.contains(Color.yellow))	{ color = Color.yellow; 	maxCtrl = yellowList;	}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.green); 	}
+		int greenList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Green score : "+greenList);
+		if( greenList >= maxCtrl 	&& couleursDispo.contains(Color.green))	{ color = Color.green; 			maxCtrl = greenList;	}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++)	{ squaresCtrl.get(i).setColor(Color.blue); 	}
+		int blueList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Blue score : "+blueList);
+		if( blueList >= maxCtrl 		&& couleursDispo.contains(Color.blue))	{ color = Color.blue; 		maxCtrl = blueList;		}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++){ squaresCtrl.get(i).setColor(Color.magenta); 	}
+		int magentaList = getConnectedCellsOfSameColor(squaresCtrl).size();		System.out.println("Magenta score : "+magentaList);
+		if( magentaList >= maxCtrl 	&& couleursDispo.contains(Color.magenta))	{ color = Color.magenta; 	maxCtrl = magentaList;	}
+		
+		for(int i = 0; i < squaresCtrl.size(); i++){ squaresCtrl.get(i).setColor(colorIniCtrl); }
+		
+		char c = ' ';
+		
+		if(color == Color.red) 		c = 'R';
+		if(color == Color.orange) 	c = 'O';
+		if(color == Color.yellow) 	c = 'J';
+		if(color == Color.green) 	c = 'V';
+		if(color == Color.blue) 	c = 'B';
+		if(color == Color.magenta) 	c = 'I';
+		
+		return c;
+	}
 
 	public static DecisionTree oneStepDecisionTreeGeneration(int indiceJoueurAct, DecisionTree dt){
 
@@ -1317,6 +1335,67 @@ public class IAcontest {
 			else if	(itemColor == Color.green) 	{ dt.setGreenChild(		new DecisionTree(cloneGrid(cloneBis)));	}
 			else if	(itemColor == Color.blue) 	{ dt.setBlueChild(		new DecisionTree(cloneGrid(cloneBis)));	}
 			else if	(itemColor == Color.magenta){ dt.setMagentaChild(	new DecisionTree(cloneGrid(cloneBis)));	}
+		}
+
+		return dt;
+	}
+	
+	public static DecisionTree decisionTreeGeneration(int[] indicesPosi, DecisionTree dt, int maxTours, Integer comptTours){
+		
+		if(comptTours > maxTours) return dt;	// condition d'arrêt
+		
+		SquareCell[][] clone = dt.getGrid();
+
+		ArrayList<Color> couleursDispo = getCouleursDispo(clone);
+		
+		int indiceJoueurAct = 0;
+		
+		if(comptTours % 2 == 0)	{ indiceJoueurAct = indicesPosi[1]; } // Si le compteur est paire, alors c'est au tour du joureur adverse
+		else					{ indiceJoueurAct = indicesPosi[0]; } // Sinon, alors c'est au tour de l'ia
+
+		for(Color itemColor : couleursDispo){
+			
+			System.out.println("!!! "+comptTours+" : "+itemColor.toString());
+
+			SquareCell[][] cloneBis = cloneGrid(clone);
+
+			ArrayList<Cell> squaresCtrlJ1 = new ArrayList<Cell>();	squaresCtrlJ1.add(cloneBis[0][0]);
+			ArrayList<Cell> squaresCtrlJ2 = new ArrayList<Cell>();	squaresCtrlJ2.add(cloneBis[cloneBis.length-1][cloneBis.length-1]);
+			
+			squaresCtrlJ1 = getConnectedCellsOfSameColor(squaresCtrlJ1);
+			squaresCtrlJ2 = getConnectedCellsOfSameColor(squaresCtrlJ2);
+			
+			ArrayList<Cell> squareCtrl = null;
+			
+			if(indiceJoueurAct == 1){ squareCtrl = squaresCtrlJ1; }
+			if(indiceJoueurAct == 2){ squareCtrl = squaresCtrlJ2; }
+
+			for(int i = 0; i < squareCtrl.size(); i++){
+				squareCtrl.get(i).setColor(itemColor);
+			}
+
+			squareCtrl = getConnectedCellsOfSameColor(squareCtrl);
+
+			for(Cell square : squareCtrl){
+				if(indiceJoueurAct == 1) { square.setCtrlBy("1"); }
+				if(indiceJoueurAct == 2) { square.setCtrlBy("2"); }
+			}
+
+			if		(itemColor == Color.red) 	{ dt.setRedChild(		new DecisionTree(cloneGrid(cloneBis)));	}
+			else if	(itemColor == Color.orange) { dt.setOrangeChild(	new DecisionTree(cloneGrid(cloneBis)));	}
+			else if	(itemColor == Color.yellow) { dt.setYellowChild(	new DecisionTree(cloneGrid(cloneBis)));	}
+			else if	(itemColor == Color.green) 	{ dt.setGreenChild(		new DecisionTree(cloneGrid(cloneBis)));	}
+			else if	(itemColor == Color.blue) 	{ dt.setBlueChild(		new DecisionTree(cloneGrid(cloneBis)));	}
+			else if	(itemColor == Color.magenta){ dt.setMagentaChild(	new DecisionTree(cloneGrid(cloneBis)));	}
+			
+			comptTours = comptTours +1;
+			
+			if		(itemColor == Color.red) 	{ decisionTreeGeneration(indicesPosi, dt.getRedChild(), 	maxTours, comptTours);	}
+			else if	(itemColor == Color.orange) { decisionTreeGeneration(indicesPosi, dt.getOrangeChild(), 	maxTours, comptTours);	}	
+			else if	(itemColor == Color.yellow) { decisionTreeGeneration(indicesPosi, dt.getYellowChild(), 	maxTours, comptTours);	}
+			else if	(itemColor == Color.green) 	{ decisionTreeGeneration(indicesPosi, dt.getGreenChild(), 	maxTours, comptTours);	}
+			else if	(itemColor == Color.blue) 	{ decisionTreeGeneration(indicesPosi, dt.getBlueChild(), 	maxTours, comptTours);	}
+			else if	(itemColor == Color.magenta){ decisionTreeGeneration(indicesPosi, dt.getMagentaChild(), maxTours, comptTours);	}
 		}
 
 		return dt;
@@ -1547,7 +1626,7 @@ public class IAcontest {
 			for(int j = 0; j < grid[0].length; j++){
 				
 				if		(grid[i][j].getCtrlBy().equals(""+indicesPosi[0])){ score++; }
-				else if	(grid[i][j].getCtrlBy().equals(""+indicesPosi[1])){ score--; }
+//				else if	(grid[i][j].getCtrlBy().equals(""+indicesPosi[1])){ score--; }
 			}
 		}
 		

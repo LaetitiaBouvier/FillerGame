@@ -2,6 +2,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * <b> </b>
+ */
 public class HexaWebBoard extends HexaBoard implements Board{
 	
 	private static final long serialVersionUID = 1L;
@@ -9,15 +12,13 @@ public class HexaWebBoard extends HexaBoard implements Board{
 	private String monAdresse;
 	private String sonAdresse;
 	
-	private int idLocal;
-
 	/**
-	 * Constructeur du joueur créant la partie 
+	 * Constructeur du joueur créant la partie en ligne
 	 * 
-	 * @param nb
-	 * @param nomJoueur1
-	 * @param monAdresse
-	 * @param sonAdresse
+	 * @param nb			( int )		: <br> taille d'un côté du tableau 		</br><br>
+	 * @param nomJoueur1	( String ) 	: <br> nom du joueur local 				</br><br>
+	 * @param monAdresse	( String ) 	: <br> adresse du joueur local 			</br><br>
+	 * @param sonAdresse	( String ) 	: <br> addresse du joueur se connectant </br><br>
 	 */
 	public HexaWebBoard(int nb, String nomJoueur1, String nomJoueur2, String monAdresse, String sonAdresse) {
 		
@@ -25,7 +26,6 @@ public class HexaWebBoard extends HexaBoard implements Board{
 		
 		setMonAdresse(monAdresse);
 		setSonAdresse(sonAdresse);
-		setIdLocal(1);
 		
 		//MAJ Joueur1
 		ArrayList<Cell> hexasCtrl = this.getJoueur1().getCasesCtrl();
@@ -62,9 +62,11 @@ public class HexaWebBoard extends HexaBoard implements Board{
 	}
 	
 	/**
-	 * Constructeur du joueur rejoignant la partie
+	 * Constructeur du joueur rejoignant la partie en ligne
 	 * 
-	 * @param saveStr
+	 * @param saveStr		( String )	: <br> sauvegarde envoyée par le joueur hébergeant la partie</br><br>
+	 * @param monAdresse	( String ) 	: <br> adresse du joueur local 								</br><br>
+	 * @param sonAdresse 	( String ) 	: <br> addresse du joueur se connectant 					</br><br>
 	 */
 	public HexaWebBoard(String saveStr, String monAdresse, String sonAdresse){
 		
@@ -72,7 +74,6 @@ public class HexaWebBoard extends HexaBoard implements Board{
 		
 		setMonAdresse(monAdresse);
 		setSonAdresse(sonAdresse);
-		setIdLocal(2);
 		
 		System.out.println("La cell [0][0] est ctrl par : "+this.grille[0][0].getCtrlBy());
 		
@@ -91,6 +92,8 @@ public class HexaWebBoard extends HexaBoard implements Board{
 		defJoueurs(nb, saveStr);
 	}
 	
+	/**
+	 */
 	@Override
 	public Player nextMove(Color couleur){
 		
@@ -140,6 +143,9 @@ public class HexaWebBoard extends HexaBoard implements Board{
 		return null;
 	}
 	
+	/**
+	 * Cette fonction d'attendre le prochain coup de l'adversaire et de rafraichir son tableau en concéquence
+	 */
 	public void waitAndListen(){
 		
 		String saveStr = Web.ecoutePaquets();
@@ -159,27 +165,39 @@ public class HexaWebBoard extends HexaBoard implements Board{
 		update(this.getGraphics());
 	}
 
+	/**
+	 * Getter permettant d'accéder à mon adresse
+	 * 
+	 * @return ( String ) Retourne mon adresse
+	 */
 	public String getMonAdresse() {
 		return monAdresse;
 	}
 
+	/**
+	 * Setter permettant de modifier mon adresse
+	 * 
+	 * @param monAdresse ( String ) : <br> adresse local </br><br>
+	 */
 	public void setMonAdresse(String monAdresse) {
 		this.monAdresse = monAdresse;
 	}
 
+	/**
+	 * Getter permettant d'accéder à mon adresse
+	 * 
+	 * @return ( String ) Retourne son adresse
+	 */
 	public String getSonAdresse() {
 		return sonAdresse;
 	}
 
+	/**
+	 * Setter permettant de modifier son adresse
+	 * 
+	 * @param sonAdresse ( String ) Retourne son adresse
+	 */
 	public void setSonAdresse(String sonAdresse) {
 		this.sonAdresse = sonAdresse;
-	}
-
-	public int getIdLocal() {
-		return idLocal;
-	}
-
-	public void setIdLocal(int idLocal) {
-		this.idLocal = idLocal;
 	}
 }

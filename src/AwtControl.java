@@ -31,19 +31,31 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 /**
- *	Cette classe est la classe principale du logiciel "The Filler Game".
- *	Elle permet la gestion de tous les composants graphiques et de l'utilisation général du programme.
+ *	<b>Cette classe est la classe principale du logiciel "The Filler Game".
+ *	Elle permet la gestion de tous les composants graphiques et de l'utilisation général du programme.</b>
+ *
+ *	@version 06.05.2016 (version finale)
+ * 	@author Stephane Tzvetkov & Laetitia Bouvier
  */
 public class AwtControl{
 
 	private Frame mainFrame;
 	private Panel controlPanel;
 	private Board board;
-
+	
 	/**
 	 * Ce constructeur permet de selectionner quel tableau on souhaite générer à l'écran, et prépare les principaux composants graphiques.
 	 * 
-	 * @param tableau 	 : chaîne de caractères représentant le nom du tableau que l'on souhaite voir
+	 * @param tableau	( String ) 	: <br>nom du tableau que l'on souhaite voir 		</br><br>
+	 * @param nb		( int )		: <br>taille de l'un des côté du tableau à générer 	</br><br>
+	 * @param joueur1	( String )	: <br>nom du joueur 1 								</br><br>
+	 * @param joueur2	( String )	: <br>nom du joueur 2 								</br><br>
+	 * @param joueur3	( String )	: <br>nom du joueur 3 								</br><br>
+	 * @param joueur4	( String )	: <br>nom du joueur 4 								</br><br>
+	 * @param IA1		( String )	: <br>type d'IA associée au joueur1 				</br><br>
+	 * @param IA2		( String )	: <br>type d'IA associée au joueur2 				</br><br>
+	 * @param IA3		( String )	: <br>type d'IA associée au joueur3 				</br><br>
+	 * @param IA4		( String )	: <br>type d'IA associée au joueur4 				</br><br>
 	 */
 	public AwtControl(String tableau, int nb, String joueur1, String joueur2, String joueur3, String joueur4, String IA1, String IA2, String IA3, String IA4){
 
@@ -128,9 +140,7 @@ public class AwtControl{
 	}
 
 	/**
-	 * Cette fonction est la fonction principale/d'entrée ...
-	 * 
-	 * @param args
+	 * Cette fonction est la fonction principale/d'entrée : elle commence simplement par afficher la vue d'introduction
 	 */
 	public static void main(String[] args){
 
@@ -139,10 +149,14 @@ public class AwtControl{
 	}
 
 	/**
-	 * Cette fonction permet l'affichages des différents éléments graphiques : le cadre principale, la barre de menu, le tableau et les boutons 
+	 * Cette fonction permet l'affichages de différents éléments graphiques : le cadre principale, la barre de menu, le tableau et les boutons
 	 * 
-	 * @see setMenu()
-	 * @see setBoardAndButtons()
+	 * @param tableau			( String ) 	: <br>nom du tableau que l'on souhaite voir 			</br><br>
+	 * @param choixIAJoueur1	( String )	: <br>type d'IA associée au joueur 1					</br><br>
+	 * @param isWebGame			( boolean )	: <br>est-ce que la partie générée sera en réseau ou non</br><br>
+	 * 
+	 * @see #setMenu()
+	 * @see #setBoardAndButtons()
 	 */
 	private void show(String tableau, String choixIAJoueur1, boolean isWebGame){
 
@@ -178,11 +192,13 @@ public class AwtControl{
 			}while(nextPlayer != null);
 		}
 	}
-
+	
 	/**
 	 * Cette fonction paramètre et affiche le tableau et les boutons (en créant ces derniers)
 	 * 
-	 * @see ButtonClickListener : classe interne gérant l'écoute des boutons
+	 * @param tableau	( String ) 	: <br>nom du tableau que l'on souhaite voir	</br><br>
+	 * 
+	 * @see #ButtonClickListener
 	 */
 	private void setBoardAndButtons(String tableau){
 
@@ -282,18 +298,6 @@ public class AwtControl{
 						AwtControl awtControl = new AwtControl("WEB_ERROR", 0, "", "", "", "", "", "", "", "");
 						awtControl.show("WEB_ERROR", "", false);
 					}
-					/*
-					if(cond){
-						mainFrame.dispose();
-						AwtControl awtControl = new AwtControl("HEXA", Integer.parseInt(nbText.getText()), j1Text.getText(), j2Text.getText(), j3Text.getText(), j4Text.getText(),
-								IAList1.getItem(IAList1.getSelectedIndex()), IAList2.getItem(IAList2.getSelectedIndex()), IAList3.getItem(IAList3.getSelectedIndex()), IAList4.getItem(IAList4.getSelectedIndex()));
-						awtControl.show("HEXA", IAList1.getItem(IAList1.getSelectedIndex()));
-					}else{
-						mainFrame.dispose();
-						AwtControl awtControlDemo = new AwtControl("HEXA_ERROR", 0, "", "", "", "", "", "", "", "");
-						awtControlDemo.show("HEXA_ERROR", "");
-					}
-					 */
 				}
 			} );
 
@@ -538,8 +542,23 @@ public class AwtControl{
 		}
 	}
 
-	//A MODIF ()
+	/**
+	 * Cette fonction vérifie les conditions de création d'une partie 
+	 * 
+	 * @param IAList1	( Choice )		: <br>choix du type d'IA associée au joueur 1 	</br><br>
+	 * @param IAList2	( Choice )		: <br>choix du type d'IA associée au joueur 2 	</br><br>
+	 * @param IAList3	( Choice )		: <br>choix du type d'IA associée au joueur 3 	</br><br>
+	 * @param IAList4	( Choice )		: <br>choix du type d'IA associée au joueur 4 	</br><br>
+	 * @param j1Text	( TextField )	: <br>nom du joueur 1 							</br><br>
+	 * @param j2Text	( TextField )	: <br>nom du joueur 2							</br><br>
+	 * @param j3Text	( TextField )	: <br>nom du joueur 3							</br><br>
+	 * @param j4Text	( TextField )	: <br>nom du joueur 4							</br><br>
+	 * @param nbText	( TextField )	: <br>taille d'un côté du tableau à générer		</br><br>
+	 * 
+	 * @return	( boolean )	Retourne si oui ou non une partie peut être créée à partir des paramètres donnés
+	 */
 	public static boolean okCreation(Choice IAList1, Choice IAList2, Choice IAList3, Choice IAList4, TextField j1Text, TextField j2Text, TextField j3Text, TextField j4Text, TextField nbText){
+		
 		boolean cond = true;
 
 		if(!IAList1.getItem(IAList1.getSelectedIndex()).equals("Sans") && !IAList2.getItem(IAList2.getSelectedIndex()).equals("Sans")){
@@ -583,7 +602,7 @@ public class AwtControl{
 	/**
 	 * Cette fonction paramètre et affiche la barre de menu
 	 * 
-	 * @see MenuItemListener : classe interne gérant l'écoute des menus
+	 * @see #MenuItemListener
 	 */
 	private void setMenu(){
 
@@ -672,7 +691,7 @@ public class AwtControl{
 	/**
 	 * Cette fonction restreint l'utilisation des boutons selon les couleurs des joueurs
 	 * 
-	 *  @see getColorsFromPlayers()
+	 *  @see #getColorsFromPlayers()
 	 */
 	public void setRestrictedButtons(){
 
@@ -710,7 +729,7 @@ public class AwtControl{
 	/**
 	 * Cette fonction permet d'autoriser l'utilisation des boutons selon les couleurs des joueurs 
 	 * 
-	 * @see setAllowedButtons()
+	 * @see #setAllowedButtons()
 	 */
 	public void setAllowedButtons(){
 
@@ -770,15 +789,14 @@ public class AwtControl{
 	}
 
 	/**
-	 * Cette petite classe interne gère l'écoute des boutons et les actions à prendre selon lesquels sont cliqués
+	 * Cette classe interne gère l'écoute des boutons et les actions à prendre selon lesquels sont cliqués
 	 */
 	private class ButtonClickListener implements ActionListener{
 
 		/**
-		 * Cette fonction gère l'action "nextMove" (pour faire progresser le jeux) selon le bouton cliqué
-		 * et appelle la restriction de l'utilisation des boutons selon les couleurs des joueurs
+		 * Cette fonction gère les actions à lancer selon le bouton cliqué
 		 * 
-		 * @see nextMove()
+		 * @param e	( ActionEvent ) : <br>action associé au click </br><br>
 		 */
 		public void actionPerformed(ActionEvent e) {
 
@@ -903,12 +921,14 @@ public class AwtControl{
 	}
 
 	/**
-	 * Cette petite classe interne gère l'écoute des menus et les actions à prendre selon lesquels sont cliqués
+	 * Cette classe interne gère l'écoute des menus et les actions à prendre selon lesquels sont cliqués
 	 */
 	class MenuItemListener implements ActionListener {
 
 		/**
 		 * Cette fonction gère les actions à lancer selon l'item de menu cliqué
+		 * 
+		 * @param e	( ActionEvent ) : <br>action associé au click </br><br>
 		 */
 		public void actionPerformed(ActionEvent e) {
 

@@ -2,19 +2,29 @@ REMARQUES : LES AMELIORATIONS :
 
 
 
-Le code se répète beaucoup sur les différents tableaux et les différentes cellules car :
+==> Le code se répète beaucoup sur les différents tableaux et les différentes cellules car :
 
 - On aurait pu utiliser une "Cell" générique, avec une liste de voisins en attribut plutôt qu'une combinaison spécifique
   selon que ce soit héxa, carré, en losange...
 - On aurait pu utiliser un "Board" générique, avec pour attribut une grille de Cell plutôt qu'une grille spécifique,
   et en ajoutant juste un attribut typeCell (HEXA, SQUARE, DIAMOND)
 
-==> On ne s'en est pas rendu compte à temps, car au début on s'était concentré sur le jeux avec des hexagones, pour l'adapter par la suite ...
+( On ne s'en est pas rendu compte à temps, car au début on s'était concentré sur le jeux avec des hexagones, pour l'adapter par la suite ... )
 
 
 
-Certaines fonctions du code semblent un peu lourdes/longues dans les différents tableaux car :
+==> Certaines fonctions du code semblent un peu lourdes/longues dans les différents tableaux car :
 
 - On aurait du avoir en attribut un tableau de joueurs, plutôt que chaque joueur : un par un.
   Du coup tout les traitement concernant les joueurs sont beaucoup trop long...
  (ça ressemble un peu à l'erreur qu'on a fait avec les voisins des Cell...)
+
+ 
+ 
+==> La classe principale 'AwtControl' semble un peu "obèse" alors que le code ne s'y repète presque pas, car :
+
+- Cette classe possède notemment des classes internes : les classes Listeners, pour écouter les différentes actions de l'utilisateur.
+  Il aurait probablement fallu réécrire nous même nos propres Listeners dans des classes à part, ça aurait été plus propre et ça aurait
+  allégé la classe principale.
+- On aurait peut être pu faire pareil pour les fonctions gérant l'affichage graphique des fenêtres ( en particulier la fonction setBoardAndButtons)
+  c'est à dire créer une classe statique composées d'une petite classe statique interne pour chaque type de fenêtre s'affichant.

@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 /**
- * L'objectif de cette classe est seulement d'offrir un joli petit menu introductif fait maison !
+ * <b>Cette classe permet seulement d'offrir un petit tableau introductif, ou un petit tableau d'erreur. </b>
  */
 public class IntroBoard extends Canvas implements Board{
 	
@@ -14,6 +14,13 @@ public class IntroBoard extends Canvas implements Board{
 	private int largeur;
 	private boolean isError;
 	
+	/**
+	 * Ce constructeur permet de créer un tableau en définissant sa hauteur, sa largeur et si il s'agit d'un tableau d'intro ou d'erreur
+	 * 
+	 * @param hauteur	( int )		: <br> hauteur du tableau à créer 													</br><br>
+	 * @param largeur	( int )		: <br> largeur du tableau à créer 													</br><br>
+	 * @param isError	( boolean )	: <br> est-ce que ce tableau est un tableau d'erreur, sinon c'est un tableau d'intro</br><br>
+	 */
 	public IntroBoard(int hauteur, int largeur, boolean isError){
 		
 		this.hauteur = hauteur;
@@ -25,33 +32,63 @@ public class IntroBoard extends Canvas implements Board{
 		setSize(hauteur, largeur);
 	}
 	
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public Player nextMove(Color couleur) { return null; }
 	
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public Color nextEasyIAMove() { return null; }
 	
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public Color nextTroubleIAMove(Player joueur) { return null; }
 	
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public Color nextHardIAMove(Player joueur) { return null; }
 	
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public ArrayList<Color> getColorsFromPlayers() { return null; }
 
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public ArrayList<Color> getFreeColors() { return null; }
 	
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public boolean isTheGameOver(){ return true; }
 	
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public String generateSaveString(){ return null; }
 	
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public Player getWinner(){ return null; }
 	
+	/**
+	 * Cette fonction permet d'afficher le tableau à proprement parlé
+	 */
 	@Override
 	public void paint(Graphics g){
 		
@@ -145,21 +182,39 @@ public class IntroBoard extends Canvas implements Board{
 		}
 	}
 
+	/**
+	 * Cette fonction est le getter permettant d'accéder à la hauteur du tableau
+	 */
 	@Override
 	public int getHauteur() { return this.hauteur; }
 
+	/**
+	 * Cette fonction est le getter permettant d'accéder à la largeur du tableau
+	 */
 	@Override
 	public int getLargeur() { return this.largeur; }
 
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public Player getJoueur1() { return null; }
 
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public Player getJoueur2() { return null; }
 
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public Player getJoueur3() { return null; }
 
+	/**
+	 * Cette fonction n'a pas d'utilité ici puisqu'il ne s'agit que d'afficher un petit tableau introductif ou un petit tableau d'erreur
+	 */
 	@Override
 	public Player getJoueur4() { return null; }
 }
