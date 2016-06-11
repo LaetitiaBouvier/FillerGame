@@ -64,7 +64,7 @@ public class AwtControl{
 			this.board = new IntroBoard(600, 300, false);
 		}
 		if(tableau.contains("ERROR")){
-			this.board = new IntroBoard(500, 500, true);
+			this.board = new IntroBoard(600, 300, true);
 		}
 		if(tableau.equals("HEXA")){
 			this.board = new HexaBoard(nb, joueur1, joueur2, joueur3, joueur4, IA1, IA2, IA3, IA4);
@@ -266,7 +266,7 @@ public class AwtControl{
 						boolean wannaPlay = true;
 						Object[] options = { "OK", "CANCEL" };
 						Object selectedValue = JOptionPane.showOptionDialog(null, "Vous deverez patienter jusqu'à ce qu'un ami rejoigne"
-								+ " votre partie, CLIQUEZ SUR OK AVANT QUE VOTRE AMI NE VALIDE VOTRE ADRESSE, sinon cliquez sur CANCEL."
+								+ " votre partie,\n CLIQUEZ SUR OK AVANT QUE VOTRE AMI NE VALIDE VOTRE ADRESSE,\n sinon cliquez sur CANCEL."
 								+ " L'adresse de votre partie est : "+monAdresse, "Céation partie",
 								JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 								null, options, options[0]);

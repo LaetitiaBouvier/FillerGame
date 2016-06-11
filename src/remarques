@@ -28,3 +28,11 @@ REMARQUES : LES AMELIORATIONS :
   allégé la classe principale.
 - On aurait peut être pu faire pareil pour les fonctions gérant l'affichage graphique des fenêtres ( en particulier la fonction setBoardAndButtons)
   c'est à dire créer une classe statique composées d'une petite classe statique interne pour chaque type de fenêtre s'affichant.
+  
+  
+  
+  ==> Aucune vérification de l'édition des sauvegardes ...
+  
+  ==> Jeux en ligne à améliorer ...
+  
+  
